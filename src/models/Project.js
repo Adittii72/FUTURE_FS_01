@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
+import ProjectImage from "./ProjectImage.js";
 
 const Project = sequelize.define(
   "Project",
@@ -29,13 +30,6 @@ const Project = sequelize.define(
         isUrl: true,
       },
     },
-    coverImageUrl: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      validate: {
-        // isUrl: true,
-      },
-    },
     category: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -57,5 +51,17 @@ const Project = sequelize.define(
     },
   }
 );
+
+
+Project.hasMany(ProjectImage, {
+  foreignKey: 'projectId',
+  as: 'images',
+  onDelete: 'CASCADE',
+});
+
+ProjectImage.belongsTo(Project, {
+  foreignKey: 'projectId',
+});
+
 
 export default Project;

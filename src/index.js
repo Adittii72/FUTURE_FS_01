@@ -9,6 +9,7 @@ import "./models/ContactMessage.js";
 import "./models/Project.js";
 import "./models/Resume.js";
 import "./models/Skill.js";
+import "./models/ProjectImage.js";
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -29,7 +30,22 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '..', 'public')));
+// app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(
+  express.static(path.join(__dirname, '..', 'public'), {
+    setHeaders: (res, filePath) => {
+      const lowerPath = filePath.toLowerCase();
+      // Force correct Content-Type for video and PDF files
+      if (lowerPath.endsWith('.mp4') || lowerPath.endsWith('.mov')) {
+        res.set('Content-Type', 'video/mp4');
+      } else if (lowerPath.endsWith('.webm') || lowerPath.endsWith('.ogg')) {
+        res.set('Content-Type', 'video/webm');
+      } else if (lowerPath.endsWith('.pdf')) {
+        res.set('Content-Type', 'application/pdf');
+      }
+    },
+  })
+);
 app.use("/api/admin", adminRoutes);
 app.use("/api/about", aboutRoutes);
 app.use("/api/skills", skillRoutes);

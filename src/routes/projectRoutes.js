@@ -6,6 +6,7 @@ import {
   updateProject,
   deleteProject,
   uploadProjectMedia,
+  deleteProjectImage,
 } from "../controllers/projectController.js";
 import auth from "../middleware/auth.js";
 import upload from "../middleware/upload.js";
@@ -19,10 +20,16 @@ router.get("/:id", getProjectById);
 // POST /api/projects
 router.post("/", auth, createProject);
 // POST /api/projects/upload/:id
-router.post("/upload/:id",auth, upload.single("mediaFile"), uploadProjectMedia);
+router.post(
+  "/upload/:id",
+  auth,
+  upload.array("mediaFiles", 5),
+  uploadProjectMedia
+);
 // PUT /api/projects/:id
 router.put("/:id", auth, updateProject);
 // DELETE /api/projects/:id
 router.delete("/:id", auth, deleteProject);
+router.delete("/image/:imageId", auth, deleteProjectImage);
 
 export default router;

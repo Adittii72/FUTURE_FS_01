@@ -1,4 +1,6 @@
 import Project from "../models/Project.js";
+import ProjectImage from "../models/ProjectImage.js";
+import { Op } from "sequelize";
 
 // @route   GET /api/projects
 // @access  Public
@@ -118,9 +120,10 @@ export const deleteProject = async (req, res) => {
 export const uploadProjectMedia = async (req, res) => {
   try {
     const { id } = req.params;
+    const files = req.files;
 
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
+    if (!files || files.length === 0) {
+      return res.status(400).json({ message: "No files uploaded" });
     }
 
     const project = await Project.findByPk(id);
@@ -128,15 +131,46 @@ export const uploadProjectMedia = async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    const imagePromises = files.map(file => {
+      const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${file.filename}`;
+      return ProjectImage.create({
+        imageUrl: imageUrl,
+        projectId: project.id,
+      });
+    });
+    
+    await Promise.all(imagePromises);
 
-    await project.update({
-      coverImageUrl: fileUrl,
+    const updatedProject = await Project.findByPk(id, {
+      include: { model: ProjectImage, as: 'images' }
     });
 
-    return res.json({ message: "File uploaded successfully", project });
+    return res.json({ message: "Files uploaded successfully", project: updatedProject });
   } catch (err) {
     console.error("uploadProjectMedia error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+// @route   DELETE /api/projects/image/:imageId
+// @access  Private (Admin)
+export const deleteProjectImage = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const image = await ProjectImage.findByPk(imageId);
+
+    if (!image) {
+      return res.status(404).json({ message: "Image not found" });
+    }
+
+    
+    await image.destroy();
+
+    return res.json({ message: "Image deleted successfully" });
+  } catch (err) {
+    console.error("deleteProjectImage error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };

@@ -1,11 +1,95 @@
 import { useState, useEffect } from 'react';
-import { Edit, Plus, Trash2, Github, Upload } from 'lucide-react';
+import { Edit, Plus, Trash2, Github, Upload, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import Card from '../components/Card';
 import ManageProjectModal from '../components/admin/ManageProjectModal';
 import UploadMediaModal from '../components/admin/UploadMediaModal';
 
+
+// --- Helper function to check if a URL is likely a video (used by both components) ---
+const isVideoMedia = (url) => {
+  if (!url) return false;
+  const lowerUrl = url.toLowerCase();
+  return lowerUrl.includes('.mp4') || 
+         lowerUrl.includes('.webm') || 
+         lowerUrl.includes('.ogg') ||
+         lowerUrl.includes('.mov') ||
+         lowerUrl.includes('.avi');
+};
+
+// --- Project Carousel Component (Used for 0, 1, or multiple IMAGES) ---
+const ProjectCarousel = ({ images = [], title }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  if (!images || images.length === 0) {
+    return (
+      <div className="relative w-full h-48 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+        <span className="text-gray-500">No media</span>
+      </div>
+    );
+  }
+
+  const prevSlide = () => {
+    setCurrentIndex(currentIndex === 0 ? images.length - 1 : currentIndex - 1);
+  };
+
+  const nextSlide = () => {
+    setCurrentIndex(currentIndex === images.length - 1 ? 0 : currentIndex + 1);
+  };
+
+  const currentMedia = images[currentIndex];
+  const isImage = !isVideoMedia(currentMedia.imageUrl); // Carousels only show media we determined NOT to be a single video.
+
+  return (
+    <div className="relative w-full h-48 overflow-hidden rounded-lg">
+      {/* Media Item */}
+      {isImage ? (
+        <img
+          src={currentMedia.imageUrl}
+          alt={`${title} media ${currentIndex + 1}`}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+         // If a video sneaks in (e.g., uploaded with images), this handles it:
+        <video
+          key={currentMedia.imageUrl}
+          src={currentMedia.imageUrl}
+          className="w-full h-full object-cover"
+          controls
+          muted 
+          loop 
+          autoPlay 
+          type={currentMedia.imageUrl.includes('.mp4') ? 'video/mp4' : 'video/webm'} 
+        >
+          Your browser does not support the video tag.
+        </video>
+      )}
+
+      {/* Navigation (Only show if multiple items) */}
+      {images.length > 1 && (
+        <>
+          <button
+            onClick={prevSlide}
+            className="absolute top-1/2 left-2 -translate-y-1/2 p-1.5 bg-black/30 hover:bg-black/50 text-white rounded-full transition-all"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute top-1/2 right-2 -translate-y-1/2 p-1.5 bg-black/30 hover:bg-black/50 text-white rounded-full transition-all"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </>
+      )}
+    </div>
+  );
+};
+
+// --- Main Projects Component ---
 const Projects = () => {
   const { isLoggedIn } = useAuth();
   const [projects, setProjects] = useState([]);
@@ -45,7 +129,8 @@ const Projects = () => {
       try {
         await api.delete(`/projects/${id}`);
         fetchProjects();
-      } catch (error) {
+      } catch (error)
+ {
         console.error('Error deleting project:', error);
         alert('Failed to delete project');
       }
@@ -65,12 +150,6 @@ const Projects = () => {
 
   const handleMediaUploaded = () => {
     fetchProjects();
-    setIsUploadModalOpen(false);
-    setUploadingProjectId(null);
-  };
-
-  const isVideo = (url) => {
-    return url && (url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.ogg'));
   };
 
   if (loading) {
@@ -80,6 +159,39 @@ const Projects = () => {
       </div>
     );
   }
+  
+  // --- FINAL MEDIA DISPLAY LOGIC ---
+  const renderProjectMedia = (project) => {
+    const images = project.images || [];
+    
+    // 1. Check for one and only one video
+    const singleVideo = images.length === 1 && isVideoMedia(images[0].imageUrl) ? images[0] : null;
+
+    if (singleVideo) {
+      // Rule: If one video exists, render it plainly (no carousel)
+      return (
+        <div className="relative w-full h-48 overflow-hidden rounded-lg">
+          <video
+            key={singleVideo.imageUrl}
+            src={singleVideo.imageUrl}
+            className="w-full h-full object-cover"
+            controls
+            muted
+            loop
+            autoPlay
+            type={singleVideo.imageUrl.includes('.mp4') ? 'video/mp4' : 'video/webm'}
+          >
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      );
+    }
+    
+    // 2. Otherwise (0, 1 image, or multiple images/videos), render the carousel
+    return <ProjectCarousel images={images} title={project.title} />;
+  };
+  // --- END FINAL MEDIA DISPLAY LOGIC ---
+
 
   return (
     <section className="min-h-screen py-8 sm:py-12 md:py-16">
@@ -126,23 +238,9 @@ const Projects = () => {
                 </div>
               )}
               <div className="space-y-4">
-                {project.coverImageUrl && (
-                  <div className="relative w-full h-48 overflow-hidden rounded-lg">
-                    {isVideo(project.coverImageUrl) ? (
-                      <video
-                        src={project.coverImageUrl}
-                        className="w-full h-full object-cover"
-                        controls
-                      />
-                    ) : (
-                      <img
-                        src={project.coverImageUrl}
-                        alt={project.title}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </div>
-                )}
+                {/* --- RENDER MEDIA BASED ON YOUR NEW RULES --- */}
+                {renderProjectMedia(project)}
+
                 <div className="space-y-2">
                   <h3 className="text-xl sm:text-2xl font-bold">{project.title}</h3>
                   <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">{project.description}</p>
@@ -152,7 +250,7 @@ const Projects = () => {
                         key={idx}
                         className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full text-sm"
                       >
-                        {tech}
+                        {tech.trim()}
                       </span>
                     ))}
                   </div>
@@ -204,4 +302,3 @@ const Projects = () => {
 };
 
 export default Projects;
-
