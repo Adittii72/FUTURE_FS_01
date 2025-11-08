@@ -38,6 +38,38 @@ const Dashboard = () => {
       setMessages(messagesRes.data);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+      // Sample data for styling preview
+      setStats({
+        projects: 6,
+        skills: 9,
+        achievements: 5,
+        unreadMessages: 3,
+      });
+      setMessages([
+        {
+          _id: '1',
+          name: 'John Doe',
+          email: 'john.doe@example.com',
+          phone: '+1 (555) 123-4567',
+          message: 'Hi! I saw your portfolio and I\'m impressed with your work. Would love to discuss a potential collaboration opportunity.',
+          createdAt: new Date().toISOString(),
+        },
+        {
+          _id: '2',
+          name: 'Jane Smith',
+          email: 'jane.smith@example.com',
+          phone: '+1 (555) 987-6543',
+          message: 'Your projects are amazing! I\'m looking for a developer for my startup. Can we schedule a call?',
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+        },
+        {
+          _id: '3',
+          name: 'Mike Johnson',
+          email: 'mike.j@example.com',
+          message: 'Great portfolio! I have a project that might interest you. Let me know when you\'re available.',
+          createdAt: new Date(Date.now() - 172800000).toISOString(),
+        },
+      ]);
     } finally {
       setLoading(false);
     }

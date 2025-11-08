@@ -27,6 +27,14 @@ const About = () => {
       setAbout(res.data);
     } catch (error) {
       console.error('Error fetching about:', error);
+      // Sample data for styling preview
+      setAbout({
+        headline: 'Full Stack Developer & UI/UX Designer',
+        bio: 'Passionate about creating beautiful, functional web experiences. I specialize in React, Node.js, and modern web technologies. With over 5 years of experience, I bring ideas to life through clean code and thoughtful design.',
+        coverImageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop',
+        linkedin: 'https://linkedin.com/in/example',
+        github: 'https://github.com/example',
+      });
     } finally {
       setLoading(false);
     }

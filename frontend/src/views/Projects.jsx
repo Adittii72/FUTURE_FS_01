@@ -25,6 +25,57 @@ const Projects = () => {
       setProjects(res.data);
     } catch (error) {
       console.error('Error fetching projects:', error);
+      // Sample data for styling preview
+      setProjects([
+        {
+          _id: '1',
+          title: 'E-Commerce Platform',
+          description: 'A full-stack e-commerce solution with payment integration, user authentication, and admin dashboard. Built with modern technologies for optimal performance and user experience.',
+          techStack: ['React', 'Node.js', 'MongoDB', 'Stripe API'],
+          githubUrl: 'https://github.com/example/ecommerce',
+          coverImageUrl: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=800&h=600&fit=crop',
+        },
+        {
+          _id: '2',
+          title: 'Task Management App',
+          description: 'A collaborative task management application with real-time updates, drag-and-drop functionality, and team collaboration features.',
+          techStack: ['React', 'Socket.io', 'Express', 'PostgreSQL'],
+          githubUrl: 'https://github.com/example/taskmanager',
+          coverImageUrl: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=800&h=600&fit=crop',
+        },
+        {
+          _id: '3',
+          title: 'Social Media Dashboard',
+          description: 'Analytics dashboard for social media management with data visualization, scheduling, and engagement metrics tracking.',
+          techStack: ['Next.js', 'TypeScript', 'Chart.js', 'Prisma'],
+          githubUrl: 'https://github.com/example/social-dashboard',
+          coverImageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
+        },
+        {
+          _id: '4',
+          title: 'Weather Forecast App',
+          description: 'Beautiful weather application with location-based forecasts, interactive maps, and detailed weather analytics.',
+          techStack: ['React', 'OpenWeather API', 'Leaflet', 'Tailwind CSS'],
+          githubUrl: 'https://github.com/example/weather-app',
+          coverImageUrl: 'https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=800&h=600&fit=crop',
+        },
+        {
+          _id: '5',
+          title: 'AI Chat Assistant',
+          description: 'Intelligent chatbot powered by machine learning with natural language processing and context-aware responses.',
+          techStack: ['React', 'Python', 'TensorFlow', 'WebSocket'],
+          githubUrl: 'https://github.com/example/ai-chat',
+          coverImageUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop',
+        },
+        {
+          _id: '6',
+          title: 'Fitness Tracking App',
+          description: 'Comprehensive fitness application with workout tracking, progress analytics, and personalized training plans.',
+          techStack: ['React Native', 'Firebase', 'Chart.js', 'Redux'],
+          githubUrl: 'https://github.com/example/fitness-app',
+          coverImageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop',
+        },
+      ]);
     } finally {
       setLoading(false);
     }

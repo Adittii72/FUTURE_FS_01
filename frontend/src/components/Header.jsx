@@ -17,7 +17,10 @@ const Header = () => {
     // Fetch resume URL
     api.get('/resume')
       .then(res => setResumeUrl(res.data.fileUrl))
-      .catch(() => {});
+      .catch(() => {
+        // Sample data for styling preview
+        setResumeUrl('https://example.com/resume.pdf');
+      });
 
     // Fetch social links from about
     api.get('/about')
@@ -27,7 +30,13 @@ const Header = () => {
           github: res.data.github || ''
         });
       })
-      .catch(() => {});
+      .catch(() => {
+        // Sample data for styling preview
+        setSocialLinks({
+          linkedin: 'https://linkedin.com/in/example',
+          github: 'https://github.com/example'
+        });
+      });
   }, []);
 
   const handleDownloadResume = () => {

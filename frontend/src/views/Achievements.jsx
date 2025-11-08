@@ -22,6 +22,39 @@ const Achievements = () => {
       setAchievements(res.data);
     } catch (error) {
       console.error('Error fetching achievements:', error);
+      // Sample data for styling preview
+      setAchievements([
+        {
+          _id: '1',
+          title: 'Best Web Application Award',
+          description: 'Won first place in the National Web Development Competition for innovative UI/UX design and performance optimization.',
+          date: '2023-06-15',
+        },
+        {
+          _id: '2',
+          title: 'React Certification',
+          description: 'Completed Advanced React Development course with distinction, mastering hooks, context API, and performance optimization.',
+          date: '2023-03-20',
+        },
+        {
+          _id: '3',
+          title: 'Open Source Contributor',
+          description: 'Contributed to major open-source projects with over 500+ stars and 50+ pull requests merged.',
+          date: '2023-01-10',
+        },
+        {
+          _id: '4',
+          title: 'Tech Conference Speaker',
+          description: 'Presented at TechConf 2023 on "Modern React Patterns and Best Practices" to an audience of 500+ developers.',
+          date: '2022-11-05',
+        },
+        {
+          _id: '5',
+          title: 'Hackathon Winner',
+          description: 'First place winner in 48-hour hackathon, building a real-time collaboration tool with 1000+ active users.',
+          date: '2022-08-12',
+        },
+      ]);
     } finally {
       setLoading(false);
     }

@@ -22,6 +22,18 @@ const Skills = () => {
       setSkills(res.data);
     } catch (error) {
       console.error('Error fetching skills:', error);
+      // Sample data for styling preview
+      setSkills([
+        { _id: '1', name: 'React', percent: 95 },
+        { _id: '2', name: 'Node.js', percent: 90 },
+        { _id: '3', name: 'TypeScript', percent: 85 },
+        { _id: '4', name: 'Tailwind CSS', percent: 92 },
+        { _id: '5', name: 'MongoDB', percent: 80 },
+        { _id: '6', name: 'Express.js', percent: 88 },
+        { _id: '7', name: 'Next.js', percent: 87 },
+        { _id: '8', name: 'GraphQL', percent: 75 },
+        { _id: '9', name: 'Docker', percent: 70 },
+      ]);
     } finally {
       setLoading(false);
     }
