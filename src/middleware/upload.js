@@ -17,11 +17,21 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  // Check mimetypes
-  if (file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/")) {
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "video/mp4",
+    "video/webm",
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ];
+
+  if (allowedTypes.includes(file.mimetype) || file.mimetype.startsWith("image/") || file.mimetype.startsWith("video/")) {
     cb(null, true); // Accept file
   } else {
-    cb(new Error("Error: Only images and videos are allowed!"), false); // Reject file
+    cb(new Error("Error: Invalid file type!"), false); // Reject file
   }
 };
 

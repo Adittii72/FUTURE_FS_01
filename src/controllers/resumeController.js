@@ -58,3 +58,29 @@ export const deleteResume = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// @route   POST /api/resume/upload
+// @access  Private (Admin)
+export const uploadResume = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+
+    let resume = await Resume.findOne();
+
+    if (resume) {
+      await resume.update({ fileUrl });
+      return res.json({ message: "Resume uploaded", resume });
+    } else {
+      resume = await Resume.create({ fileUrl });
+      return res.status(201).json({ message: "Resume created", resume });
+    }
+  } catch (err) {
+    console.error("uploadResume error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};

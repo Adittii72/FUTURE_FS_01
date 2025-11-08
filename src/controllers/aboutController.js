@@ -15,17 +15,16 @@ export const getAbout = async (req, res) => {
 
 export const updateAbout = async (req, res) => {
   try {
-    const { headline, bio, linkedin, github, location, coverImageUrl } = req.body;
-
-    if (!headline && !bio && !linkedin && !github && !location && !coverImageUrl) {
+    if (Object.keys(req.body).length === 0) {
       return res.status(400).json({ message: "At least one field is required to update" });
     }
+
+    const { headline, bio, linkedin, github, location, coverImageUrl } = req.body;
 
 
     let about = await About.findOne();
 
     if (!about) {
-
       about = await About.create({
         headline: headline || "",
         bio: bio || "",
@@ -39,17 +38,43 @@ export const updateAbout = async (req, res) => {
 
 
     await about.update({
-      headline: headline ?? about.headline,
-      bio: bio ?? about.bio,
-      linkedin: linkedin ?? about.linkedin,
-      github: github ?? about.github,
-      location: location ?? about.location,
-      coverImageUrl: coverImageUrl ?? about.coverImageUrl,
+      headline: 'headline' in req.body ? headline : about.headline,
+      bio: 'bio' in req.body ? bio : about.bio,
+      linkedin: 'linkedin' in req.body ? linkedin : about.linkedin,
+      github: 'github' in req.body ? github : about.github,
+      location: 'location' in req.body ? location : about.location,
+      coverImageUrl: 'coverImageUrl' in req.body ? coverImageUrl : about.coverImageUrl,
     });
 
     return res.json({ message: "About updated", about });
   } catch (err) {
     console.error("updateAbout error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+// @route   POST /api/about/upload
+// @access  Private (Admin)
+export const uploadAboutImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+
+    let about = await About.findOne();
+
+    if (about) {
+      await about.update({ coverImageUrl: fileUrl });
+      return res.json({ message: "About image updated", about });
+    } else {
+      about = await About.create({ coverImageUrl: fileUrl });
+      return res.status(201).json({ message: "About image created", about });
+    }
+  } catch (err) {
+    console.error("uploadAboutImage error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };

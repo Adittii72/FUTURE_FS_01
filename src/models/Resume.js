@@ -13,7 +13,7 @@ const Resume = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        isUrl: true,
+        // isUrl: true,
       },
     },
 

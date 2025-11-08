@@ -36,7 +36,7 @@ const ManageSkillModal = ({ isOpen, onClose, onUpdate, skill }) => {
 
     try {
       if (skill) {
-        await api.put(`/skills/${skill._id}`, formData);
+        await api.put(`/skills/${skill.id}`, formData);
       } else {
         await api.post('/skills', formData);
       }

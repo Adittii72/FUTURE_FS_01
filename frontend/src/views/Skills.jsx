@@ -19,21 +19,9 @@ const Skills = () => {
   const fetchSkills = async () => {
     try {
       const res = await api.get('/skills');
-      setSkills(res.data);
+      setSkills(res.data.skills);
     } catch (error) {
       console.error('Error fetching skills:', error);
-      // Sample data for styling preview
-      setSkills([
-        { _id: '1', name: 'React', percent: 95 },
-        { _id: '2', name: 'Node.js', percent: 90 },
-        { _id: '3', name: 'TypeScript', percent: 85 },
-        { _id: '4', name: 'Tailwind CSS', percent: 92 },
-        { _id: '5', name: 'MongoDB', percent: 80 },
-        { _id: '6', name: 'Express.js', percent: 88 },
-        { _id: '7', name: 'Next.js', percent: 87 },
-        { _id: '8', name: 'GraphQL', percent: 75 },
-        { _id: '9', name: 'Docker', percent: 70 },
-      ]);
     } finally {
       setLoading(false);
     }
@@ -93,7 +81,7 @@ const Skills = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {skills.map((skill) => (
-            <Card key={skill._id} className="relative">
+            <Card key={skill.id} className="relative">
               {isLoggedIn && (
                 <div className="absolute top-2 right-2 sm:top-4 sm:right-4 flex gap-1 sm:gap-2">
                   <button
@@ -104,7 +92,7 @@ const Skills = () => {
                     <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                   <button
-                    onClick={() => handleDelete(skill._id)}
+                    onClick={() => handleDelete(skill.id)}
                     className="p-1.5 sm:p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
                     aria-label="Delete skill"
                   >

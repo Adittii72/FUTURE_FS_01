@@ -19,42 +19,9 @@ const Achievements = () => {
   const fetchAchievements = async () => {
     try {
       const res = await api.get('/achievements');
-      setAchievements(res.data);
+      setAchievements(res.data.achievements);
     } catch (error) {
       console.error('Error fetching achievements:', error);
-      // Sample data for styling preview
-      setAchievements([
-        {
-          _id: '1',
-          title: 'Best Web Application Award',
-          description: 'Won first place in the National Web Development Competition for innovative UI/UX design and performance optimization.',
-          date: '2023-06-15',
-        },
-        {
-          _id: '2',
-          title: 'React Certification',
-          description: 'Completed Advanced React Development course with distinction, mastering hooks, context API, and performance optimization.',
-          date: '2023-03-20',
-        },
-        {
-          _id: '3',
-          title: 'Open Source Contributor',
-          description: 'Contributed to major open-source projects with over 500+ stars and 50+ pull requests merged.',
-          date: '2023-01-10',
-        },
-        {
-          _id: '4',
-          title: 'Tech Conference Speaker',
-          description: 'Presented at TechConf 2023 on "Modern React Patterns and Best Practices" to an audience of 500+ developers.',
-          date: '2022-11-05',
-        },
-        {
-          _id: '5',
-          title: 'Hackathon Winner',
-          description: 'First place winner in 48-hour hackathon, building a real-time collaboration tool with 1000+ active users.',
-          date: '2022-08-12',
-        },
-      ]);
     } finally {
       setLoading(false);
     }
@@ -114,7 +81,7 @@ const Achievements = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {achievements.map((achievement) => (
-            <Card key={achievement._id} className="relative">
+            <Card key={achievement.id} className="relative">
               {isLoggedIn && (
                 <div className="absolute top-2 right-2 sm:top-4 sm:right-4 flex gap-1 sm:gap-2">
                   <button
@@ -125,7 +92,7 @@ const Achievements = () => {
                     <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                   <button
-                    onClick={() => handleDelete(achievement._id)}
+                    onClick={() => handleDelete(achievement.id)}
                     className="p-1.5 sm:p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
                     aria-label="Delete achievement"
                   >

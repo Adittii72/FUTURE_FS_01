@@ -38,7 +38,7 @@ const ManageAchievementModal = ({ isOpen, onClose, onUpdate, achievement }) => {
 
     try {
       if (achievement) {
-        await api.put(`/achievements/${achievement._id}`, formData);
+        await api.put(`/achievements/${achievement.id}`, formData);
       } else {
         await api.post('/achievements', formData);
       }

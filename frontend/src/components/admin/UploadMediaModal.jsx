@@ -33,7 +33,7 @@ const UploadMediaModal = ({ isOpen, onClose, onUpload, projectId }) => {
 
     try {
       const formData = new FormData();
-      formData.append('media', file);
+      formData.append('mediaFile', file);
 
       await api.post(`/projects/upload/${projectId}`, formData, {
         headers: {

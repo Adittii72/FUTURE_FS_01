@@ -39,7 +39,7 @@ const About = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
       validate: {
-        isUrl: true,
+        // isUrl: true,
       },
     },
   },

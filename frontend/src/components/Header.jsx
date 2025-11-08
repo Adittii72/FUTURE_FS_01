@@ -15,27 +15,23 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    // Fetch resume URL
     api.get('/resume')
-      .then(res => setResumeUrl(res.data.fileUrl))
+      .then(res => setResumeUrl(res.data.resume.fileUrl))
       .catch(() => {
-        // Sample data for styling preview
         setResumeUrl('https://example.com/resume.pdf');
       });
 
-    // Fetch social links from about
     api.get('/about')
       .then(res => {
         setSocialLinks({
-          linkedin: res.data.linkedin || '',
-          github: res.data.github || ''
+          linkedin: res.data.about.linkedin || '',
+          github: res.data.about.github || ''
         });
       })
       .catch(() => {
-        // Sample data for styling preview
         setSocialLinks({
-          linkedin: 'https://linkedin.com/in/example',
-          github: 'https://github.com/example'
+          linkedin: 'https://www.linkedin.com/in/aditi-shrimankar-163848356/',
+          github: 'https://github.com/Adittii72/offline-AI-assistant'
         });
       });
   }, []);

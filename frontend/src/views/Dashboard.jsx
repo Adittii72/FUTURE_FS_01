@@ -34,42 +34,10 @@ const Dashboard = () => {
         api.get('/analytics/summary'),
         api.get('/contact/messages'),
       ]);
-      setStats(statsRes.data);
-      setMessages(messagesRes.data);
+      setStats(statsRes.data.summary);
+      setMessages(messagesRes.data.messages);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      // Sample data for styling preview
-      setStats({
-        projects: 6,
-        skills: 9,
-        achievements: 5,
-        unreadMessages: 3,
-      });
-      setMessages([
-        {
-          _id: '1',
-          name: 'John Doe',
-          email: 'john.doe@example.com',
-          phone: '+1 (555) 123-4567',
-          message: 'Hi! I saw your portfolio and I\'m impressed with your work. Would love to discuss a potential collaboration opportunity.',
-          createdAt: new Date().toISOString(),
-        },
-        {
-          _id: '2',
-          name: 'Jane Smith',
-          email: 'jane.smith@example.com',
-          phone: '+1 (555) 987-6543',
-          message: 'Your projects are amazing! I\'m looking for a developer for my startup. Can we schedule a call?',
-          createdAt: new Date(Date.now() - 86400000).toISOString(),
-        },
-        {
-          _id: '3',
-          name: 'Mike Johnson',
-          email: 'mike.j@example.com',
-          message: 'Great portfolio! I have a project that might interest you. Let me know when you\'re available.',
-          createdAt: new Date(Date.now() - 172800000).toISOString(),
-        },
-      ]);
     } finally {
       setLoading(false);
     }
@@ -148,7 +116,7 @@ const Dashboard = () => {
             <div className="space-y-3 md:space-y-4">
               {messages.map((message) => (
                 <div
-                  key={message._id}
+                  key={message.id}
                   className="p-3 sm:p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 >
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-start gap-3 mb-2">
@@ -162,7 +130,7 @@ const Dashboard = () => {
                     <Button
                       variant="danger"
                       size="sm"
-                      onClick={() => handleDeleteMessage(message._id)}
+                      onClick={() => handleDeleteMessage(message.id)}
                       className="w-full sm:w-auto"
                     >
                       Delete

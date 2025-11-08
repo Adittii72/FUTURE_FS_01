@@ -19,7 +19,7 @@ const ManageProjectModal = ({ isOpen, onClose, onUpdate, project }) => {
       setFormData({
         title: project.title || '',
         description: project.description || '',
-        techStack: project.techStack?.join(', ') || '',
+        techStack: project.techStack || '',
         githubUrl: project.githubUrl || '',
       });
     } else {
@@ -41,11 +41,11 @@ const ManageProjectModal = ({ isOpen, onClose, onUpdate, project }) => {
     try {
       const payload = {
         ...formData,
-        techStack: formData.techStack.split(',').map(tech => tech.trim()).filter(tech => tech),
+        // techStack: formData.techStack.split(',').map(tech => tech.trim()).filter(tech => tech),
       };
 
       if (project) {
-        await api.put(`/projects/${project._id}`, payload);
+        await api.put(`/projects/${project.id}`, payload);
       } else {
         await api.post('/projects', payload);
       }
