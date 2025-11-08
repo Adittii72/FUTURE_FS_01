@@ -3,7 +3,6 @@ import About from "../models/About.js";
 
 export const getAbout = async (req, res) => {
   try {
-    // fetch the first About entry
     const about = await About.findOne();
     if (!about) return res.status(404).json({ message: "About information not found" });
     return res.json({ about });
