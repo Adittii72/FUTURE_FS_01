@@ -133,43 +133,46 @@ const Projects = () => {
   }
 
   return (
-    <section className="min-h-screen py-16">
+    <section className="min-h-screen py-8 sm:py-12 md:py-16">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-12">
-          <h2 className="text-4xl font-bold gradient-text">Projects</h2>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 md:mb-12">
+          <h2 className="text-3xl sm:text-4xl font-bold gradient-text">Projects</h2>
           {isLoggedIn && (
             <button
               onClick={handleCreate}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-all"
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-all text-sm sm:text-base"
             >
               <Plus className="w-4 h-4" />
-              Add Project
+              <span>Add Project</span>
             </button>
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {projects.map((project) => (
             <Card key={project._id} className="overflow-hidden">
               {isLoggedIn && (
-                <div className="absolute top-4 right-4 z-10 flex gap-2">
+                <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex gap-1 sm:gap-2">
                   <button
                     onClick={() => handleEdit(project)}
-                    className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors shadow-lg"
+                    className="p-1.5 sm:p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors shadow-lg"
+                    aria-label="Edit project"
                   >
-                    <Edit className="w-4 h-4" />
+                    <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                   <button
                     onClick={() => handleUploadMedia(project._id)}
-                    className="p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors shadow-lg"
+                    className="p-1.5 sm:p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors shadow-lg"
+                    aria-label="Upload media"
                   >
-                    <Upload className="w-4 h-4" />
+                    <Upload className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(project._id)}
-                    className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors shadow-lg"
+                    className="p-1.5 sm:p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors shadow-lg"
+                    aria-label="Delete project"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                 </div>
               )}
@@ -192,8 +195,8 @@ const Projects = () => {
                   </div>
                 )}
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-bold">{project.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-300">{project.description}</p>
+                  <h3 className="text-xl sm:text-2xl font-bold">{project.title}</h3>
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">{project.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {project.techStack?.map((tech, idx) => (
                       <span

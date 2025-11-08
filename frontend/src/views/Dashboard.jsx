@@ -103,37 +103,37 @@ const Dashboard = () => {
   ];
 
   return (
-    <section className="min-h-screen py-16">
+    <section className="min-h-screen py-8 sm:py-12 md:py-16">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold gradient-text mb-12">Dashboard</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold gradient-text mb-8 md:mb-12">Dashboard</h1>
 
         {/* Resume Management */}
         <Card className="mb-6">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center gap-3">
-              <FileText className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+              <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600 dark:text-purple-400" />
               <div>
-                <h3 className="font-semibold">Resume Management</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Update your resume download link</p>
+                <h3 className="text-base sm:text-lg font-semibold">Resume Management</h3>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Update your resume download link</p>
               </div>
             </div>
-            <Button variant="primary" onClick={() => setIsResumeModalOpen(true)}>
+            <Button variant="primary" size="sm" onClick={() => setIsResumeModalOpen(true)} className="w-full sm:w-auto">
               Manage Resume
             </Button>
           </div>
         </Card>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
           {statCards.map((stat, idx) => (
             <Card key={idx} className="relative overflow-hidden">
               <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.color} opacity-10 rounded-full -mr-16 -mt-16`}></div>
               <div className="relative">
-                <div className={`inline-flex p-3 bg-gradient-to-br ${stat.color} rounded-lg mb-4`}>
-                  <stat.icon className="w-6 h-6 text-white" />
+                <div className={`inline-flex p-2 sm:p-3 bg-gradient-to-br ${stat.color} rounded-lg mb-3 sm:mb-4`}>
+                  <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold mb-1">{stat.value}</h3>
-                <p className="text-gray-600 dark:text-gray-400">{stat.label}</p>
+                <h3 className="text-xl sm:text-2xl font-bold mb-1">{stat.value}</h3>
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">{stat.label}</p>
               </div>
             </Card>
           ))}
@@ -141,33 +141,34 @@ const Dashboard = () => {
 
         {/* Messages Section */}
         <Card>
-          <h2 className="text-2xl font-bold mb-6">Contact Messages</h2>
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 md:mb-6">Contact Messages</h2>
           {messages.length === 0 ? (
             <p className="text-gray-500 dark:text-gray-400 text-center py-8">No messages yet.</p>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {messages.map((message) => (
                 <div
                   key={message._id}
-                  className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  className="p-3 sm:p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 >
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className="font-semibold">{message.name}</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{message.email}</p>
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-start gap-3 mb-2">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-sm sm:text-base">{message.name}</h3>
+                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 break-all">{message.email}</p>
                       {message.phone && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{message.phone}</p>
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">{message.phone}</p>
                       )}
                     </div>
                     <Button
                       variant="danger"
                       size="sm"
                       onClick={() => handleDeleteMessage(message._id)}
+                      className="w-full sm:w-auto"
                     >
                       Delete
                     </Button>
                   </div>
-                  <p className="text-gray-700 dark:text-gray-300 mt-2">{message.message}</p>
+                  <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mt-2">{message.message}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                     {new Date(message.createdAt).toLocaleString()}
                   </p>

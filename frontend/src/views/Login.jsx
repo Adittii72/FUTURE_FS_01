@@ -42,14 +42,14 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 py-12 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 py-8 sm:py-12 px-4">
       <Card className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-4">
-            <LogIn className="w-8 h-8 text-white" />
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full mb-3 sm:mb-4">
+            <LogIn className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold gradient-text">Admin Login</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">Sign in to manage your portfolio</p>
+          <h1 className="text-2xl sm:text-3xl font-bold gradient-text">Admin Login</h1>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-2">Sign in to manage your portfolio</p>
         </div>
 
         {error && (

@@ -43,9 +43,9 @@ const Contact = () => {
   };
 
   return (
-    <section className="min-h-screen py-16">
+    <section className="min-h-screen py-8 sm:py-12 md:py-16">
       <div className="container mx-auto px-4 max-w-2xl">
-        <h2 className="text-4xl font-bold gradient-text text-center mb-12">Get In Touch</h2>
+        <h2 className="text-3xl sm:text-4xl font-bold gradient-text text-center mb-8 md:mb-12">Get In Touch</h2>
         
         <Card>
           {success && (

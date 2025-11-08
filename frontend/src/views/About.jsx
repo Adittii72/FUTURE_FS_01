@@ -54,35 +54,36 @@ const About = () => {
   }
 
   return (
-    <section className="min-h-screen py-16">
+    <section className="min-h-screen py-8 sm:py-12 md:py-16">
       <div className="container mx-auto px-4">
         {isLoggedIn && (
-          <div className="flex justify-end mb-6">
+          <div className="flex justify-end mb-4 md:mb-6">
             <button
               onClick={() => setIsEditModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm sm:text-base"
             >
               <Edit className="w-4 h-4" />
-              Edit About
+              <span className="hidden sm:inline">Edit About</span>
+              <span className="sm:hidden">Edit</span>
             </button>
           </div>
         )}
 
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div className="space-y-6 animate-fade-in">
-            <h1 className="text-5xl md:text-6xl font-bold">
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
+          <div className="space-y-4 md:space-y-6 animate-fade-in order-2 md:order-1">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
               <span className="gradient-text">{about.headline}</span>
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
               {about.bio}
             </p>
           </div>
           {about.coverImageUrl && (
-            <div className="animate-fade-in">
+            <div className="animate-fade-in order-1 md:order-2">
               <img
                 src={about.coverImageUrl}
                 alt="Profile"
-                className="w-full h-auto rounded-2xl shadow-2xl object-cover"
+                className="w-full h-auto rounded-xl md:rounded-2xl shadow-2xl object-cover"
               />
             </div>
           )}
