@@ -6,30 +6,28 @@ import {
   updateProject,
   deleteProject,
   uploadProjectMedia,
-  deleteProjectImage,
 } from "../controllers/projectController.js";
 import auth from "../middleware/auth.js";
 import upload from "../middleware/upload.js";
 
 const router = express.Router();
+
 // GET /api/projects
 router.get("/", getAllProjects);
 // GET /api/projects/:id
 router.get("/:id", getProjectById);
 // --- Admin (Protected) Routes ---
-// POST /api/projects
+// These rely on global body-parser for JSON (from index.js)
 router.post("/", auth, createProject);
-// POST /api/projects/upload/:id
+router.put("/:id", auth, updateProject);
+router.delete("/:id", auth, deleteProject);
+
+// --- FILE UPLOAD: Multer must be the ONLY body reader here ---
 router.post(
   "/upload/:id",
   auth,
-  upload.array("mediaFiles", 5),
+  upload.single("mediaFile"),
   uploadProjectMedia
 );
-// PUT /api/projects/:id
-router.put("/:id", auth, updateProject);
-// DELETE /api/projects/:id
-router.delete("/:id", auth, deleteProject);
-router.delete("/image/:imageId", auth, deleteProjectImage);
 
 export default router;

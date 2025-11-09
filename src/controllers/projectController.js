@@ -1,11 +1,11 @@
 import Project from "../models/Project.js";
-import ProjectImage from "../models/ProjectImage.js";
-import { Op } from "sequelize";
+// Removed ProjectImage import
 
 // @route   GET /api/projects
 // @access  Public
 export const getAllProjects = async (req, res) => {
   try {
+    // Reverted to simple find all
     const projects = await Project.findAll({
       order: [["createdAt", "DESC"]],
     });
@@ -39,6 +39,7 @@ export const getProjectById = async (req, res) => {
 // @access  Private (Admin)
 export const createProject = async (req, res) => {
   try {
+    // Reverted to accepting coverImageUrl
     const { title, description, techStack, githubUrl, coverImageUrl, category } = req.body;
 
     if (!title || !description) {
@@ -50,7 +51,7 @@ export const createProject = async (req, res) => {
       description,
       techStack: techStack || null,
       githubUrl: githubUrl || null,
-      coverImageUrl: coverImageUrl || null,
+      coverImageUrl: coverImageUrl || null, // Reverted
       category: category || null,
     });
 
@@ -82,7 +83,7 @@ export const updateProject = async (req, res) => {
       description: description ?? project.description,
       techStack: techStack ?? project.techStack,
       githubUrl: githubUrl ?? project.githubUrl,
-      coverImageUrl: coverImageUrl ?? project.coverImageUrl,
+      coverImageUrl: coverImageUrl ?? project.coverImageUrl, // Reverted to single column update
       category: category ?? project.category,
     });
 
@@ -120,10 +121,9 @@ export const deleteProject = async (req, res) => {
 export const uploadProjectMedia = async (req, res) => {
   try {
     const { id } = req.params;
-    const files = req.files;
 
-    if (!files || files.length === 0) {
-      return res.status(400).json({ message: "No files uploaded" });
+    if (!req.file) { // <-- Reverted to single file check
+      return res.status(400).json({ message: "No file uploaded" });
     }
 
     const project = await Project.findByPk(id);
@@ -131,46 +131,15 @@ export const uploadProjectMedia = async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    const imagePromises = files.map(file => {
-      const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${file.filename}`;
-      return ProjectImage.create({
-        imageUrl: imageUrl,
-        projectId: project.id,
-      });
-    });
-    
-    await Promise.all(imagePromises);
+    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
 
-    const updatedProject = await Project.findByPk(id, {
-      include: { model: ProjectImage, as: 'images' }
+    await project.update({
+      coverImageUrl: fileUrl, // <-- Saving to single column
     });
 
-    return res.json({ message: "Files uploaded successfully", project: updatedProject });
+    return res.json({ message: "File uploaded successfully", project });
   } catch (err) {
     console.error("uploadProjectMedia error:", err);
-    return res.status(500).json({ message: "Server error" });
-  }
-};
-
-
-
-// @route   DELETE /api/projects/image/:imageId
-// @access  Private (Admin)
-export const deleteProjectImage = async (req, res) => {
-  try {
-    const { imageId } = req.params;
-    const image = await ProjectImage.findByPk(imageId);
-
-    if (!image) {
-      return res.status(404).json({ message: "Image not found" });
-    }
-
-    
-    await image.destroy();
-
-    return res.json({ message: "Image deleted successfully" });
-  } catch (err) {
-    console.error("deleteProjectImage error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };
