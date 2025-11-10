@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Edit, Plus, Trash2, Award } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
-import Card from '../components/Card';
-import ManageAchievementModal from '../components/admin/ManageAchievementModal';
+import { Edit, Plus, Trash2, Award, Upload } from 'lucide-react';
+import { useAuth } from '../context/AuthContext.jsx';
+import api from '../services/api.js';
+import Card from '../components/Card.jsx';
+import ManageAchievementModal from '../components/admin/ManageAchievementModal.jsx';
+import UploadAchievementImageModal from '../components/admin/UploadAchievementImageModal.jsx'; // <-- ADDED
 
 const Achievements = () => {
   const { isLoggedIn } = useAuth();
@@ -11,6 +12,11 @@ const Achievements = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAchievement, setEditingAchievement] = useState(null);
+  
+  // --- ADDED STATE FOR NEW MODAL ---
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [uploadAchievementId, setUploadAchievementId] = useState(null);
+  // --- END ADDED STATE ---
 
   useEffect(() => {
     fetchAchievements();
@@ -37,6 +43,12 @@ const Achievements = () => {
     setIsModalOpen(true);
   };
 
+  // --- ADDED HANDLER ---
+  const handleOpenUpload = (id) => {
+    setUploadAchievementId(id);
+    setIsUploadModalOpen(true);
+  };
+
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this achievement?')) {
       try {
@@ -53,6 +65,13 @@ const Achievements = () => {
     fetchAchievements();
     setIsModalOpen(false);
     setEditingAchievement(null);
+  };
+
+  // --- ADDED HANDLER ---
+  const handleImageUploaded = () => {
+    fetchAchievements();
+    setIsUploadModalOpen(false);
+    setUploadAchievementId(null);
   };
 
   if (loading) {
@@ -79,6 +98,7 @@ const Achievements = () => {
           )}
         </div>
 
+        {/* --- UPDATED GRID --- */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {achievements.map((achievement) => (
             <Card key={achievement.id} className="relative">
@@ -91,6 +111,14 @@ const Achievements = () => {
                   >
                     <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
+                  {/* --- ADDED UPLOAD BUTTON --- */}
+                  <button
+                    onClick={() => handleOpenUpload(achievement.id)}
+                    className="p-1.5 sm:p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+                    aria-label="Upload image"
+                  >
+                    <Upload className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  </button>
                   <button
                     onClick={() => handleDelete(achievement.id)}
                     className="p-1.5 sm:p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
@@ -100,8 +128,10 @@ const Achievements = () => {
                   </button>
                 </div>
               )}
+              
+              {/* --- UPDATED CARD CONTENT --- */}
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg">
+                <div className="p-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex-shrink-0">
                   <Award className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
@@ -112,11 +142,28 @@ const Achievements = () => {
                       {new Date(achievement.date).toLocaleDateString()}
                     </p>
                   )}
+                  {/* --- ADDED IMAGE DISPLAY --- */}
+                  {achievement.imageUrl && (
+                    <a 
+                      href={achievement.imageUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="block mt-4"
+                    >
+                      <img 
+                        src={achievement.imageUrl} 
+                        alt="Certificate" 
+                        className="rounded-lg w-full h-auto max-w-xs border dark:border-gray-700"
+                      />
+                    </a>
+                  )}
                 </div>
               </div>
             </Card>
           ))}
         </div>
+        {/* --- END UPDATED GRID --- */}
+
 
         {achievements.length === 0 && (
           <div className="text-center py-16">
@@ -134,9 +181,19 @@ const Achievements = () => {
         onUpdate={handleUpdate}
         achievement={editingAchievement}
       />
+
+      {/* --- ADDED NEW MODAL --- */}
+      <UploadAchievementImageModal
+        isOpen={isUploadModalOpen}
+        onClose={() => {
+          setIsUploadModalOpen(false);
+          setUploadAchievementId(null);
+        }}
+        onUpload={handleImageUploaded}
+        achievementId={uploadAchievementId}
+      />
     </section>
   );
 };
 
 export default Achievements;
-

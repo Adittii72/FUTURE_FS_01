@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Upload, Trash2 } from 'lucide-react';
-import api from '../../services/api';
-import Modal from '../Modal';
-import Input from '../Input';
-import Textarea from '../Textarea';
-import Button from '../Button';
+import api from '../../services/api.js';
+import Modal from '../Modal.jsx';
+import Input from '../Input.jsx';
+import Textarea from '../Textarea.jsx';
+import Button from '../Button.jsx';
 
 const ManageAboutModal = ({ isOpen, onClose, onUpdate, initialData }) => {
   const [textLoading, setTextLoading] = useState(false);
@@ -13,6 +13,7 @@ const ManageAboutModal = ({ isOpen, onClose, onUpdate, initialData }) => {
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
+    name: '', // <-- ADDED
     headline: '',
     bio: '',
     linkedin: '',
@@ -22,6 +23,7 @@ const ManageAboutModal = ({ isOpen, onClose, onUpdate, initialData }) => {
   useEffect(() => {
     if (initialData) {
       setFormData({
+        name: initialData.name || '', // <-- ADDED
         headline: initialData.headline || '',
         bio: initialData.bio || '',
         linkedin: initialData.linkedin || '',
@@ -175,6 +177,16 @@ const ManageAboutModal = ({ isOpen, onClose, onUpdate, initialData }) => {
 
       {/* --- EXISTING TEXT FORM --- */}
       <form onSubmit={handleTextSubmit} className="space-y-4">
+        {/* --- ADDED NAME INPUT --- */}
+        <Input
+          label="Your Name"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+          placeholder="Your Full Name"
+        />
+
         <Input
           label="Headline"
           name="headline"

@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Edit, Plus, Trash2, Github, Upload } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
-import Card from '../components/Card';
-import ManageProjectModal from '../components/admin/ManageProjectModal';
-import UploadMediaModal from '../components/admin/UploadMediaModal';
+import { useAuth } from '/src/context/AuthContext.jsx';
+import api from '/src/services/api.js';
+import Card from '/src/components/Card.jsx';
+import ManageProjectModal from '/src/components/admin/ManageProjectModal.jsx';
+import UploadMediaModal from '/src/components/admin/UploadMediaModal.jsx';
+
+// --- IMPORTS RESTORED ---
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+// --- END IMPORTS ---
 
 const Projects = () => {
   const { isLoggedIn } = useAuth();
@@ -69,17 +74,6 @@ const Projects = () => {
     setUploadingProjectId(null);
   };
 
-  // --- REVERTED: Single media check for video ---
-  const isVideo = (url) => {
-    const lowerUrl = url ? url.toLowerCase() : '';
-    return lowerUrl.includes('.mp4') || 
-           lowerUrl.includes('.webm') || 
-           lowerUrl.includes('.ogg') ||
-           lowerUrl.includes('.mov') ||
-           lowerUrl.includes('.avi');
-  };
-  // --- END REVERTED ---
-
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -133,33 +127,48 @@ const Projects = () => {
                 </div>
               )}
               <div className="space-y-4">
-                {/* --- RESTORED SINGLE MEDIA DISPLAY --- */}
-                {project.coverImageUrl ? (
-                  <div className="relative w-full h-48 overflow-hidden rounded-lg">
-                    {isVideo(project.coverImageUrl) ? (
-                      <video
-                        key={project.coverImageUrl} // Key helps re-render on URL change
-                        src={project.coverImageUrl}
-                        className="w-full h-full object-cover"
-                        controls
-                        muted 
-                        loop 
-                        autoPlay
-                      />
-                    ) : (
-                      <img
-                        src={project.coverImageUrl}
-                        alt={project.title}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </div>
-                ) : (
-                  <div className="relative w-full h-48 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                    <span className="text-gray-500">No media</span>
-                  </div>
-                )}
-                {/* --- END RESTORED --- */}
+                
+                {/* --- RESTORED MEDIA DISPLAY LOGIC --- */}
+                <div className="relative w-full h-48 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+                  {project.videoUrl ? (
+                    // 1. Show Video if it exists
+                    <video
+                      key={project.videoUrl} 
+                      src={project.videoUrl}
+                      className="w-full h-full object-cover"
+                      controls
+                      muted
+                      loop
+                      autoPlay
+                    />
+                  ) : project.images && project.images.length > 0 ? (
+                    // 2. Show Image Carousel if images exist
+                    <Carousel
+                      showThumbs={false}
+                      showStatus={false}
+                      infiniteLoop
+                      autoPlay
+                      useKeyboardArrows
+                      className="h-full"
+                    >
+                      {project.images.map((image) => (
+                        <div key={image.id} className="h-48">
+                          <img
+                            src={image.imageUrl}
+                            alt={project.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
+                    </Carousel>
+                  ) : (
+                    // 3. Show placeholder
+                    <div className="flex items-center justify-center h-full">
+                      <span className="text-gray-500">No media</span>
+                    </div>
+                  )}
+                </div>
+                {/* --- END RESTORED MEDIA DISPLAY LOGIC --- */}
 
                 <div className="space-y-2">
                   <h3 className="text-xl sm:text-2xl font-bold">{project.title}</h3>

@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Edit } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
-import Card from '../components/Card';
-import ManageAboutModal from '../components/admin/ManageAboutModal';
+import { useAuth } from '../context/AuthContext.jsx';
+import api from '../services/api.js';
+import Card from '../components/Card.jsx';
+import ManageAboutModal from '../components/admin/ManageAboutModal.jsx';
 
 const About = () => {
   const { isLoggedIn } = useAuth();
   const [about, setAbout] = useState({
+    name: 'Your Name', // <-- Default name
     headline: 'Full Stack Developer',
     bio: 'Passionate developer creating amazing web experiences.',
     coverImageUrl: '',
@@ -63,9 +64,14 @@ const About = () => {
 
         <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
           <div className="space-y-4 md:space-y-6 animate-fade-in order-2 md:order-1">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-              <span className="gradient-text">{about.headline}</span>
+            {/* --- ADDED NAME FIELD --- */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-gray-900 dark:text-white">
+              {about.name}
             </h1>
+            {/* --- HEADLINE --- */}
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
+              <span className="gradient-text">{about.headline}</span>
+            </h2>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
               {about.bio}
             </p>
@@ -93,4 +99,3 @@ const About = () => {
 };
 
 export default About;
-

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import api from '../../services/api';
-import Modal from '../Modal';
-import Input from '../Input';
-import Textarea from '../Textarea';
-import Button from '../Button';
+import api from '/src/services/api.js';
+import Modal from '/src/components/Modal.jsx';
+import Input from '/src/components/Input.jsx';
+import Textarea from '/src/components/Textarea.jsx';
+import Button from '/src/components/Button.jsx';
 
 const ManageProjectModal = ({ isOpen, onClose, onUpdate, project }) => {
   const [loading, setLoading] = useState(false);
@@ -39,10 +39,8 @@ const ManageProjectModal = ({ isOpen, onClose, onUpdate, project }) => {
     setLoading(true);
 
     try {
-      const payload = {
-        ...formData,
-        // techStack: formData.techStack.split(',').map(tech => tech.trim()).filter(tech => tech),
-      };
+      // Payload no longer contains 'category'
+      const payload = { ...formData };
 
       if (project) {
         await api.put(`/projects/${project.id}`, payload);
@@ -96,6 +94,8 @@ const ManageProjectModal = ({ isOpen, onClose, onUpdate, project }) => {
           onChange={handleChange}
           placeholder="https://github.com/username/project"
         />
+        
+        {/* 'category' input field REMOVED */}
 
         <div className="flex justify-end gap-3 pt-4">
           <Button type="button" variant="secondary" onClick={onClose}>
@@ -111,4 +111,3 @@ const ManageProjectModal = ({ isOpen, onClose, onUpdate, project }) => {
 };
 
 export default ManageProjectModal;
-
