@@ -18,7 +18,6 @@ export const getAllAchievements = async (req, res) => {
 // @access  Private (Admin)
 export const createAchievement = async (req, res) => {
   try {
-    // --- UPDATED: Simplified fields ---
     const { title, description, imageUrl, date } = req.body;
 
     if (!title) {
@@ -33,7 +32,6 @@ export const createAchievement = async (req, res) => {
       imageUrl: imageUrl || null,
       date: date || null,
     });
-    // --- END ---
 
     return res.status(201).json({ message: "Achievement created", achievement });
   } catch (err) {
@@ -47,7 +45,6 @@ export const createAchievement = async (req, res) => {
 export const updateAchievement = async (req, res) => {
   try {
     const { id } = req.params;
-    // --- UPDATED: Simplified fields ---
     const { title, description, imageUrl, date } = req.body;
 
     const achievement = await Achievement.findByPk(id);
@@ -62,7 +59,6 @@ export const updateAchievement = async (req, res) => {
       imageUrl: imageUrl ?? achievement.imageUrl,
       date: date ?? achievement.date,
     });
-    // --- END ---
 
     return res.json({ message: "Achievement updated", achievement });
   } catch (err) {
@@ -110,7 +106,6 @@ export const uploadAchievementImage = async (req, res) => {
       req.file.filename
     }`;
 
-    // Update the imageUrl field
     await achievement.update({
       imageUrl: fileUrl,
     });

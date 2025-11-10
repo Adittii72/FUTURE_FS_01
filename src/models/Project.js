@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
-// import ProjectImage from "./ProjectImage.js"; // <-- REMOVED
 
 const Project = sequelize.define(
   "Project",
@@ -31,7 +30,6 @@ const Project = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    // 'category' field is removed as requested
   },
   {
     tableName: "projects",
@@ -47,6 +45,5 @@ const Project = sequelize.define(
   }
 );
 
-// --- ASSOCIATION REMOVED FROM HERE ---
 
 export default Project;

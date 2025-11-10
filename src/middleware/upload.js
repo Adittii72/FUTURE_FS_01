@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
   },
 });
 
-// --- UPDATED FILE FILTER ---
+
 const fileFilter = (req, file, cb) => {
   if (file.fieldname === "videoFile") {
     if (file.mimetype.startsWith("video/")) {
@@ -24,7 +24,7 @@ const fileFilter = (req, file, cb) => {
     } else {
       cb(new Error("Only video files are allowed for this field!"), false);
     }
-  } else if (file.fieldname === "imageFiles") { // <-- RESTORED
+  } else if (file.fieldname === "imageFiles") { 
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);
     } else {
@@ -52,11 +52,11 @@ const fileFilter = (req, file, cb) => {
     cb(new Error("Unexpected file field!"), false);
   }
 };
-// --- END FILE FILTER ---
+
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
+  limits: { fileSize: 50 * 1024 * 1024 }, 
   fileFilter: fileFilter,
 });
 

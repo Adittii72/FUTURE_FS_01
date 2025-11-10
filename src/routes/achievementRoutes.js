@@ -4,29 +4,22 @@ import {
   createAchievement,
   updateAchievement,
   deleteAchievement,
-  uploadAchievementImage, // <-- ADDED
+  uploadAchievementImage,
 } from "../controllers/achievementController.js";
 import auth from "../middleware/auth.js";
-import upload from "../middleware/upload.js"; // <-- ADDED
+import upload from "../middleware/upload.js"; 
 
 const router = express.Router();
-// GET /api/achievements
 router.get("/", getAllAchievements);
-// --- Admin (Protected) Routes ---
-// POST /api/achievements
 router.post("/", auth, createAchievement);
-// PUT /api/achievements/:id
 router.put("/:id", auth, updateAchievement);
-// DELETE /api/achievements/:id
 router.delete("/:id", auth, deleteAchievement);
-
-// --- ADDED UPLOAD ROUTE ---
 router.post(
   "/upload/:id",
   auth,
-  upload.single("certificateImage"), // Field name
+  upload.single("certificateImage"),
   uploadAchievementImage
 );
-// --- END ---
+
 
 export default router;

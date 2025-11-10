@@ -152,7 +152,6 @@ const Dashboard = () => {
         onClose={() => setIsResumeModalOpen(false)}
         onUpdate={() => {
           setIsResumeModalOpen(false);
-          // Optionally refresh data
         }}
       />
     </section>

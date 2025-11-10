@@ -8,7 +8,7 @@ import ManageAboutModal from '../components/admin/ManageAboutModal.jsx';
 const About = () => {
   const { isLoggedIn } = useAuth();
   const [about, setAbout] = useState({
-    name: 'Your Name', // <-- Default name
+    name: 'Your Name',
     headline: 'Full Stack Developer',
     bio: 'Passionate developer creating amazing web experiences.',
     coverImageUrl: '',

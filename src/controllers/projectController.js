@@ -6,7 +6,6 @@ import sequelize from "../config/database.js";
 // @access  Public
 export const getAllProjects = async (req, res) => {
   try {
-    // --- UPDATED to include images ---
     const projects = await Project.findAll({
       order: [["createdAt", "DESC"]],
       include: {
@@ -50,7 +49,6 @@ export const getProjectById = async (req, res) => {
 // @access  Private (Admin)
 export const createProject = async (req, res) => {
   try {
-    // --- UPDATED: 'category' removed ---
     const { title, description, techStack, githubUrl } = req.body;
 
     if (!title || !description) {
@@ -83,7 +81,6 @@ export const createProject = async (req, res) => {
 export const updateProject = async (req, res) => {
   try {
     const { id } = req.params;
-    // --- UPDATED: 'category' removed ---
     const { title, description, techStack, githubUrl, videoUrl } = req.body;
 
     const project = await Project.findByPk(id);
@@ -118,7 +115,7 @@ export const deleteProject = async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    await project.destroy(); // 'onDelete: CASCADE' will handle images
+    await project.destroy(); 
 
     return res.json({ message: "Project deleted successfully" });
   } catch (err) {
@@ -132,7 +129,7 @@ export const deleteProject = async (req, res) => {
 // --- This is the full logic for handling BOTH video and images ---
 export const uploadProjectMedia = async (req, res) => {
   const { id } = req.params;
-  const t = await sequelize.transaction(); // Start transaction
+  const t = await sequelize.transaction(); 
 
   try {
     const project = await Project.findByPk(id, { transaction: t });
@@ -147,7 +144,6 @@ export const uploadProjectMedia = async (req, res) => {
       `${req.protocol}://${req.get("host")}/uploads/${file.filename}`;
 
     if (hasVideo) {
-      // --- VIDEO UPLOAD LOGIC ---
       const videoFile = req.files.videoFile[0];
 
       if (videoFile.size > 50 * 1024 * 1024) {
@@ -159,30 +155,23 @@ export const uploadProjectMedia = async (req, res) => {
 
       const videoUrl = getUrl(videoFile);
 
-      // 1. Set the project's video URL
       project.videoUrl = videoUrl;
       await project.save({ transaction: t });
 
-      // 2. Delete all existing images for this project
       await ProjectImage.destroy({
         where: { projectId: id },
         transaction: t,
       });
     } else if (hasImages) {
-      // --- IMAGE UPLOAD LOGIC ---
       const imageFiles = req.files.imageFiles;
 
-      // 1. Set the project's video URL to null
       project.videoUrl = null;
       await project.save({ transaction: t });
 
-      // 2. Delete all existing images for this project
       await ProjectImage.destroy({
         where: { projectId: id },
         transaction: t,
       });
-
-      // 3. Create new image records
       const imageRecords = imageFiles.map((file) => ({
         imageUrl: getUrl(file),
         projectId: id,
@@ -190,7 +179,6 @@ export const uploadProjectMedia = async (req, res) => {
 
       await ProjectImage.bulkCreate(imageRecords, { transaction: t });
     } else {
-      // --- NO FILES UPLOADED ---
       await t.rollback();
       return res
         .status(400)

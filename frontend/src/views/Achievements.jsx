@@ -12,11 +12,10 @@ const Achievements = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAchievement, setEditingAchievement] = useState(null);
-  
-  // --- ADDED STATE FOR NEW MODAL ---
+
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [uploadAchievementId, setUploadAchievementId] = useState(null);
-  // --- END ADDED STATE ---
+
 
   useEffect(() => {
     fetchAchievements();
@@ -43,7 +42,7 @@ const Achievements = () => {
     setIsModalOpen(true);
   };
 
-  // --- ADDED HANDLER ---
+
   const handleOpenUpload = (id) => {
     setUploadAchievementId(id);
     setIsUploadModalOpen(true);
@@ -67,7 +66,7 @@ const Achievements = () => {
     setEditingAchievement(null);
   };
 
-  // --- ADDED HANDLER ---
+
   const handleImageUploaded = () => {
     fetchAchievements();
     setIsUploadModalOpen(false);

@@ -31,7 +31,7 @@ const Header = () => {
       .catch(() => {
         setSocialLinks({
           linkedin: 'https://www.linkedin.com/in/aditi-shrimankar-163848356/',
-          github: 'https://github.com/Adittii72/offline-AI-assistant'
+          github: 'https://github.com/Adittii72?tab=repositories'
         });
       });
   }, []);

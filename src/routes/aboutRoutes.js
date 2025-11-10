@@ -8,11 +8,7 @@ import auth from "../middleware/auth.js";
 import upload from "../middleware/upload.js"; 
 
 const router = express.Router();
-
-// --- Public Route ---
 router.get("/", getAbout);
-// --- Admin (Protected) Routes ---
-// For updating text fields
 router.put("/", auth, updateAbout);
 router.post(
   "/upload",

@@ -25,16 +25,10 @@ const About = sequelize.define(
     linkedin: {
       type: DataTypes.STRING,
       allowNull: true,
-      // validate: {
-      //   isUrl: true, // <-- THIS LINE IS REMOVED
-      // },
     },
     github: {
       type: DataTypes.STRING,
       allowNull: true,
-      // validate: {
-      //   isUrl: true, // <-- THIS LINE IS REMOVED
-      // },
     },
     location: {
       type: DataTypes.STRING,
@@ -43,9 +37,6 @@ const About = sequelize.define(
     coverImageUrl: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: {
-        // isUrl: true,
-      },
     },
   },
   {

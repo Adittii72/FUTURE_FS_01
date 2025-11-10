@@ -12,9 +12,6 @@ const Resume = sequelize.define(
     fileUrl: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        // isUrl: true,
-      },
     },
 
   },
