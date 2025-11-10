@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
-import Card from '../components/Card';
-import Input from '../components/Input';
-import Button from '../components/Button';
+import { useAuth } from '/src/context/AuthContext.jsx';
+import api from '/src/services/api.js';
+import Card from '/src/components/Card.jsx';
+import Input from '/src/components/Input.jsx';
+import Button from '/src/components/Button.jsx';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -67,7 +67,7 @@ const Login = () => {
             onChange={handleChange}
             required
             placeholder="admin@example.com"
-            autoComplete="email"
+            autoComplete="new-password" 
           />
 
           <Input
@@ -78,7 +78,7 @@ const Login = () => {
             onChange={handleChange}
             required
             placeholder="••••••••"
-            autoComplete="current-password"
+            autoComplete="new-password" 
           />
 
           <Button
@@ -104,4 +104,3 @@ const Login = () => {
 };
 
 export default Login;
-

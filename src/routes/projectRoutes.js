@@ -16,17 +16,20 @@ const router = express.Router();
 router.get("/", getAllProjects);
 // GET /api/projects/:id
 router.get("/:id", getProjectById);
+
 // --- Admin (Protected) Routes ---
-// These rely on global body-parser for JSON (from index.js)
 router.post("/", auth, createProject);
 router.put("/:id", auth, updateProject);
 router.delete("/:id", auth, deleteProject);
 
-// --- FILE UPLOAD: Multer must be the ONLY body reader here ---
+// --- FILE UPLOAD: Using upload.fields ---
 router.post(
   "/upload/:id",
   auth,
-  upload.single("mediaFile"),
+  upload.fields([
+    { name: "videoFile", maxCount: 1 },
+    { name: "imageFiles", maxCount: 5 },
+  ]),
   uploadProjectMedia
 );
 

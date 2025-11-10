@@ -1,3 +1,102 @@
+// import express from "express";
+// import cors from "cors";
+// import dotenv from "dotenv";
+// import sequelize from "./config/database.js";
+
+// // --- Required imports for pathing ---
+// import path from "path";
+// import { fileURLToPath } from "url";
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+// // --- End path imports ---
+
+// // --- Model Imports (needed for Sequelize to find models) ---
+// import "./models/About.js";
+// import "./models/Admin.js";
+// import "./models/Achievement.js";
+// import "./models/ContactMessage.js";
+// import Project from "./models/Project.js"; // <-- UPDATED
+// import ProjectImage from "./models/ProjectImage.js"; // <-- UPDATED
+// import "./models/Resume.js";
+// import "./models/Skill.js";
+// // --- End Model Imports ---
+
+// // --- !! FIX: DEFINE ASSOCIATIONS HERE !! ---
+// Project.hasMany(ProjectImage, {
+//   foreignKey: "projectId",
+//   as: "images",
+//   onDelete: "CASCADE",
+// });
+// ProjectImage.belongsTo(Project, {
+//   foreignKey: "projectId",
+//   as: "project",
+// });
+// // --- End Associations ---
+
+// // --- Route Imports ---
+// import adminRoutes from "./routes/adminRoutes.js";
+// import aboutRoutes from "./routes/aboutRoutes.js";
+// import skillRoutes from "./routes/skillRoutes.js";
+// import projectRoutes from "./routes/projectRoutes.js";
+// import achievementRoutes from "./routes/achievementRoutes.js";
+// import contactRoutes from "./routes/contactRoutes.js";
+// import resumeRoutes from "./routes/resumeRoutes.js";
+// import analyticsRoutes from "./routes/analyticsRoutes.js";
+// // --- End Route Imports ---
+
+// dotenv.config();
+// const app = express();
+// app.use(cors());
+
+// app.use(express.json({ limit: '50mb' }));
+// app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// // Static files serving
+// app.use(
+//   express.static(path.join(__dirname, '..', 'public'), {
+//     setHeaders: (res, filePath) => {
+//       const lowerPath = filePath.toLowerCase();
+//       if (lowerPath.endsWith('.mp4') || lowerPath.endsWith('.mov')) {
+//         res.set('Content-Type', 'video/mp4');
+//       } else if (lowerPath.endsWith('.webm') || lowerPath.endsWith('.ogg')) {
+//         res.set('Content-Type', 'video/webm');
+//       } else if (lowerPath.endsWith('.pdf')) {
+//         res.set('Content-Type', 'application/pdf');
+//       }
+//     },
+//   })
+// );
+
+// // --- Use Routes ---
+// app.use("/api/admin", adminRoutes);
+// app.use("/api/about", aboutRoutes);
+// app.use("/api/skills", skillRoutes);
+// app.use("/api/projects", projectRoutes);
+// app.use("/api/achievements", achievementRoutes);
+// app.use("/api/contact", contactRoutes);
+// app.use("/api/resume", resumeRoutes);
+// app.use("/api/analytics", analyticsRoutes);
+
+// app.get("/", (req, res) => {
+//   res.send("Backend is running successfully");
+// });
+
+// sequelize
+//   .authenticate()
+//   .then(() => {
+//     console.log("MySQL Database connected successfully!");
+//     return sequelize.sync({ alter: true }); 
+//   })
+//   .then(() => {
+//     console.log("Database synced successfully!");
+//     const PORT = process.env.PORT || 5000;
+//     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+//   })
+//   .catch((error) => {
+//     console.error("Unable to connect to or sync the database:", error);
+//   });
+
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -15,17 +114,31 @@ import "./models/About.js";
 import "./models/Admin.js";
 import "./models/Achievement.js";
 import "./models/ContactMessage.js";
-import "./models/Project.js";
+import Project from "./models/Project.js"; // <-- Import model
+import ProjectImage from "./models/ProjectImage.js"; // <-- Import model
 import "./models/Resume.js";
 import "./models/Skill.js";
 // --- End Model Imports ---
+
+// --- !! FIX: DEFINE ASSOCIATIONS HERE !! ---
+// This is the correct place to define relationships
+Project.hasMany(ProjectImage, {
+  foreignKey: "projectId",
+  as: "images",
+  onDelete: "CASCADE",
+});
+ProjectImage.belongsTo(Project, {
+  foreignKey: "projectId",
+  as: "project",
+});
+// --- End Associations ---
 
 // --- Route Imports ---
 import adminRoutes from "./routes/adminRoutes.js";
 import aboutRoutes from "./routes/aboutRoutes.js";
 import skillRoutes from "./routes/skillRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
-import achievementRoutes from "./routes/achievementRoutes.js"
+import achievementRoutes from "./routes/achievementRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import resumeRoutes from "./routes/resumeRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
@@ -35,31 +148,26 @@ dotenv.config();
 const app = express();
 app.use(cors());
 
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-
-// --- CRITICAL FIX 2: Explicitly serve static files with MIME type headers (for playback) ---
+// Static files serving
 app.use(
-  express.static(path.join(__dirname, '..', 'public'), {
+  express.static(path.join(__dirname, "..", "public"), {
     setHeaders: (res, filePath) => {
       const lowerPath = filePath.toLowerCase();
-      // Forces correct Content-Type for all media files (Crucial for video playback)
-      if (lowerPath.endsWith('.mp4') || lowerPath.endsWith('.mov')) {
-        res.set('Content-Type', 'video/mp4');
-      } else if (lowerPath.endsWith('.webm') || lowerPath.endsWith('.ogg')) {
-        res.set('Content-Type', 'video/webm');
-      } else if (lowerPath.endsWith('.pdf')) {
-        res.set('Content-Type', 'application/pdf');
+      if (lowerPath.endsWith(".mp4") || lowerPath.endsWith(".mov")) {
+        res.set("Content-Type", "video/mp4");
+      } else if (lowerPath.endsWith(".webm") || lowerPath.endsWith(".ogg")) {
+        res.set("Content-Type", "video/webm");
+      } else if (lowerPath.endsWith(".pdf")) {
+        res.set("Content-Type", "application/pdf");
       }
     },
   })
 );
-// --- End Critical Fix 2 ---
-
 
 // --- Use Routes ---
-// These now rely on the global parsers for JSON bodies
 app.use("/api/admin", adminRoutes);
 app.use("/api/about", aboutRoutes);
 app.use("/api/skills", skillRoutes);
@@ -69,7 +177,6 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/resume", resumeRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
-
 app.get("/", (req, res) => {
   res.send("Backend is running successfully");
 });
@@ -78,7 +185,7 @@ sequelize
   .authenticate()
   .then(() => {
     console.log("MySQL Database connected successfully!");
-    return sequelize.sync({ alter: true }); 
+    return sequelize.sync({ alter: true });
   })
   .then(() => {
     console.log("Database synced successfully!");

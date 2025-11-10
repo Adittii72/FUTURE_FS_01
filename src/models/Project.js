@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
+// import ProjectImage from "./ProjectImage.js"; // <-- REMOVED
 
 const Project = sequelize.define(
   "Project",
@@ -25,22 +26,12 @@ const Project = sequelize.define(
     githubUrl: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: {
-        isUrl: true,
-      },
     },
-    coverImageUrl: { // <-- RESTORED: Single Image/Video URL column
-      type: DataTypes.STRING,
-      allowNull: true,
-      validate: {
-        // isUrl: true,
-      },
-    },
-    category: {
+    videoUrl: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-
+    // 'category' field is removed as requested
   },
   {
     tableName: "projects",
@@ -48,15 +39,14 @@ const Project = sequelize.define(
     hooks: {
       beforeCreate: (project) => {
         if (project.title) project.title = project.title.trim();
-        if (project.category) project.category = project.category.trim();
       },
       beforeUpdate: (project) => {
         if (project.title) project.title = project.title.trim();
-        if (project.category) project.category = project.category.trim();
       },
     },
   }
 );
 
-// We rely on the index.js file NO longer having the ProjectImage import.
+// --- ASSOCIATION REMOVED FROM HERE ---
+
 export default Project;

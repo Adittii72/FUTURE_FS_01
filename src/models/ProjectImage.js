@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
+// import Project from "./Project.js"; // <-- REMOVED
 
 const ProjectImage = sequelize.define(
   "ProjectImage",
@@ -17,8 +18,8 @@ const ProjectImage = sequelize.define(
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
-        model: 'projects',
-        key: 'id',
+        model: "projects",
+        key: "id",
       },
     },
   },
@@ -27,5 +28,10 @@ const ProjectImage = sequelize.define(
     timestamps: true,
   }
 );
+
+// --- ASSOCIATION REMOVED FROM HERE ---
+// The line 'ProjectImage.belongsTo(Project, ...)' that was here is
+// what caused the crash. It has been permanently removed from this file.
+// --- END ---
 
 export default ProjectImage;

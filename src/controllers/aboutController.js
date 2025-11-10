@@ -19,13 +19,15 @@ export const updateAbout = async (req, res) => {
       return res.status(400).json({ message: "At least one field is required to update" });
     }
 
-    const { headline, bio, linkedin, github, location, coverImageUrl } = req.body;
+    // --- UPDATED to include 'name' ---
+    const { name, headline, bio, linkedin, github, location, coverImageUrl } = req.body;
 
 
     let about = await About.findOne();
 
     if (!about) {
       about = await About.create({
+        name: name || "Your Name", // <-- ADDED
         headline: headline || "",
         bio: bio || "",
         linkedin: linkedin || null,
@@ -38,6 +40,7 @@ export const updateAbout = async (req, res) => {
 
 
     await about.update({
+      name: 'name' in req.body ? name : about.name, // <-- ADDED
       headline: 'headline' in req.body ? headline : about.headline,
       bio: 'bio' in req.body ? bio : about.bio,
       linkedin: 'linkedin' in req.body ? linkedin : about.linkedin,
@@ -45,6 +48,7 @@ export const updateAbout = async (req, res) => {
       location: 'location' in req.body ? location : about.location,
       coverImageUrl: 'coverImageUrl' in req.body ? coverImageUrl : about.coverImageUrl,
     });
+    // --- END UPDATE ---
 
     return res.json({ message: "About updated", about });
   } catch (err) {

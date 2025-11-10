@@ -4,8 +4,10 @@ import {
   createAchievement,
   updateAchievement,
   deleteAchievement,
+  uploadAchievementImage, // <-- ADDED
 } from "../controllers/achievementController.js";
 import auth from "../middleware/auth.js";
+import upload from "../middleware/upload.js"; // <-- ADDED
 
 const router = express.Router();
 // GET /api/achievements
@@ -17,5 +19,14 @@ router.post("/", auth, createAchievement);
 router.put("/:id", auth, updateAchievement);
 // DELETE /api/achievements/:id
 router.delete("/:id", auth, deleteAchievement);
+
+// --- ADDED UPLOAD ROUTE ---
+router.post(
+  "/upload/:id",
+  auth,
+  upload.single("certificateImage"), // Field name
+  uploadAchievementImage
+);
+// --- END ---
 
 export default router;

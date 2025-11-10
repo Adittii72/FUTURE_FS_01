@@ -9,6 +9,11 @@ const About = sequelize.define(
       autoIncrement: true,
       primaryKey: true,
     },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: "Your Name",
+    },
     headline: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -20,16 +25,16 @@ const About = sequelize.define(
     linkedin: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: {
-        isUrl: true,
-      },
+      // validate: {
+      //   isUrl: true, // <-- THIS LINE IS REMOVED
+      // },
     },
     github: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: {
-        isUrl: true,
-      },
+      // validate: {
+      //   isUrl: true, // <-- THIS LINE IS REMOVED
+      // },
     },
     location: {
       type: DataTypes.STRING,
@@ -48,14 +53,18 @@ const About = sequelize.define(
     timestamps: true,
     hooks: {
       beforeCreate: (instance) => {
+        if (instance.name) instance.name = instance.name.trim();
         if (instance.linkedin) instance.linkedin = instance.linkedin.trim();
         if (instance.github) instance.github = instance.github.trim();
-        if (instance.coverImageUrl) instance.coverImageUrl = instance.coverImageUrl.trim();
+        if (instance.coverImageUrl)
+          instance.coverImageUrl = instance.coverImageUrl.trim();
       },
       beforeUpdate: (instance) => {
+        if (instance.name) instance.name = instance.name.trim();
         if (instance.linkedin) instance.linkedin = instance.linkedin.trim();
         if (instance.github) instance.github = instance.github.trim();
-        if (instance.coverImageUrl) instance.coverImageUrl = instance.coverImageUrl.trim();
+        if (instance.coverImageUrl)
+          instance.coverImageUrl = instance.coverImageUrl.trim();
       },
     },
   }

@@ -87,7 +87,7 @@ const Contact = () => {
               type="tel"
               value={formData.phone}
               onChange={handleChange}
-              placeholder="+1 (555) 123-4567"
+              placeholder="+91 1234567890"
             />
 
             <Textarea

@@ -8,31 +8,32 @@ export const getAllAchievements = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
     return res.json({ achievements });
-  } catch (err)
- {
+  } catch (err) {
     console.error("getAllAchievements error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };
 
-
 // @route   POST /api/achievements
 // @access  Private (Admin)
 export const createAchievement = async (req, res) => {
   try {
-    const { title, description, issuer, fileUrl, category } = req.body;
+    // --- UPDATED: Simplified fields ---
+    const { title, description, imageUrl, date } = req.body;
 
     if (!title) {
-      return res.status(400).json({ message: "Achievement 'title' is required" });
+      return res
+        .status(400)
+        .json({ message: "Achievement 'title' is required" });
     }
 
     const achievement = await Achievement.create({
       title,
       description: description || null,
-      issuer: issuer || null,
-      fileUrl: fileUrl || null,
-      category: category || null,
+      imageUrl: imageUrl || null,
+      date: date || null,
     });
+    // --- END ---
 
     return res.status(201).json({ message: "Achievement created", achievement });
   } catch (err) {
@@ -41,13 +42,13 @@ export const createAchievement = async (req, res) => {
   }
 };
 
-
 // @route   PUT /api/achievements/:id
 // @access  Private (Admin)
 export const updateAchievement = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, issuer, fileUrl, category } = req.body;
+    // --- UPDATED: Simplified fields ---
+    const { title, description, imageUrl, date } = req.body;
 
     const achievement = await Achievement.findByPk(id);
 
@@ -58,10 +59,10 @@ export const updateAchievement = async (req, res) => {
     await achievement.update({
       title: title ?? achievement.title,
       description: description ?? achievement.description,
-      issuer: issuer ?? achievement.issuer,
-      fileUrl: fileUrl ?? achievement.fileUrl,
-      category: category ?? achievement.category,
+      imageUrl: imageUrl ?? achievement.imageUrl,
+      date: date ?? achievement.date,
     });
+    // --- END ---
 
     return res.json({ message: "Achievement updated", achievement });
   } catch (err) {
@@ -87,5 +88,36 @@ export const deleteAchievement = async (req, res) => {
   } catch (err) {
     console.error("deleteAchievement error:", err);
     return res.status(500).json({ message: "Server error" });
+  }
+};
+
+// @route   POST /api/achievements/upload/:id
+// @access  Private (Admin)
+export const uploadAchievementImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const achievement = await Achievement.findByPk(id);
+    if (!achievement) {
+      return res.status(404).json({ message: "Achievement not found" });
+    }
+
+    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${
+      req.file.filename
+    }`;
+
+    // Update the imageUrl field
+    await achievement.update({
+      imageUrl: fileUrl,
+    });
+
+    return res.json({ message: "Image uploaded successfully", achievement });
+  } catch (err) {
+    console.error("uploadAchievementImage error:", err);
+    return res.status(500).json({ message: "Server error"})
   }
 };
