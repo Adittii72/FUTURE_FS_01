@@ -13,9 +13,10 @@ const ManageAboutModal = ({ isOpen, onClose, onUpdate, initialData }) => {
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
-    name: '', // <-- ADDED
+    name: '',
     headline: '',
     bio: '',
+    profileImageUrl: '',
     linkedin: '',
     github: '',
   });
@@ -23,9 +24,10 @@ const ManageAboutModal = ({ isOpen, onClose, onUpdate, initialData }) => {
   useEffect(() => {
     if (initialData) {
       setFormData({
-        name: initialData.name || '', // <-- ADDED
+        name: initialData.name || '',
         headline: initialData.headline || '',
         bio: initialData.bio || '',
+        profileImageUrl: initialData.profileImageUrl || '',
         linkedin: initialData.linkedin || '',
         github: initialData.github || '',
       });
@@ -194,6 +196,15 @@ const ManageAboutModal = ({ isOpen, onClose, onUpdate, initialData }) => {
           onChange={handleChange}
           required
           placeholder="Full Stack Developer"
+        />
+
+        <Input
+          label="Profile Image URL"
+          name="profileImageUrl"
+          type="url"
+          value={formData.profileImageUrl}
+          onChange={handleChange}
+          placeholder="https://example.com/profile-image.jpg"
         />
 
         <Textarea

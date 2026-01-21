@@ -10,9 +10,8 @@ const Project = sequelize.define(
       primaryKey: true,
     },
     title: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       allowNull: false,
-      unique: true,
     },
     description: {
       type: DataTypes.TEXT,

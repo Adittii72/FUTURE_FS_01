@@ -1,4 +1,5 @@
 import ContactMessage from "../models/ContactMessage.js";
+import { sendThankYouEmail, sendAdminNotificationEmail } from "../utils/emailService.js";
 import { Op } from "sequelize"; 
 
 
@@ -12,15 +13,41 @@ export const submitMessage = async (req, res) => {
       return res.status(400).json({ message: "'name' and 'message' are required" });
     }
 
+    if (!email) {
+      return res.status(400).json({ message: "'email' is required" });
+    }
 
+    // Save message to database
     const contactMessage = await ContactMessage.create({
       name,
-      email: email || null,
+      email,
       phone: phone || null,
       message,
     });
 
-    return res.status(201).json({ message: "Message sent successfully", contactMessage });
+    // Send both emails
+    const adminEmailResult = await sendAdminNotificationEmail({
+      name,
+      email,
+      phone: phone || 'Not provided',
+      message
+    });
+
+    const thankYouEmailResult = await sendThankYouEmail(email, name);
+
+    // Check if emails were sent successfully
+    if (!adminEmailResult.success || !thankYouEmailResult.success) {
+      console.warn('Some emails failed to send, but message was saved');
+    }
+
+    return res.status(201).json({ 
+      message: "Message sent successfully",
+      contactMessage,
+      emailStatus: {
+        adminNotification: adminEmailResult.success,
+        thankYouEmail: thankYouEmailResult.success
+      }
+    });
   } catch (err) {
     console.error("submitMessage error:", err);
     return res.status(500).json({ message: "Server error" });

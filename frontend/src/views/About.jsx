@@ -12,6 +12,7 @@ const About = () => {
     headline: 'Full Stack Developer',
     bio: 'Passionate developer creating amazing web experiences.',
     coverImageUrl: '',
+    profileImageUrl: '',
     linkedin: '',
     github: '',
   });
@@ -47,8 +48,8 @@ const About = () => {
   }
 
   return (
-    <section className="min-h-screen py-8 sm:py-12 md:py-16">
-      <div className="container mx-auto px-4">
+    <section className="h-screen flex flex-col relative overflow-hidden">
+      <div className="container mx-auto px-4 h-full flex flex-col justify-center py-4">
         {isLoggedIn && (
           <div className="flex justify-end mb-4 md:mb-6">
             <button
@@ -62,7 +63,7 @@ const About = () => {
           </div>
         )}
 
-        <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center h-full max-h-full">
           <div className="space-y-4 md:space-y-6 animate-fade-in order-2 md:order-1">
             {/* --- ADDED NAME FIELD --- */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-gray-900 dark:text-white">
@@ -76,15 +77,31 @@ const About = () => {
               {about.bio}
             </p>
           </div>
-          {about.coverImageUrl && (
-            <div className="animate-fade-in order-1 md:order-2">
-              <img
-                src={about.coverImageUrl}
-                alt="Profile"
-                className="w-full h-auto rounded-xl md:rounded-2xl shadow-2xl object-cover"
-              />
-            </div>
-          )}
+          <div className="animate-fade-in order-1 md:order-2 flex justify-center md:justify-end">
+            {about.profileImageUrl ? (
+              <div className="relative" style={{ width: '400px', height: '400px' }}>
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full opacity-100"></div>
+                <div className="relative opacity-100 rounded-full overflow-hidden" style={{ width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', margin: '10px' }}>
+                  <img
+                    src={about.profileImageUrl}
+                    alt={about.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            ) : about.coverImageUrl ? (
+              <div className="relative" style={{ width: '400px', height: '400px' }}>
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full opacity-100"></div>
+                <div className="relative opacity-100 rounded-full overflow-hidden" style={{ width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', margin: '10px' }}>
+                  <img
+                    src={about.coverImageUrl}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
 

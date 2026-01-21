@@ -31,11 +31,16 @@ const Contact = () => {
     setSuccess(false);
 
     try {
-      await api.post('/contact', formData);
+      // Send message to backend - it will handle both emails via SMTP
+      const response = await api.post('/contact', formData);
+      
+      console.log('Email status:', response.data.emailStatus);
+      
       setSuccess(true);
       setFormData({ name: '', email: '', phone: '', message: '' });
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
+      console.error('Error:', err);
       setError(err.response?.data?.message || 'Failed to send message. Please try again.');
     } finally {
       setLoading(false);
@@ -43,24 +48,24 @@ const Contact = () => {
   };
 
   return (
-    <section className="min-h-screen py-8 sm:py-12 md:py-16">
-      <div className="container mx-auto px-4 max-w-2xl">
-        <h2 className="text-3xl sm:text-4xl font-bold gradient-text text-center mb-8 md:mb-12">Get In Touch</h2>
+    <section className="h-screen flex items-center justify-center overflow-hidden">
+      <div className="container mx-auto px-4 max-w-2xl w-full">
+        <h2 className="text-3xl sm:text-4xl font-bold gradient-text text-center mb-6 md:mb-8">Get In Touch</h2>
         
         <Card>
           {success && (
-            <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/30 border border-green-400 text-green-700 dark:text-green-400 rounded-lg">
-              Message sent successfully! I'll get back to you soon.
+            <div className="mb-4 p-3 bg-green-100 dark:bg-green-900/30 border border-green-400 text-green-700 dark:text-green-400 rounded-lg text-sm">
+              Message sent successfully! Check your email for confirmation. I'll get back to you soon.
             </div>
           )}
           
           {error && (
-            <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/30 border border-red-400 text-red-700 dark:text-red-400 rounded-lg">
+            <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-400 text-red-700 dark:text-red-400 rounded-lg text-sm">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               label="Name"
               name="name"
@@ -96,7 +101,7 @@ const Contact = () => {
               value={formData.message}
               onChange={handleChange}
               required
-              rows={6}
+              rows={4}
               placeholder="Your message here..."
             />
 
@@ -127,4 +132,3 @@ const Contact = () => {
 };
 
 export default Contact;
-

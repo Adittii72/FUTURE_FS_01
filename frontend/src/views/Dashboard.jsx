@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FolderKanban, Award, MessageSquare, Code, FileText } from 'lucide-react';
+import { FolderKanban, Award, Code, FileText } from 'lucide-react';
 import api from '../services/api';
 import Card from '../components/Card';
 import Button from '../components/Button';
@@ -14,9 +14,7 @@ const Dashboard = () => {
     projects: 0,
     skills: 0,
     achievements: 0,
-    unreadMessages: 0,
   });
-  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
 
@@ -30,28 +28,12 @@ const Dashboard = () => {
 
   const fetchData = async () => {
     try {
-      const [statsRes, messagesRes] = await Promise.all([
-        api.get('/analytics/summary'),
-        api.get('/contact/messages'),
-      ]);
+      const statsRes = await api.get('/analytics/summary');
       setStats(statsRes.data.summary);
-      setMessages(messagesRes.data.messages);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleDeleteMessage = async (id) => {
-    if (window.confirm('Are you sure you want to delete this message?')) {
-      try {
-        await api.delete(`/contact/${id}`);
-        fetchData();
-      } catch (error) {
-        console.error('Error deleting message:', error);
-        alert('Failed to delete message');
-      }
     }
   };
 
@@ -67,7 +49,6 @@ const Dashboard = () => {
     { icon: FolderKanban, label: 'Projects', value: stats.projects, color: 'from-blue-500 to-cyan-500' },
     { icon: Code, label: 'Skills', value: stats.skills, color: 'from-purple-500 to-pink-500' },
     { icon: Award, label: 'Achievements', value: stats.achievements, color: 'from-yellow-500 to-orange-500' },
-    { icon: MessageSquare, label: 'Unread Messages', value: stats.unreadMessages, color: 'from-green-500 to-emerald-500' },
   ];
 
   return (
@@ -107,44 +88,7 @@ const Dashboard = () => {
           ))}
         </div>
 
-        {/* Messages Section */}
-        <Card>
-          <h2 className="text-xl sm:text-2xl font-bold mb-4 md:mb-6">Contact Messages</h2>
-          {messages.length === 0 ? (
-            <p className="text-gray-500 dark:text-gray-400 text-center py-8">No messages yet.</p>
-          ) : (
-            <div className="space-y-3 md:space-y-4">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className="p-3 sm:p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                >
-                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-start gap-3 mb-2">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-sm sm:text-base">{message.name}</h3>
-                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 break-all">{message.email}</p>
-                      {message.phone && (
-                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">{message.phone}</p>
-                      )}
-                    </div>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleDeleteMessage(message.id)}
-                      className="w-full sm:w-auto"
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                  <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 mt-2">{message.message}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    {new Date(message.createdAt).toLocaleString()}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-        </Card>
+
       </div>
 
       <ManageResumeModal

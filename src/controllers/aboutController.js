@@ -19,7 +19,7 @@ export const updateAbout = async (req, res) => {
       return res.status(400).json({ message: "At least one field is required to update" });
     }
 
-    const { name, headline, bio, linkedin, github, location, coverImageUrl } = req.body;
+    const { name, headline, bio, linkedin, github, location, coverImageUrl, profileImageUrl } = req.body;
 
 
     let about = await About.findOne();
@@ -33,6 +33,7 @@ export const updateAbout = async (req, res) => {
         github: github || null,
         location: location || null,
         coverImageUrl: coverImageUrl || null,
+        profileImageUrl: profileImageUrl || null,
       });
       return res.status(201).json({ message: "About created", about });
     }
@@ -46,6 +47,7 @@ export const updateAbout = async (req, res) => {
       github: 'github' in req.body ? github : about.github,
       location: 'location' in req.body ? location : about.location,
       coverImageUrl: 'coverImageUrl' in req.body ? coverImageUrl : about.coverImageUrl,
+      profileImageUrl: 'profileImageUrl' in req.body ? profileImageUrl : about.profileImageUrl,
     });
 
 

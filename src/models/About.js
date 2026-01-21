@@ -38,6 +38,10 @@ const About = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    profileImageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     tableName: "about",
@@ -49,6 +53,8 @@ const About = sequelize.define(
         if (instance.github) instance.github = instance.github.trim();
         if (instance.coverImageUrl)
           instance.coverImageUrl = instance.coverImageUrl.trim();
+        if (instance.profileImageUrl)
+          instance.profileImageUrl = instance.profileImageUrl.trim();
       },
       beforeUpdate: (instance) => {
         if (instance.name) instance.name = instance.name.trim();
@@ -56,6 +62,8 @@ const About = sequelize.define(
         if (instance.github) instance.github = instance.github.trim();
         if (instance.coverImageUrl)
           instance.coverImageUrl = instance.coverImageUrl.trim();
+        if (instance.profileImageUrl)
+          instance.profileImageUrl = instance.profileImageUrl.trim();
       },
     },
   }
