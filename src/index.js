@@ -77,14 +77,36 @@ app.get("/", (req, res) => {
 sequelize
   .authenticate()
   .then(() => {
-    console.log("MySQL Database connected successfully!");
+    console.log("✅ PostgreSQL Database connected successfully!");
+    console.log("📊 Database Host:", process.env.DATABASE_URL?.split('@')[1]?.split('/')[0]);
     return sequelize.sync({ alter: true });
   })
   .then(() => {
-    console.log("Database synced successfully!");
+    console.log("✅ Database tables synced successfully!");
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📡 API available at http://localhost:${PORT}`);
+      console.log(`💾 Database: Connected to PostgreSQL`);
+    });
   })
   .catch((error) => {
-    console.error("Unable to connect to or sync the database:", error);
+    console.error("❌ Unable to connect to the database:");
+    console.error("Error:", error.message);
+    console.error("\n⚠️  Database connection failed. Possible reasons:");
+    console.error("   1. Database server is not accessible");
+    console.error("   2. Incorrect DATABASE_URL credentials");
+    console.error("   3. Network/firewall issues");
+    console.error("   4. Database server is down");
+    console.error("\n💡 Tip: Check your Railway database status and credentials");
+    console.error("\nCurrent DATABASE_URL:", process.env.DATABASE_URL?.substring(0, 50) + "...");
+    
+    // Start server anyway for development
+    console.log("\n⚠️  Starting server without database connection...");
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT} (Database disconnected)`);
+      console.log(`📡 API available at http://localhost:${PORT}`);
+      console.log(`⚠️  Database operations will fail until connection is restored`);
+    });
   });
