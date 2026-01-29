@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import api from '../services/api.js';
 import Card from '../components/Card.jsx';
 import ManageAboutModal from '../components/admin/ManageAboutModal.jsx';
+import { getMediaUrl } from '../utils/mediaUrl.js';
 
 const About = () => {
   const { isLoggedIn } = useAuth();
@@ -26,7 +27,12 @@ const About = () => {
   const fetchAbout = async () => {
     try {
       const res = await api.get('/about');
-      setAbout(res.data.about);
+      // Backend returns `{ about: {...} }`, but older builds sometimes expect the object at root.
+      const aboutFromApi = res?.data?.about ?? res?.data;
+      if (aboutFromApi && typeof aboutFromApi === 'object') {
+        // Merge so defaults stay in place if some fields are missing/null.
+        setAbout((prev) => ({ ...prev, ...aboutFromApi }));
+      }
     } catch (error) {
       console.error('Error fetching about:', error);
     } finally {
@@ -83,7 +89,7 @@ const About = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full opacity-100"></div>
                 <div className="relative opacity-100 rounded-full overflow-hidden" style={{ width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', margin: '10px' }}>
                   <img
-                    src={about.profileImageUrl}
+                    src={getMediaUrl(about.profileImageUrl)}
                     alt={about.name}
                     className="w-full h-full object-cover"
                   />
@@ -94,7 +100,7 @@ const About = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full opacity-100"></div>
                 <div className="relative opacity-100 rounded-full overflow-hidden" style={{ width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', margin: '10px' }}>
                   <img
-                    src={about.coverImageUrl}
+                    src={getMediaUrl(about.coverImageUrl)}
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />

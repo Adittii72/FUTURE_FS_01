@@ -1,6 +1,7 @@
 import Project from "../models/Project.js";
 import ProjectImage from "../models/ProjectImage.js";
 import sequelize from "../config/database.js";
+import { uploadToSupabase } from "../utils/storage.js";
 
 /* =========================
    GET ALL PROJECTS
@@ -134,12 +135,22 @@ export const uploadProjectMedia = async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    const getPath = (file) => `/uploads/${file.filename}`;
+    const bucket = process.env.SUPABASE_STORAGE_BUCKET || "media";
 
     // VIDEO UPLOAD
     if (req.files?.videoFile) {
       const video = req.files.videoFile[0];
-      project.videoUrl = getPath(video);
+      const ext = video.originalname.split(".").pop() || "mp4";
+      const filePath = `projects/${project.id}/video-${Date.now()}.${ext}`;
+
+      const publicUrl = await uploadToSupabase({
+        bucket,
+        path: filePath,
+        fileBuffer: video.buffer,
+        contentType: video.mimetype,
+      });
+
+      project.videoUrl = publicUrl;
       await project.save({ transaction: t });
 
       await ProjectImage.destroy({
@@ -155,11 +166,25 @@ export const uploadProjectMedia = async (req, res) => {
         transaction: t,
       });
 
-      const images = req.files.imageFiles.map((file) => ({
-        imageUrl: getPath(file),
-        projectId: project.id,
-      }));
+      // Upload all images to Supabase and get URLs
+      const imagePromises = req.files.imageFiles.map(async (file, index) => {
+        const ext = file.originalname.split(".").pop() || "jpg";
+        const filePath = `projects/${project.id}/images/${Date.now()}-${index}.${ext}`;
 
+        const publicUrl = await uploadToSupabase({
+          bucket,
+          path: filePath,
+          fileBuffer: file.buffer,
+          contentType: file.mimetype,
+        });
+
+        return {
+          imageUrl: publicUrl,
+          projectId: project.id,
+        };
+      });
+
+      const images = await Promise.all(imagePromises);
       await ProjectImage.bulkCreate(images, { transaction: t });
       project.videoUrl = null;
       await project.save({ transaction: t });
@@ -175,6 +200,6 @@ export const uploadProjectMedia = async (req, res) => {
   } catch (err) {
     await t.rollback();
     console.error("uploadProjectMedia error:", err);
-    return res.status(500).json({ message: "Media upload failed" });
+    return res.status(500).json({ message: err.message || "Media upload failed" });
   }
 };

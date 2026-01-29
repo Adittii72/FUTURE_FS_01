@@ -5,6 +5,7 @@ import api from '../services/api.js';
 import Card from '../components/Card.jsx';
 import ManageAchievementModal from '../components/admin/ManageAchievementModal.jsx';
 import UploadAchievementImageModal from '../components/admin/UploadAchievementImageModal.jsx'; // <-- ADDED
+import { getMediaUrl } from '../utils/mediaUrl.js';
 
 const Achievements = () => {
   const { isLoggedIn } = useAuth();
@@ -144,13 +145,13 @@ const Achievements = () => {
                   {/* --- ADDED IMAGE DISPLAY --- */}
                   {achievement.imageUrl && (
                     <a 
-                      href={achievement.imageUrl} 
+                      href={getMediaUrl(achievement.imageUrl)} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="block mt-4"
                     >
                       <img 
-                        src={achievement.imageUrl} 
+                        src={getMediaUrl(achievement.imageUrl)} 
                         alt="Certificate" 
                         className="rounded-lg w-full h-auto max-w-xs border dark:border-gray-700"
                       />

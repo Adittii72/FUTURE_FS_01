@@ -2,19 +2,13 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
+// Keep local storage directory for fallback (optional)
 const storageDir = "public/uploads";
-
 fs.mkdirSync(storageDir, { recursive: true });
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, storageDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + path.extname(file.originalname);
-    cb(null, file.fieldname + "-" + uniqueSuffix);
-  },
-});
+// Use memory storage instead of disk storage for Supabase uploads
+// Files will be available as req.file.buffer
+const storage = multer.memoryStorage();
 
 
 const fileFilter = (req, file, cb) => {

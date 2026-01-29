@@ -1,4 +1,5 @@
 import Achievement from "../models/Achievement.js";
+import { uploadToSupabase } from "../utils/storage.js";
 
 // GET /api/achievements
 export const getAllAchievements = async (req, res) => {
@@ -96,16 +97,25 @@ export const uploadAchievementImage = async (req, res) => {
       return res.status(404).json({ message: "Achievement not found" });
     }
 
-    // ✅ STORE RELATIVE PATH ONLY
-    const fileUrl = `/uploads/${req.file.filename}`;
+    // Upload to Supabase Storage
+    const bucket = process.env.SUPABASE_STORAGE_BUCKET || "media";
+    const ext = req.file.originalname.split(".").pop() || "jpg";
+    const filePath = `achievements/${id}/${Date.now()}.${ext}`;
+
+    const publicUrl = await uploadToSupabase({
+      bucket,
+      path: filePath,
+      fileBuffer: req.file.buffer,
+      contentType: req.file.mimetype,
+    });
 
     await achievement.update({
-      imageUrl: fileUrl,
+      imageUrl: publicUrl, // Store full Supabase URL
     });
 
     return res.json({ achievement });
   } catch (err) {
     console.error("uploadAchievementImage error:", err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: err.message || "Server error" });
   }
 };

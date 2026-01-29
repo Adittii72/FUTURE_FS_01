@@ -1,4 +1,5 @@
 import Resume from "../models/Resume.js";
+import { uploadToSupabase } from "../utils/storage.js";
 
 // @route   GET /api/resume
 // @access  Public
@@ -68,19 +69,29 @@ export const uploadResume = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    // Upload to Supabase Storage
+    const bucket = process.env.SUPABASE_STORAGE_BUCKET || "media";
+    const ext = req.file.originalname.split(".").pop() || "pdf";
+    const filePath = `resume/resume-${Date.now()}.${ext}`;
+
+    const publicUrl = await uploadToSupabase({
+      bucket,
+      path: filePath,
+      fileBuffer: req.file.buffer,
+      contentType: req.file.mimetype,
+    });
 
     let resume = await Resume.findOne();
 
     if (resume) {
-      await resume.update({ fileUrl });
+      await resume.update({ fileUrl: publicUrl });
       return res.json({ message: "Resume uploaded", resume });
     } else {
-      resume = await Resume.create({ fileUrl });
+      resume = await Resume.create({ fileUrl: publicUrl });
       return res.status(201).json({ message: "Resume created", resume });
     }
   } catch (err) {
     console.error("uploadResume error:", err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: err.message || "Server error" });
   }
 };

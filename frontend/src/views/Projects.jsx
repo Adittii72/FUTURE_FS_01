@@ -7,6 +7,7 @@ import ManageProjectModal from '/src/components/admin/ManageProjectModal.jsx';
 import UploadMediaModal from '/src/components/admin/UploadMediaModal.jsx';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { getMediaUrl } from '/src/utils/mediaUrl.js';
 
 
 const Projects = () => {
@@ -131,7 +132,7 @@ const Projects = () => {
                   {project.videoUrl ? (
                     <video
                       key={project.videoUrl} 
-                      src={project.videoUrl}
+                      src={getMediaUrl(project.videoUrl)}
                       className="w-full h-full object-cover"
                       controls
                       muted
@@ -151,7 +152,7 @@ const Projects = () => {
                       {project.images.map((image) => (
                         <div key={image.id} className="h-48">
                           <img
-                            src={image.imageUrl}
+                            src={getMediaUrl(image.imageUrl)}
                             alt={project.title}
                             className="w-full h-full object-cover"
                           />
