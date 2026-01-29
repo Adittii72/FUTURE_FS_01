@@ -16,7 +16,9 @@ export const getAbout = async (req, res) => {
 export const updateAbout = async (req, res) => {
   try {
     if (Object.keys(req.body).length === 0) {
-      return res.status(400).json({ message: "At least one field is required to update" });
+      return res
+        .status(400)
+        .json({ message: "At least one field is required to update" });
     }
 
     const {
@@ -56,7 +58,9 @@ export const updateAbout = async (req, res) => {
       coverImageUrl:
         "coverImageUrl" in req.body ? coverImageUrl : about.coverImageUrl,
       profileImageUrl:
-        "profileImageUrl" in req.body ? profileImageUrl : about.profileImageUrl,
+        "profileImageUrl" in req.body
+          ? profileImageUrl
+          : about.profileImageUrl,
     });
 
     return res.json(about);
@@ -72,7 +76,7 @@ export const uploadAboutImage = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    const fileUrl = `/uploads/${req.file.filename}`;
 
     let about = await About.findOne();
 
