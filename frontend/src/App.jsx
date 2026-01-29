@@ -2,11 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Header from './components/Header';
-import About from './views/About';
-import Skills from './views/Skills';
-import Projects from './views/Projects';
-import Achievements from './views/Achievements';
-import Contact from './views/Contact';
+import Home from './views/Home';
 import Login from './views/Login';
 import Dashboard from './views/Dashboard';
 
@@ -29,11 +25,8 @@ function App() {
                   <>
                     <Header />
                     <Routes>
-                      <Route path="/" element={<About />} />
-                      <Route path="/skills" element={<Skills />} />
-                      <Route path="/projects" element={<Projects />} />
-                      <Route path="/achievements" element={<Achievements />} />
-                      <Route path="/contact" element={<Contact />} />
+                      {/* Single-page app: all sections rendered on home route */}
+                      <Route path="/" element={<Home />} />
                       <Route
                         path="/dashboard"
                         element={

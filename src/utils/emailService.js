@@ -1,42 +1,30 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Verify SMTP configuration
-console.log('SMTP Configuration:');
-console.log('Host:', process.env.SMTP_HOST);
-console.log('Port:', process.env.SMTP_PORT);
-console.log('User:', process.env.SMTP_USER);
+// Initialize Resend client
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Create transporter using Gmail SMTP
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT),
-  secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+// Verify Resend configuration
+if (!process.env.RESEND_API_KEY) {
+  console.warn('⚠️  RESEND_API_KEY is not set. Email sending will fail.');
+} else {
+  console.log('✅ Resend email service initialized');
+}
 
-// Verify transporter connection
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('SMTP Transporter Error:', error);
-  } else {
-    console.log('SMTP Transporter is ready to send emails');
-  }
-});
+// Get sender email from env or use default
+const FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev'; // Resend default
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'aditi1411ss1@gmail.com';
 
 // Send notification email to admin when someone contacts
 export const sendAdminNotificationEmail = async (contactData) => {
   try {
     console.log('Sending admin notification email...');
     
-    const mailOptions = {
-      from: `"Portfolio Contact Form" <${process.env.SMTP_USER}>`,
-      to: process.env.ADMIN_EMAIL,
+    const { data, error } = await resend.emails.send({
+      from: `"Portfolio Contact Form" <${FROM_EMAIL}>`,
+      to: ADMIN_EMAIL,
       replyTo: contactData.email, // When you click reply, it will reply to the user
       subject: `New Contact Message from ${contactData.name}`,
       html: `
@@ -82,12 +70,16 @@ export const sendAdminNotificationEmail = async (contactData) => {
           </p>
         </div>
       `,
-    };
+    });
 
-    const info = await transporter.sendMail(mailOptions);
+    if (error) {
+      console.error('❌ Resend API error:', error);
+      return { success: false, error: error.message };
+    }
+
     console.log('✅ Admin notification email sent successfully');
-    console.log('Message ID:', info.messageId);
-    return { success: true, messageId: info.messageId };
+    console.log('Message ID:', data?.id);
+    return { success: true, messageId: data?.id };
   } catch (error) {
     console.error('❌ Error sending admin notification email:', error);
     console.error('Error details:', error.message);
@@ -100,8 +92,8 @@ export const sendThankYouEmail = async (recipientEmail, recipientName) => {
   try {
     console.log('Sending thank you email to:', recipientEmail);
     
-    const mailOptions = {
-      from: `"Aditi Shrimankar" <${process.env.SMTP_USER}>`,
+    const { data, error } = await resend.emails.send({
+      from: `"Aditi Shrimankar" <${FROM_EMAIL}>`,
       to: recipientEmail,
       subject: 'Thank You for Contacting Me - Aditi Shrimankar',
       html: `
@@ -146,12 +138,16 @@ export const sendThankYouEmail = async (recipientEmail, recipientName) => {
           </div>
         </div>
       `,
-    };
+    });
 
-    const info = await transporter.sendMail(mailOptions);
+    if (error) {
+      console.error('❌ Resend API error:', error);
+      return { success: false, error: error.message };
+    }
+
     console.log('✅ Thank you email sent successfully to:', recipientEmail);
-    console.log('Message ID:', info.messageId);
-    return { success: true, messageId: info.messageId };
+    console.log('Message ID:', data?.id);
+    return { success: true, messageId: data?.id };
   } catch (error) {
     console.error('❌ Error sending thank you email:', error);
     console.error('Error details:', error.message);

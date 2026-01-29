@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Moon, Sun, Download, Linkedin, Github, LogOut, Menu, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -9,7 +9,6 @@ import Button from './Button';
 const Header = () => {
   const { isDark, toggleTheme } = useTheme();
   const { isLoggedIn, logout } = useAuth();
-  const location = useLocation();
   const [resumeUrl, setResumeUrl] = useState('');
   const [socialLinks, setSocialLinks] = useState({
     linkedin: '',
@@ -48,35 +47,39 @@ const Header = () => {
     }
   };
 
+  const scrollToSection = (sectionId) => {
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   const navLinks = [
-    { path: '/', label: 'Home' },
-    { path: '/skills', label: 'Skills' },
-    { path: '/projects', label: 'Projects' },
-    { path: '/achievements', label: 'Achievements' },
-    { path: '/contact', label: 'Contact' },
+    { id: 'about', label: 'Home' },
+    { id: 'skills', label: 'Skills' },
+    { id: 'projects', label: 'Projects' },
+    { id: 'achievements', label: 'Achievements' },
+    { id: 'contact', label: 'Contact' },
   ];
 
   return (
     <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-xl md:text-2xl font-bold gradient-text">
+          <Link to="/" className="text-xl md:text-2xl font-bold gradient-text" onClick={() => scrollToSection('about')}>
             Portfolio
           </Link>
 
           <div className="hidden md:flex items-center space-x-6">
             {navLinks.map(link => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`px-3 py-2 rounded-lg transition-colors ${
-                  location.pathname === link.path
-                    ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
+              <button
+                key={link.id}
+                type="button"
+                onClick={() => scrollToSection(link.id)}
+                className="px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
               >
                 {link.label}
-              </Link>
+              </button>
             ))}
           </div>
 
@@ -116,6 +119,25 @@ const Header = () => {
             </button>
           </div>
         </div>
+
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-3 space-y-2">
+            {navLinks.map(link => (
+              <button
+                key={link.id}
+                type="button"
+                onClick={() => {
+                  scrollToSection(link.id);
+                  setMobileMenuOpen(false);
+                }}
+                className="block w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                {link.label}
+              </button>
+            ))}
+          </div>
+        )}
       </nav>
     </header>
   );
