@@ -33,7 +33,7 @@ const Login = () => {
     try {
       const res = await api.post('/admin/login', formData);
       login(res.data.token);
-      navigate('/dashboard');
+      navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid email or password');
     } finally {

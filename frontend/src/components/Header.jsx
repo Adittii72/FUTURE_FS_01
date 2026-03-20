@@ -107,9 +107,18 @@ const Header = () => {
 
             {isLoggedIn && (
               <>
-                <Link to="/dashboard">Dashboard</Link>
-                <button onClick={logout}>
-                  <LogOut />
+                <Link 
+                  to="/dashboard" 
+                  className="px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  Dashboard
+                </Link>
+                <button 
+                  onClick={logout}
+                  className="p-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                  title="Logout"
+                >
+                  <LogOut className="w-5 h-5" />
                 </button>
               </>
             )}
@@ -136,6 +145,15 @@ const Header = () => {
                 {link.label}
               </button>
             ))}
+            {isLoggedIn && (
+              <Link
+                to="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                Dashboard
+              </Link>
+            )}
           </div>
         )}
       </nav>

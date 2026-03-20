@@ -7,12 +7,14 @@ if (!supabaseUrl || !supabaseServiceRoleKey) {
   console.warn('⚠️  Supabase environment variables are missing. Storage uploads will fail.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseServiceRoleKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  }
-});
+export const supabase = supabaseUrl && supabaseServiceRoleKey 
+  ? createClient(supabaseUrl, supabaseServiceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    })
+  : null;
 
 export default supabase;
 
