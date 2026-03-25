@@ -1,7 +1,6 @@
 import ContactMessage from "../models/ContactMessage.js";
 import { sendThankYouEmail, sendAdminNotificationEmail } from "../utils/emailService.js";
-import { Op } from "sequelize"; 
-
+import { Op } from "sequelize";
 
 // @route   POST /api/contact
 // @access  Public
@@ -84,13 +83,13 @@ export const getAllMessages = async (req, res) => {
 export const deleteMessage = async (req, res) => {
   try {
     const { id } = req.params;
-    const message = await ContactMessage.findByPk(id);
+    const contactMessage = await ContactMessage.findByPk(id);
 
-    if (!message) {
+    if (!contactMessage) {
       return res.status(404).json({ message: "Message not found" });
     }
 
-    await message.destroy();
+    await contactMessage.destroy();
 
     return res.json({ message: "Message deleted successfully" });
   } catch (err) {
@@ -98,6 +97,7 @@ export const deleteMessage = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
 
 // @route   GET /api/contact/messages
 // @access  Private (Admin)
