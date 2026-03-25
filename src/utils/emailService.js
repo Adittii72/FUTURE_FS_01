@@ -12,8 +12,8 @@ console.log('Admin Email:', process.env.ADMIN_EMAIL);
 
 // Create transporter using Gmail SMTP with proper settings for Gmail
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT),
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: parseInt(process.env.SMTP_PORT) || 587,
   secure: process.env.SMTP_SECURE === 'true', // false for port 587, true for port 465
   auth: {
     user: process.env.SMTP_USER,
@@ -22,20 +22,22 @@ const transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false, // Allow self-signed certs (for Gmail)
   },
+  // Add timeout to prevent hanging
+  connectionTimeout: 5000,
+  socketTimeout: 5000,
 });
 
-// Verify transporter connection immediately
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('❌ SMTP Connection Error:', error);
-    console.error('⚠️  Please check:');
-    console.error('1. SMTP_USER is correct');
-    console.error('2. SMTP_PASS is an App Password (not regular password) if 2FA is enabled');
-    console.error('3. Gmail account allows "Less secure apps" if 2FA is not enabled');
-  } else {
-    console.log('✅ SMTP Transporter is ready to send emails');
-  }
-});
+// Verify transporter connection (non-blocking with timeout)
+setTimeout(() => {
+  transporter.verify((error, success) => {
+    if (error) {
+      console.error('❌ SMTP Connection Error:', error.message);
+      console.error('⚠️  Email sending may not work. Continuing anyway...');
+    } else {
+      console.log('✅ SMTP Transporter is ready to send emails');
+    }
+  });
+}, 1000); // Verify after 1 second, don't block startup
 
 // Send notification email to admin when someone contacts
 export const sendAdminNotificationEmail = async (contactData) => {
