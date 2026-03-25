@@ -20,9 +20,14 @@ const Header = () => {
     // Resume
     api.get('/resume')
       .then(res => {
-        setResumeUrl(res?.data?.resume?.fileUrl || '');
+        const fileUrl = res?.data?.resume?.fileUrl || '';
+        console.log('Resume fetched:', fileUrl);
+        setResumeUrl(fileUrl);
       })
-      .catch(() => setResumeUrl(''));
+      .catch((err) => {
+        console.error('Error fetching resume:', err);
+        setResumeUrl('');
+      });
 
     // About (FIXED RESPONSE HANDLING)
     api.get('/about')
@@ -43,7 +48,17 @@ const Header = () => {
 
   const handleDownloadResume = () => {
     if (resumeUrl) {
-      window.open(resumeUrl, '_blank');
+      console.log('Opening resume URL:', resumeUrl);
+      // If it's a Supabase URL, open in new tab to view/download
+      if (resumeUrl.includes('supabase')) {
+        window.open(resumeUrl, '_blank');
+      } else {
+        // For other URLs, also open in new tab
+        window.open(resumeUrl, '_blank');
+      }
+    } else {
+      console.warn('Resume URL is empty');
+      alert('Resume not available yet');
     }
   };
 
