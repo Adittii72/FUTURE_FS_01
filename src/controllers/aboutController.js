@@ -1,4 +1,5 @@
 import About from "../models/About.js";
+import { uploadToSupabase } from "../utils/storage.js";
 
 
 export const getAbout = async (req, res) => {
@@ -67,19 +68,29 @@ export const uploadAboutImage = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    // Upload to Supabase Storage
+    const bucket = process.env.SUPABASE_STORAGE_BUCKET || "media";
+    const ext = req.file.originalname.split(".").pop() || "jpg";
+    const filePath = `about/cover-${Date.now()}.${ext}`;
+
+    const publicUrl = await uploadToSupabase({
+      bucket,
+      path: filePath,
+      fileBuffer: req.file.buffer,
+      contentType: req.file.mimetype,
+    });
 
     let about = await About.findOne();
 
     if (about) {
-      await about.update({ coverImageUrl: fileUrl });
+      await about.update({ coverImageUrl: publicUrl });
       return res.json({ message: "About image updated", about });
     } else {
-      about = await About.create({ coverImageUrl: fileUrl });
+      about = await About.create({ coverImageUrl: publicUrl });
       return res.status(201).json({ message: "About image created", about });
     }
   } catch (err) {
     console.error("uploadAboutImage error:", err);
-    return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: err.message || "Server error" });
   }
 };

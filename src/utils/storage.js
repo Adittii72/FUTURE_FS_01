@@ -1,14 +1,9 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import supabase from './supabaseClient.js';
 
 /**
- * Uploads a file buffer to local storage
+ * Uploads a file buffer to Supabase Storage
  * @param {Object} params
- * @param {string} params.bucket - The storage bucket name (used for directory organization)
+ * @param {string} params.bucket - The storage bucket name (e.g., "media")
  * @param {string} params.path - The path within the bucket (e.g., "achievements/1/image.jpg")
  * @param {Buffer} params.fileBuffer - The file buffer to upload
  * @param {string} params.contentType - MIME type (e.g., "image/jpeg", "video/mp4")
@@ -16,23 +11,30 @@ const __dirname = path.dirname(__filename);
  */
 export const uploadToSupabase = async ({ bucket, path: filePath, fileBuffer, contentType }) => {
   try {
-    // Construct full path: public/uploads/{filePath}
-    const uploadsDir = path.join(__dirname, '..', '..', 'public', 'uploads');
-    const fullPath = path.join(uploadsDir, filePath);
-    
-    // Create directories if they don't exist
-    const dirPath = path.dirname(fullPath);
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true });
-      console.log(`📁 Created directory: ${dirPath}`);
+    if (!supabase) {
+      throw new Error('Supabase is not configured. Check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.');
     }
 
-    // Write file to disk
-    fs.writeFileSync(fullPath, fileBuffer);
-    console.log(`✅ File uploaded to: ${fullPath}`);
+    // Upload file to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(filePath, fileBuffer, {
+        contentType,
+        upsert: true, // Replace if file exists
+      });
 
-    // Return public URL path (relative to backend domain)
-    const publicUrl = `/uploads/${filePath}`;
+    if (error) {
+      console.error('Supabase upload error:', error);
+      throw error;
+    }
+
+    // Get public URL
+    const { data: publicData } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(filePath);
+
+    const publicUrl = publicData?.publicUrl;
+    console.log(`✅ File uploaded to Supabase: ${filePath}`);
     console.log(`🌐 Public URL: ${publicUrl}`);
 
     return publicUrl;
