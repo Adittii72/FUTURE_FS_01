@@ -9,6 +9,12 @@ export const submitMessage = async (req, res) => {
   try {
     const { name, email, phone, message } = req.body;
 
+    console.log('\n📝 New contact form submission received');
+    console.log('👤 Name:', name);
+    console.log('📧 Email:', email);
+    console.log('📱 Phone:', phone);
+    console.log('💬 Message length:', message?.length);
+
     if (!name || !message) {
       return res.status(400).json({ message: "'name' and 'message' are required" });
     }
@@ -18,14 +24,17 @@ export const submitMessage = async (req, res) => {
     }
 
     // Save message to database
+    console.log('💾 Saving message to database...');
     const contactMessage = await ContactMessage.create({
       name,
       email,
       phone: phone || null,
       message,
     });
+    console.log('✅ Message saved successfully. ID:', contactMessage.id);
 
-    // Send both emails
+    // Send admin notification email
+    console.log('\n📬 Sending emails...');
     const adminEmailResult = await sendAdminNotificationEmail({
       name,
       email,
@@ -35,11 +44,12 @@ export const submitMessage = async (req, res) => {
 
     const thankYouEmailResult = await sendThankYouEmail(email, name);
 
-    // Check if emails were sent successfully
-    if (!adminEmailResult.success || !thankYouEmailResult.success) {
-      console.warn('Some emails failed to send, but message was saved');
-    }
+    // Log results
+    console.log('\n📊 Email Results:');
+    console.log('Admin notification:', adminEmailResult.success ? '✅ Sent' : '❌ Failed');
+    console.log('Thank you email:', thankYouEmailResult.success ? '✅ Sent' : '❌ Failed');
 
+    // Return response with email status
     return res.status(201).json({ 
       message: "Message sent successfully",
       contactMessage,
@@ -49,7 +59,42 @@ export const submitMessage = async (req, res) => {
       }
     });
   } catch (err) {
-    console.error("submitMessage error:", err);
+    console.error("❌ submitMessage error:", err);
+    return res.status(500).json({ message: "Server error: " + err.message });
+  }
+};
+
+// @route   GET /api/contact/messages
+// @access  Private (Admin)
+export const getAllMessages = async (req, res) => {
+  try {
+    const messages = await ContactMessage.findAll({
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.json({ messages });
+  } catch (err) {
+    console.error("getAllMessages error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+// @route   DELETE /api/contact/:id
+// @access  Private (Admin)
+export const deleteMessage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const message = await ContactMessage.findByPk(id);
+
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    await message.destroy();
+
+    return res.json({ message: "Message deleted successfully" });
+  } catch (err) {
+    console.error("deleteMessage error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };
