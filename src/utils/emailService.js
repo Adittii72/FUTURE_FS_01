@@ -1,60 +1,33 @@
-﻿import nodemailer from 'nodemailer';
+﻿import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Verify SMTP configuration
-console.log('🔧 SMTP Configuration:');
-console.log('Host:', process.env.SMTP_HOST);
-console.log('Port:', process.env.SMTP_PORT);
-console.log('User:', process.env.SMTP_USER);
-console.log('Admin Email:', process.env.ADMIN_EMAIL);
+// Initialize SendGrid with API key
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// Create transporter using Gmail SMTP with proper settings for Gmail
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT) || 587,
-  secure: process.env.SMTP_SECURE === 'true', // false for port 587, true for port 465
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS, // Use App Password if 2FA is enabled
-  },
-  tls: {
-    rejectUnauthorized: false, // Allow self-signed certs (for Gmail)
-  },
-  // Add timeout to prevent hanging
-  connectionTimeout: 5000,
-  socketTimeout: 5000,
-});
-
-// Verify transporter connection (non-blocking with timeout)
-setTimeout(() => {
-  transporter.verify((error, success) => {
-    if (error) {
-      console.error('❌ SMTP Connection Error:', error.message);
-      console.error('⚠️  Email sending may not work. Continuing anyway...');
-    } else {
-      console.log('✅ SMTP Transporter is ready to send emails');
-    }
-  });
-}, 1000); // Verify after 1 second, don't block startup
+// Verify SendGrid configuration
+console.log('🔧 SendGrid Configuration:');
+console.log('✅ API Key:', process.env.SENDGRID_API_KEY ? '***' + process.env.SENDGRID_API_KEY.slice(-4) : 'NOT SET');
+console.log('📧 From Email:', process.env.FROM_EMAIL);
+console.log('📬 Admin Email:', process.env.ADMIN_EMAIL);
 
 // Send notification email to admin when someone contacts
 export const sendAdminNotificationEmail = async (contactData) => {
   try {
-    console.log('\n📧 Sending admin notification email...');
+    console.log('\n📧 Sending admin notification email via SendGrid...');
     console.log('📮 To:', process.env.ADMIN_EMAIL);
     console.log('👤 From:', contactData.email);
-    
-    // Return immediately if email config is missing
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS || !process.env.ADMIN_EMAIL) {
-      console.warn('⚠️  Email config missing, skipping email send');
-      return { success: false, error: 'Email configuration incomplete' };
+
+    // Validate configuration
+    if (!process.env.SENDGRID_API_KEY || !process.env.FROM_EMAIL || !process.env.ADMIN_EMAIL) {
+      console.warn('⚠️  SendGrid configuration incomplete, skipping email');
+      return { success: false, error: 'SendGrid config missing' };
     }
-    
-    const mailOptions = {
-      from: process.env.SMTP_USER,
+
+    const msg = {
       to: process.env.ADMIN_EMAIL,
+      from: process.env.FROM_EMAIL,
       replyTo: contactData.email,
       subject: `New Contact Message from ${contactData.name}`,
       html: `
@@ -83,41 +56,34 @@ export const sendAdminNotificationEmail = async (contactData) => {
           <div style="margin: 20px 0;">
             <h3 style="color: #555; margin-bottom: 10px;">Message:</h3>
             <div style="background-color: #fff; padding: 15px; border-left: 4px solid #0066cc; border-radius: 4px;">
-              <p style="color: #333; line-height: 1.6; margin: 0;">${contactData.message}</p>
+              <p style="color: #333; line-height: 1.6; margin: 0; white-space: pre-wrap;">${contactData.message}</p>
             </div>
+          </div>
+          
+          <div style="background-color: #e8f4fd; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <p style="color: #333; margin: 0;">
+              <strong>💡 Quick Reply:</strong> Click "Reply" button to respond to ${contactData.email}
+            </p>
           </div>
           
           <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
           
           <p style="color: #999; font-size: 12px; text-align: center;">
-            This email was sent from your portfolio contact form at ${new Date().toLocaleString()}
+            Sent from Aditi's Portfolio Contact Form at ${new Date().toLocaleString()}
           </p>
         </div>
       `,
     };
 
-    // Wrap sendMail in a timeout promise
-    const emailPromise = new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        reject(new Error('Email send timeout'));
-      }, 10000); // 10 second timeout
-
-      transporter.sendMail(mailOptions, (error, info) => {
-        clearTimeout(timeout);
-        if (error) {
-          reject(error);
-        } else {
-          resolve(info);
-        }
-      });
-    });
-
-    const info = await emailPromise;
-    console.log('✅ Admin notification email sent successfully');
-    console.log('📬 Message ID:', info.messageId);
-    return { success: true, messageId: info.messageId };
+    const result = await sgMail.send(msg);
+    console.log('✅ Admin notification email sent successfully to:', process.env.ADMIN_EMAIL);
+    console.log('📬 Message ID:', result[0].headers['x-message-id']);
+    return { success: true, messageId: result[0].headers['x-message-id'] };
   } catch (error) {
     console.error('❌ Error sending admin notification email:', error.message);
+    if (error.response) {
+      console.error('📋 SendGrid Error Details:', error.response.body);
+    }
     return { success: false, error: error.message };
   }
 };
@@ -125,25 +91,25 @@ export const sendAdminNotificationEmail = async (contactData) => {
 // Send thank you email to the person who contacted you
 export const sendThankYouEmail = async (recipientEmail, recipientName) => {
   try {
-    console.log('\n📧 Sending thank you email...');
+    console.log('\n📧 Sending thank you email via SendGrid...');
     console.log('📮 To:', recipientEmail);
-    
-    // Return immediately if email config is missing
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      console.warn('⚠️  Email config missing, skipping thank you email');
-      return { success: false, error: 'Email configuration incomplete' };
+
+    // Validate configuration
+    if (!process.env.SENDGRID_API_KEY || !process.env.FROM_EMAIL) {
+      console.warn('⚠️  SendGrid configuration incomplete, skipping email');
+      return { success: false, error: 'SendGrid config missing' };
     }
-    
-    const mailOptions = {
-      from: process.env.SMTP_USER,
+
+    const msg = {
       to: recipientEmail,
+      from: process.env.FROM_EMAIL,
       subject: 'Thank You for Contacting Me - Aditi Shrimankar',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
           <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
             
             <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #0066cc; margin: 0; font-size: 28px;">Thank You for Reaching Out!</h1>
+              <h1 style="color: #0066cc; margin: 0; font-size: 28px;">Thank You for Reaching Out! 🙏</h1>
             </div>
             
             <p style="color: #333; line-height: 1.8; font-size: 16px;">
@@ -168,7 +134,7 @@ export const sendThankYouEmail = async (recipientEmail, recipientName) => {
             <p style="color: #333; line-height: 1.8; font-size: 16px; margin-top: 30px;">
               Best regards,<br>
               <strong style="color: #0066cc; font-size: 18px;">Aditi Shrimankar</strong><br>
-              <span style="color: #666; font-size: 14px;">Full Stack Developer</span>
+              <span style="color: #666; font-size: 14px;">Full Stack Developer 💻</span>
             </p>
             
             <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
@@ -182,28 +148,15 @@ export const sendThankYouEmail = async (recipientEmail, recipientName) => {
       `,
     };
 
-    // Wrap sendMail in a timeout promise
-    const emailPromise = new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        reject(new Error('Email send timeout'));
-      }, 10000); // 10 second timeout
-
-      transporter.sendMail(mailOptions, (error, info) => {
-        clearTimeout(timeout);
-        if (error) {
-          reject(error);
-        } else {
-          resolve(info);
-        }
-      });
-    });
-
-    const info = await emailPromise;
+    const result = await sgMail.send(msg);
     console.log('✅ Thank you email sent successfully to:', recipientEmail);
-    console.log('📬 Message ID:', info.messageId);
-    return { success: true, messageId: info.messageId };
+    console.log('📬 Message ID:', result[0].headers['x-message-id']);
+    return { success: true, messageId: result[0].headers['x-message-id'] };
   } catch (error) {
     console.error('❌ Error sending thank you email:', error.message);
+    if (error.response) {
+      console.error('📋 SendGrid Error Details:', error.response.body);
+    }
     return { success: false, error: error.message };
   }
 };
