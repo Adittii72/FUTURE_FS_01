@@ -46,8 +46,14 @@ export const sendAdminNotificationEmail = async (contactData) => {
     console.log('📮 To:', process.env.ADMIN_EMAIL);
     console.log('👤 From:', contactData.email);
     
+    // Return immediately if email config is missing
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS || !process.env.ADMIN_EMAIL) {
+      console.warn('⚠️  Email config missing, skipping email send');
+      return { success: false, error: 'Email configuration incomplete' };
+    }
+    
     const mailOptions = {
-      from: process.env.SMTP_USER, // Must be the authenticated email for Gmail
+      from: process.env.SMTP_USER,
       to: process.env.ADMIN_EMAIL,
       replyTo: contactData.email,
       subject: `New Contact Message from ${contactData.name}`,
@@ -81,12 +87,6 @@ export const sendAdminNotificationEmail = async (contactData) => {
             </div>
           </div>
           
-          <div style="background-color: #e8f4fd; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <p style="color: #333; margin: 0;">
-              <strong>💡 Quick Reply:</strong> Click "Reply" button in your email to respond directly to ${contactData.email}
-            </p>
-          </div>
-          
           <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
           
           <p style="color: #999; font-size: 12px; text-align: center;">
@@ -96,13 +96,28 @@ export const sendAdminNotificationEmail = async (contactData) => {
       `,
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    // Wrap sendMail in a timeout promise
+    const emailPromise = new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('Email send timeout'));
+      }, 10000); // 10 second timeout
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        clearTimeout(timeout);
+        if (error) {
+          reject(error);
+        } else {
+          resolve(info);
+        }
+      });
+    });
+
+    const info = await emailPromise;
     console.log('✅ Admin notification email sent successfully');
     console.log('📬 Message ID:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('❌ Error sending admin notification email:', error.message);
-    console.error('📋 Full error:', error);
     return { success: false, error: error.message };
   }
 };
@@ -113,8 +128,14 @@ export const sendThankYouEmail = async (recipientEmail, recipientName) => {
     console.log('\n📧 Sending thank you email...');
     console.log('📮 To:', recipientEmail);
     
+    // Return immediately if email config is missing
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.warn('⚠️  Email config missing, skipping thank you email');
+      return { success: false, error: 'Email configuration incomplete' };
+    }
+    
     const mailOptions = {
-      from: process.env.SMTP_USER, // Must be the authenticated email for Gmail
+      from: process.env.SMTP_USER,
       to: recipientEmail,
       subject: 'Thank You for Contacting Me - Aditi Shrimankar',
       html: `
@@ -161,13 +182,28 @@ export const sendThankYouEmail = async (recipientEmail, recipientName) => {
       `,
     };
 
-    const info = await transporter.sendMail(mailOptions);
+    // Wrap sendMail in a timeout promise
+    const emailPromise = new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('Email send timeout'));
+      }, 10000); // 10 second timeout
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        clearTimeout(timeout);
+        if (error) {
+          reject(error);
+        } else {
+          resolve(info);
+        }
+      });
+    });
+
+    const info = await emailPromise;
     console.log('✅ Thank you email sent successfully to:', recipientEmail);
     console.log('📬 Message ID:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('❌ Error sending thank you email:', error.message);
-    console.error('📋 Full error:', error);
     return { success: false, error: error.message };
   }
 };
