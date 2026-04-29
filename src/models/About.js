@@ -16,7 +16,7 @@ const About = sequelize.define(
     },
     headline: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     bio: {
       type: DataTypes.TEXT,

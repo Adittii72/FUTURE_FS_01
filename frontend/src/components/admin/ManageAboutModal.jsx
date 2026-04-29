@@ -190,11 +190,10 @@ const ManageAboutModal = ({ isOpen, onClose, onUpdate, initialData }) => {
         />
 
         <Input
-          label="Headline"
+          label="Headline (Optional)"
           name="headline"
           value={formData.headline}
           onChange={handleChange}
-          required
           placeholder="Full Stack Developer"
         />
 
