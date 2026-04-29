@@ -1,6 +1,5 @@
-﻿import ContactMessage from "../models/ContactMessage.js";
+﻿import supabase from "../config/supabase.js";
 import { sendThankYouEmail, sendAdminNotificationEmail } from "../utils/emailService.js";
-import { Op } from "sequelize";
 
 // @route   POST /api/contact
 // @access  Public
@@ -24,12 +23,18 @@ export const submitMessage = async (req, res) => {
 
     // Save message to database
     console.log('💾 Saving message to database...');
-    const contactMessage = await ContactMessage.create({
-      name,
-      email,
-      phone: phone || null,
-      message,
-    });
+    const { data: contactMessage, error } = await supabase
+      .from("contact_messages")
+      .insert([{
+        name,
+        email,
+        phone: phone || null,
+        message,
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
     console.log('✅ Message saved successfully. ID:', contactMessage.id);
 
     // Send admin notification email
@@ -67,10 +72,12 @@ export const submitMessage = async (req, res) => {
 // @access  Private (Admin)
 export const getAllMessages = async (req, res) => {
   try {
-    const messages = await ContactMessage.findAll({
-      order: [["createdAt", "DESC"]],
-    });
+    const { data: messages, error } = await supabase
+      .from("contact_messages")
+      .select("*")
+      .order("createdAt", { ascending: false });
 
+    if (error) throw error;
     return res.json({ messages });
   } catch (err) {
     console.error("getAllMessages error:", err);

@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import Admin from "../models/Admin.js";
+import supabase from "../config/supabase.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -11,10 +11,18 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ message: "Email and password required" });
 
-    const admin = await Admin.findOne({ where: { email: email.trim().toLowerCase() } });
+    const { data: admins, error } = await supabase
+      .from("admins")
+      .select("*")
+      .eq("email", email.trim().toLowerCase());
+
+    if (error) throw error;
+
+    const admin = admins && admins.length > 0 ? admins[0] : null;
     if (!admin || !admin.isActive) return res.status(401).json({ message: "Invalid credentials" });
 
-    const match = await admin.validatePassword(password);
+    // Compare password
+    const match = await bcrypt.compare(password, admin.password);
     if (!match) return res.status(401).json({ message: "Invalid credentials" });
 
     const payload = { id: admin.id, email: admin.email, role: admin.role || "admin" };
@@ -29,8 +37,13 @@ export const login = async (req, res) => {
 
 export const profile = async (req, res) => {
   try {
-    const admin = await Admin.findByPk(req.admin.id, { attributes: ["id", "name", "email", "isActive", "createdAt", "updatedAt"] });
-    if (!admin) return res.status(404).json({ message: "Admin not found" });
+    const { data: admin, error } = await supabase
+      .from("admins")
+      .select("id, name, email, isActive, createdAt, updatedAt")
+      .eq("id", req.admin.id)
+      .single();
+
+    if (error || !admin) return res.status(404).json({ message: "Admin not found" });
     return res.json({ admin });
   } catch (err) {
     console.error("Profile error:", err);
