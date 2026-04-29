@@ -1,31 +1,10 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import sequelize from "./config/database.js";
 import path from "path";
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import "./models/About.js";
-import "./models/Admin.js";
-import "./models/Achievement.js";
-import "./models/ContactMessage.js";
-import Project from "./models/Project.js"; 
-import ProjectImage from "./models/ProjectImage.js";
-import "./models/Resume.js";
-import "./models/Skill.js";
-
-
-Project.hasMany(ProjectImage, {
-  foreignKey: "projectId",
-  as: "images",
-  onDelete: "CASCADE",
-});
-ProjectImage.belongsTo(Project, {
-  foreignKey: "projectId",
-  as: "project",
-});
-
 
 import adminRoutes from "./routes/adminRoutes.js";
 import aboutRoutes from "./routes/aboutRoutes.js";
@@ -35,7 +14,6 @@ import achievementRoutes from "./routes/achievementRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import resumeRoutes from "./routes/resumeRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
-
 
 dotenv.config();
 const app = express();
@@ -74,21 +52,9 @@ app.get("/", (req, res) => {
   res.send("Backend is running successfully");
 });
 
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("Postgre connected successfully!");
-    return sequelize.sync({ alter: true });
-  })
-  .then(() => {
-    console.log("Database synced successfully!");
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch((error) => {
-    console.error("Database connection warning:", error.message);
-    console.log("⚠️  Continuing without database...");
-    // Continue running even if DB fails
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => console.log(`Server running on port ${PORT} (without DB)`));
-  });
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log("Connected to Supabase PostgreSQL");
+});

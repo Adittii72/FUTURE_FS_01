@@ -1,6 +1,4 @@
-import Project from "../models/Project.js";
-import ProjectImage from "../models/ProjectImage.js";
-import sequelize from "../config/database.js";
+import supabase from "../config/supabase.js";
 import { uploadToSupabase } from "../utils/storage.js";
 
 /* =========================
@@ -8,16 +6,20 @@ import { uploadToSupabase } from "../utils/storage.js";
 ========================= */
 export const getAllProjects = async (req, res) => {
   try {
-    const projects = await Project.findAll({
-      order: [["createdAt", "DESC"]],
-      include: {
-        model: ProjectImage,
-        as: "images",
-        attributes: ["id", "imageUrl"],
-      },
-    });
+    const { data: projects, error } = await supabase
+      .from("projects")
+      .select("*, project_images(id, imageUrl)")
+      .order("createdAt", { ascending: false });
 
-    return res.json({ projects });
+    if (error) throw error;
+
+    // Transform data to match frontend expectations
+    const transformedProjects = projects.map((p) => ({
+      ...p,
+      images: p.project_images || [],
+    }));
+
+    return res.json({ projects: transformedProjects });
   } catch (err) {
     console.error("getAllProjects error:", err);
     return res.status(500).json({ message: "Server error" });
@@ -29,19 +31,22 @@ export const getAllProjects = async (req, res) => {
 ========================= */
 export const getProjectById = async (req, res) => {
   try {
-    const project = await Project.findByPk(req.params.id, {
-      include: {
-        model: ProjectImage,
-        as: "images",
-        attributes: ["id", "imageUrl"],
-      },
-    });
+    const { data: project, error } = await supabase
+      .from("projects")
+      .select("*, project_images(id, imageUrl)")
+      .eq("id", req.params.id)
+      .single();
 
-    if (!project) {
+    if (error || !project) {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    return res.json({ project });
+    return res.json({
+      project: {
+        ...project,
+        images: project.project_images || [],
+      },
+    });
   } catch (err) {
     console.error("getProjectById error:", err);
     return res.status(500).json({ message: "Server error" });
@@ -61,12 +66,20 @@ export const createProject = async (req, res) => {
         .json({ message: "Title and description are required" });
     }
 
-    const project = await Project.create({
-      title,
-      description,
-      techStack: techStack || null,
-      githubUrl: githubUrl || null,
-    });
+    const { data: project, error } = await supabase
+      .from("projects")
+      .insert([
+        {
+          title,
+          description,
+          techStack: techStack || null,
+          githubUrl: githubUrl || null,
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) throw error;
 
     return res.status(201).json({ project });
   } catch (err) {
@@ -80,22 +93,30 @@ export const createProject = async (req, res) => {
 ========================= */
 export const updateProject = async (req, res) => {
   try {
-    const project = await Project.findByPk(req.params.id);
+    const { title, description, techStack, githubUrl } = req.body;
 
-    if (!project) {
+    const { data: project, error } = await supabase
+      .from("projects")
+      .update({
+        title: title,
+        description: description,
+        techStack: techStack,
+        githubUrl: githubUrl,
+      })
+      .eq("id", req.params.id)
+      .select("*, project_images(id, imageUrl)")
+      .single();
+
+    if (error || !project) {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    const { title, description, techStack, githubUrl } = req.body;
-
-    await project.update({
-      title: title ?? project.title,
-      description: description ?? project.description,
-      techStack: techStack ?? project.techStack,
-      githubUrl: githubUrl ?? project.githubUrl,
+    return res.json({
+      project: {
+        ...project,
+        images: project.project_images || [],
+      },
     });
-
-    return res.json({ project });
   } catch (err) {
     console.error("updateProject error:", err);
     return res.status(500).json({ message: "Server error" });
@@ -107,13 +128,15 @@ export const updateProject = async (req, res) => {
 ========================= */
 export const deleteProject = async (req, res) => {
   try {
-    const project = await Project.findByPk(req.params.id);
+    const { error } = await supabase
+      .from("projects")
+      .delete()
+      .eq("id", req.params.id);
 
-    if (!project) {
+    if (error) {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    await project.destroy();
     return res.json({ message: "Project deleted successfully" });
   } catch (err) {
     console.error("deleteProject error:", err);
@@ -125,13 +148,14 @@ export const deleteProject = async (req, res) => {
    UPLOAD PROJECT MEDIA
 ========================= */
 export const uploadProjectMedia = async (req, res) => {
-  const t = await sequelize.transaction();
-
   try {
-    const project = await Project.findByPk(req.params.id, { transaction: t });
+    const { data: project, error: projectError } = await supabase
+      .from("projects")
+      .select("id")
+      .eq("id", req.params.id)
+      .single();
 
-    if (!project) {
-      await t.rollback();
+    if (projectError || !project) {
       return res.status(404).json({ message: "Project not found" });
     }
 
@@ -150,21 +174,27 @@ export const uploadProjectMedia = async (req, res) => {
         contentType: video.mimetype,
       });
 
-      project.videoUrl = publicUrl;
-      await project.save({ transaction: t });
+      const { error: updateError } = await supabase
+        .from("projects")
+        .update({ videoUrl: publicUrl })
+        .eq("id", project.id);
 
-      await ProjectImage.destroy({
-        where: { projectId: project.id },
-        transaction: t,
-      });
+      if (updateError) throw updateError;
+
+      // Delete existing images
+      await supabase
+        .from("project_images")
+        .delete()
+        .eq("projectId", project.id);
     }
 
     // IMAGE UPLOAD
     if (req.files?.imageFiles) {
-      await ProjectImage.destroy({
-        where: { projectId: project.id },
-        transaction: t,
-      });
+      // Delete existing images
+      await supabase
+        .from("project_images")
+        .delete()
+        .eq("projectId", project.id);
 
       // Upload all images to Supabase and get URLs
       const imagePromises = req.files.imageFiles.map(async (file, index) => {
@@ -185,21 +215,36 @@ export const uploadProjectMedia = async (req, res) => {
       });
 
       const images = await Promise.all(imagePromises);
-      await ProjectImage.bulkCreate(images, { transaction: t });
-      project.videoUrl = null;
-      await project.save({ transaction: t });
+
+      const { error: insertError } = await supabase
+        .from("project_images")
+        .insert(images);
+
+      if (insertError) throw insertError;
+
+      // Clear video URL
+      await supabase
+        .from("projects")
+        .update({ videoUrl: null })
+        .eq("id", project.id);
     }
 
-    await t.commit();
+    const { data: updated, error: selectError } = await supabase
+      .from("projects")
+      .select("*, project_images(id, imageUrl)")
+      .eq("id", project.id)
+      .single();
 
-    const updated = await Project.findByPk(project.id, {
-      include: { model: ProjectImage, as: "images" },
+    if (selectError) throw selectError;
+
+    return res.json({
+      project: {
+        ...updated,
+        images: updated.project_images || [],
+      },
     });
-
-    return res.json({ project: updated });
   } catch (err) {
-    await t.rollback();
     console.error("uploadProjectMedia error:", err);
-    return res.status(500).json({ message: err.message || "Media upload failed" });
+    return res.status(500).json({ message: "Server error" });
   }
 };

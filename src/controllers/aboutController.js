@@ -1,10 +1,16 @@
-import About from "../models/About.js";
+import supabase from "../config/supabase.js";
 import { uploadToSupabase } from "../utils/storage.js";
 
 
 export const getAbout = async (req, res) => {
   try {
-    const about = await About.findOne();
+    const { data: aboutArray, error } = await supabase
+      .from("about")
+      .select("*");
+
+    if (error) throw error;
+
+    const about = aboutArray && aboutArray.length > 0 ? aboutArray[0] : null;
     if (!about) return res.status(404).json({ message: "About information not found" });
     return res.json({ about });
   } catch (err) {
@@ -22,37 +28,54 @@ export const updateAbout = async (req, res) => {
 
     const { name, headline, bio, linkedin, github, location, coverImageUrl, profileImageUrl } = req.body;
 
+    // Get existing about or create new
+    const { data: aboutArray } = await supabase
+      .from("about")
+      .select("*");
 
-    let about = await About.findOne();
+    let about = aboutArray && aboutArray.length > 0 ? aboutArray[0] : null;
 
     if (!about) {
-      about = await About.create({
-        name: name || "Your Name",
-        headline: headline || "",
-        bio: bio || "",
-        linkedin: linkedin || null,
-        github: github || null,
-        location: location || null,
-        coverImageUrl: coverImageUrl || null,
-        profileImageUrl: profileImageUrl || null,
-      });
-      return res.status(201).json({ message: "About created", about });
+      const { data: newAbout, error: createError } = await supabase
+        .from("about")
+        .insert([{
+          name: name || "Your Name",
+          headline: headline || null,
+          bio: bio || null,
+          linkedin: linkedin || null,
+          github: github || null,
+          location: location || null,
+          coverImageUrl: coverImageUrl || null,
+          profileImageUrl: profileImageUrl || null,
+        }])
+        .select()
+        .single();
+
+      if (createError) throw createError;
+      return res.status(201).json({ message: "About created", about: newAbout });
     }
 
+    // Update existing
+    const updateData = {};
+    if ('name' in req.body) updateData.name = name;
+    if ('headline' in req.body) updateData.headline = headline;
+    if ('bio' in req.body) updateData.bio = bio;
+    if ('linkedin' in req.body) updateData.linkedin = linkedin;
+    if ('github' in req.body) updateData.github = github;
+    if ('location' in req.body) updateData.location = location;
+    if ('coverImageUrl' in req.body) updateData.coverImageUrl = coverImageUrl;
+    if ('profileImageUrl' in req.body) updateData.profileImageUrl = profileImageUrl;
 
-    await about.update({
-      name: 'name' in req.body ? name : about.name, 
-      headline: 'headline' in req.body ? headline : about.headline,
-      bio: 'bio' in req.body ? bio : about.bio,
-      linkedin: 'linkedin' in req.body ? linkedin : about.linkedin,
-      github: 'github' in req.body ? github : about.github,
-      location: 'location' in req.body ? location : about.location,
-      coverImageUrl: 'coverImageUrl' in req.body ? coverImageUrl : about.coverImageUrl,
-      profileImageUrl: 'profileImageUrl' in req.body ? profileImageUrl : about.profileImageUrl,
-    });
+    const { data: updatedAbout, error: updateError } = await supabase
+      .from("about")
+      .update(updateData)
+      .eq("id", about.id)
+      .select()
+      .single();
 
+    if (updateError) throw updateError;
 
-    return res.json({ message: "About updated", about });
+    return res.json({ message: "About updated", about: updatedAbout });
   } catch (err) {
     console.error("updateAbout error:", err);
     return res.status(500).json({ message: "Server error" });
@@ -80,14 +103,32 @@ export const uploadAboutImage = async (req, res) => {
       contentType: req.file.mimetype,
     });
 
-    let about = await About.findOne();
+    // Get existing about
+    const { data: aboutArray } = await supabase
+      .from("about")
+      .select("*");
+
+    let about = aboutArray && aboutArray.length > 0 ? aboutArray[0] : null;
 
     if (about) {
-      await about.update({ coverImageUrl: publicUrl });
-      return res.json({ message: "About image updated", about });
+      const { data: updated, error } = await supabase
+        .from("about")
+        .update({ coverImageUrl: publicUrl })
+        .eq("id", about.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return res.json({ message: "About image updated", about: updated });
     } else {
-      about = await About.create({ coverImageUrl: publicUrl });
-      return res.status(201).json({ message: "About image created", about });
+      const { data: created, error } = await supabase
+        .from("about")
+        .insert([{ coverImageUrl: publicUrl }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return res.status(201).json({ message: "About image created", about: created });
     }
   } catch (err) {
     console.error("uploadAboutImage error:", err);
