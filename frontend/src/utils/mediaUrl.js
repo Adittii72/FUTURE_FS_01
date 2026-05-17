@@ -11,14 +11,16 @@ export const getMediaUrl = (url) => {
     return url;
   }
   
+  const backendUrl =
+    import.meta.env.VITE_BACKEND_URL ||
+    'https://future-fs-01-backend-7jvt.onrender.com';
+
   // If it's a relative path (starts with /), prepend backend URL
   if (url.startsWith('/')) {
-    const backendUrl = 'https://future-fs-01-backend-7jvt.onrender.com';
     return `${backendUrl}${url}`;
   }
   
   // If it doesn't start with /, assume it's relative and add /
-  const backendUrl = 'https://future-fs-01-backend-7jvt.onrender.com';
   return `${backendUrl}/${url}`;
 };
 

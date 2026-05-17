@@ -1,15 +1,9 @@
-import supabase from "../config/supabase.js";
+import Achievement from "../models/Achievement.js";
 import { uploadToSupabase } from "../utils/storage.js";
 
-// GET /api/achievements
 export const getAllAchievements = async (req, res) => {
   try {
-    const { data: achievements, error } = await supabase
-      .from("achievements")
-      .select("*")
-      .order("createdAt", { ascending: false });
-
-    if (error) throw error;
+    const achievements = await Achievement.find().sort({ createdAt: -1 });
     return res.json({ achievements });
   } catch (err) {
     console.error("getAllAchievements error:", err);
@@ -17,7 +11,6 @@ export const getAllAchievements = async (req, res) => {
   }
 };
 
-// POST /api/achievements
 export const createAchievement = async (req, res) => {
   try {
     const { title, description, imageUrl, date } = req.body;
@@ -28,18 +21,13 @@ export const createAchievement = async (req, res) => {
         .json({ message: "Achievement 'title' is required" });
     }
 
-    const { data: achievement, error } = await supabase
-      .from("achievements")
-      .insert([{
-        title,
-        description: description || null,
-        imageUrl: imageUrl || null,
-        date: date || null,
-      }])
-      .select()
-      .single();
+    const achievement = await Achievement.create({
+      title,
+      description: description || null,
+      imageUrl: imageUrl || null,
+      date: date || null,
+    });
 
-    if (error) throw error;
     return res.status(201).json({ achievement });
   } catch (err) {
     console.error("createAchievement error:", err);
@@ -47,25 +35,18 @@ export const createAchievement = async (req, res) => {
   }
 };
 
-// PUT /api/achievements/:id
 export const updateAchievement = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, imageUrl, date } = req.body;
 
-    const { data: achievement, error } = await supabase
-      .from("achievements")
-      .update({
-        title: title,
-        description: description,
-        imageUrl: imageUrl,
-        date: date,
-      })
-      .eq("id", id)
-      .select()
-      .single();
+    const achievement = await Achievement.findByIdAndUpdate(
+      id,
+      { title, description, imageUrl, date },
+      { new: true, runValidators: true }
+    );
 
-    if (error || !achievement) {
+    if (!achievement) {
       return res.status(404).json({ message: "Achievement not found" });
     }
 
@@ -76,17 +57,12 @@ export const updateAchievement = async (req, res) => {
   }
 };
 
-// DELETE /api/achievements/:id
 export const deleteAchievement = async (req, res) => {
   try {
     const { id } = req.params;
+    const achievement = await Achievement.findByIdAndDelete(id);
 
-    const { error } = await supabase
-      .from("achievements")
-      .delete()
-      .eq("id", id);
-
-    if (error) {
+    if (!achievement) {
       return res.status(404).json({ message: "Achievement not found" });
     }
 
@@ -97,7 +73,6 @@ export const deleteAchievement = async (req, res) => {
   }
 };
 
-// POST /api/achievements/upload/:id
 export const uploadAchievementImage = async (req, res) => {
   try {
     const { id } = req.params;
@@ -106,18 +81,11 @@ export const uploadAchievementImage = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // Check if achievement exists
-    const { data: achievement, error: checkError } = await supabase
-      .from("achievements")
-      .select("id")
-      .eq("id", id)
-      .single();
-
-    if (checkError || !achievement) {
+    const achievement = await Achievement.findById(id);
+    if (!achievement) {
       return res.status(404).json({ message: "Achievement not found" });
     }
 
-    // Upload to Supabase Storage
     const bucket = process.env.SUPABASE_STORAGE_BUCKET || "media";
     const ext = req.file.originalname.split(".").pop() || "jpg";
     const filePath = `achievements/${id}/${Date.now()}.${ext}`;
@@ -129,15 +97,10 @@ export const uploadAchievementImage = async (req, res) => {
       contentType: req.file.mimetype,
     });
 
-    const { data: updated, error: updateError } = await supabase
-      .from("achievements")
-      .update({ imageUrl: publicUrl })
-      .eq("id", id)
-      .select()
-      .single();
+    achievement.imageUrl = publicUrl;
+    await achievement.save();
 
-    if (updateError) throw updateError;
-    return res.json({ achievement: updated });
+    return res.json({ achievement });
   } catch (err) {
     console.error("uploadAchievementImage error:", err);
     return res.status(500).json({ message: err.message || "Server error" });

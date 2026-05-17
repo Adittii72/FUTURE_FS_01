@@ -1,24 +1,11 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
+import mongoose from "mongoose";
+import schemaOptions from "./schemaOptions.js";
 
-const Resume = sequelize.define(
-  "Resume",
+const resumeSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    fileUrl: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-
+    fileUrl: { type: String, trim: true, default: "" },
   },
-  {
-    tableName: "resumes",
-    timestamps: true,
-  }
+  { ...schemaOptions, collection: "resumes" }
 );
 
-export default Resume;
+export default mongoose.models.Resume || mongoose.model("Resume", resumeSchema);

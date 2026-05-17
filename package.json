@@ -9,7 +9,8 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "backup": "node src/scripts/backupDatabase.js",
-    "restore": "node src/scripts/restoreDatabase.js"
+    "restore": "node src/scripts/restoreDatabase.js",
+    "migrate:supabase-to-mongo": "node src/scripts/migrateSupabaseToMongo.js"
   },
   "keywords": [],
   "author": "",

@@ -1,15 +1,8 @@
-import supabase from "../config/supabase.js";
+import Skill from "../models/Skill.js";
 
-// @route   GET /api/skills
-// @access  Public
 export const getAllSkills = async (req, res) => {
   try {
-    const { data: skills, error } = await supabase
-      .from("skills")
-      .select("*")
-      .order("percent", { ascending: false });
-
-    if (error) throw error;
+    const skills = await Skill.find().sort({ percent: -1 });
     return res.json({ skills });
   } catch (err) {
     console.error("getAllSkills error:", err);
@@ -17,8 +10,6 @@ export const getAllSkills = async (req, res) => {
   }
 };
 
-// @route   POST /api/skills
-// @access  Private (Admin)
 export const createSkill = async (req, res) => {
   try {
     const { name, level, percent } = req.body;
@@ -27,49 +18,39 @@ export const createSkill = async (req, res) => {
       return res.status(400).json({ message: "Skill 'name' is required" });
     }
 
-    const { data: skill, error } = await supabase
-      .from("skills")
-      .insert([{
-        name,
-        level: level || null,
-        percent: percent || null,
-      }])
-      .select()
-      .single();
-
-    if (error) {
-      if (error.code === "23505") {
-        return res.status(400).json({ message: "Skill with this name already exists" });
-      }
-      throw error;
-    }
+    const skill = await Skill.create({
+      name,
+      level: level || null,
+      percent: percent === "" || percent === undefined ? null : Number(percent),
+    });
 
     return res.status(201).json({ message: "Skill created", skill });
   } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).json({ message: "Skill with this name already exists" });
+    }
+
     console.error("createSkill error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };
 
-// @route   PUT /api/skills/:id
-// @access  Private (Admin)
 export const updateSkill = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, level, percent } = req.body;
 
-    const { data: skill, error } = await supabase
-      .from("skills")
-      .update({
-        name: name,
-        level: level,
-        percent: percent,
-      })
-      .eq("id", id)
-      .select()
-      .single();
+    const skill = await Skill.findByIdAndUpdate(
+      id,
+      {
+        name,
+        level,
+        percent: percent === "" || percent === undefined ? null : Number(percent),
+      },
+      { new: true, runValidators: true }
+    );
 
-    if (error || !skill) {
+    if (!skill) {
       return res.status(404).json({ message: "Skill not found" });
     }
 
@@ -80,17 +61,12 @@ export const updateSkill = async (req, res) => {
   }
 };
 
-// @route   DELETE /api/skills/:id
-// @access  Private (Admin)
 export const deleteSkill = async (req, res) => {
   try {
     const { id } = req.params;
-    const { error } = await supabase
-      .from("skills")
-      .delete()
-      .eq("id", id);
+    const skill = await Skill.findByIdAndDelete(id);
 
-    if (error) {
+    if (!skill) {
       return res.status(404).json({ message: "Skill not found" });
     }
 

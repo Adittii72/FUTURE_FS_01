@@ -1,33 +1,25 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
+import mongoose from "mongoose";
 
-const ProjectImage = sequelize.define(
-  "ProjectImage",
+const projectImageSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    imageUrl: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    projectId: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
-      references: {
-        model: "projects",
-        key: "id",
-      },
-    },
+    imageUrl: { type: String, required: true, trim: true },
+    projectId: { type: mongoose.Schema.Types.ObjectId, ref: "Project", required: true },
   },
   {
-    tableName: "project_images",
+    collection: "project_images",
     timestamps: true,
+    versionKey: false,
+    toJSON: {
+      virtuals: true,
+      transform: (_doc, ret) => {
+        ret.id = ret._id.toString();
+        ret.projectId = ret.projectId?.toString();
+        delete ret._id;
+        return ret;
+      },
+    },
   }
 );
 
-
-
-export default ProjectImage;
+export default mongoose.models.ProjectImage ||
+  mongoose.model("ProjectImage", projectImageSchema);

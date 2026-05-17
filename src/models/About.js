@@ -1,72 +1,18 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
+import mongoose from "mongoose";
+import schemaOptions from "./schemaOptions.js";
 
-const About = sequelize.define(
-  "About",
+const aboutSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: "Your Name",
-    },
-    headline: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    bio: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    linkedin: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    github: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    location: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    coverImageUrl: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    profileImageUrl: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+    name: { type: String, trim: true, default: "Your Name" },
+    headline: { type: String, trim: true, default: null },
+    bio: { type: String, default: null },
+    linkedin: { type: String, trim: true, default: null },
+    github: { type: String, trim: true, default: null },
+    location: { type: String, trim: true, default: null },
+    coverImageUrl: { type: String, trim: true, default: null },
+    profileImageUrl: { type: String, trim: true, default: null },
   },
-  {
-    tableName: "about",
-    timestamps: true,
-    hooks: {
-      beforeCreate: (instance) => {
-        if (instance.name) instance.name = instance.name.trim();
-        if (instance.linkedin) instance.linkedin = instance.linkedin.trim();
-        if (instance.github) instance.github = instance.github.trim();
-        if (instance.coverImageUrl)
-          instance.coverImageUrl = instance.coverImageUrl.trim();
-        if (instance.profileImageUrl)
-          instance.profileImageUrl = instance.profileImageUrl.trim();
-      },
-      beforeUpdate: (instance) => {
-        if (instance.name) instance.name = instance.name.trim();
-        if (instance.linkedin) instance.linkedin = instance.linkedin.trim();
-        if (instance.github) instance.github = instance.github.trim();
-        if (instance.coverImageUrl)
-          instance.coverImageUrl = instance.coverImageUrl.trim();
-        if (instance.profileImageUrl)
-          instance.profileImageUrl = instance.profileImageUrl.trim();
-      },
-    },
-  }
+  { ...schemaOptions, collection: "about" }
 );
 
-export default About;
+export default mongoose.models.About || mongoose.model("About", aboutSchema);

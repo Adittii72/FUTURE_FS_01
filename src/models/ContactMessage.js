@@ -1,56 +1,16 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
+import mongoose from "mongoose";
+import schemaOptions from "./schemaOptions.js";
 
-const ContactMessage = sequelize.define(
-  "ContactMessage",
+const contactMessageSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      validate: {
-        isEmail: true,
-      },
-    },
-    phone: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    message: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    isRead: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-    
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, trim: true, lowercase: true },
+    phone: { type: String, trim: true, default: null },
+    message: { type: String, required: true },
+    isRead: { type: Boolean, default: false },
   },
-  {
-    tableName: "contact_messages",
-    timestamps: true,
-    hooks: {
-      beforeCreate: (msg) => {
-        if (msg.name) msg.name = msg.name.trim();
-        if (msg.email) msg.email = msg.email.trim().toLowerCase();
-        if (msg.phone) msg.phone = msg.phone.trim();
-      },
-      beforeUpdate: (msg) => {
-        if (msg.name) msg.name = msg.name.trim();
-        if (msg.email) msg.email = msg.email.trim().toLowerCase();
-        if (msg.phone) msg.phone = msg.phone.trim();
-      },
-    },
-  }
+  { ...schemaOptions, collection: "contact_messages" }
 );
 
-export default ContactMessage;
+export default mongoose.models.ContactMessage ||
+  mongoose.model("ContactMessage", contactMessageSchema);

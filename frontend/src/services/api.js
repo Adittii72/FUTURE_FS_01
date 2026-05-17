@@ -1,7 +1,11 @@
 import axios from "axios";
 
+const apiBaseUrl =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://future-fs-01-backend-7jvt.onrender.com/api";
+
 const api = axios.create({
-  baseURL: "https://future-fs-01-backend-7jvt.onrender.com/api",
+  baseURL: apiBaseUrl,
   headers: {
     "Content-Type": "application/json",
   },

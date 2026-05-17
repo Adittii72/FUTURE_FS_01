@@ -1,15 +1,15 @@
 import dotenv from "dotenv";
-dotenv.config();
-import sequelize from "../config/database.js";
+import mongoose from "mongoose";
+import connectDatabase from "../config/database.js";
 import About from "../models/About.js";
+
+dotenv.config();
 
 const run = async () => {
   try {
-    await sequelize.authenticate();
-    await sequelize.sync();
+    await connectDatabase();
 
     let about = await About.findOne();
-
     if (!about) {
       about = await About.create({
         name: "Your Name",
@@ -21,15 +21,16 @@ const run = async () => {
         github: "",
         location: "",
       });
-      console.log("About section created successfully!");
+      console.log("About section created successfully.");
     } else {
-      // Update existing about if needed
-      console.log("About section already exists");
+      console.log("About section already exists.");
     }
 
+    await mongoose.disconnect();
     process.exit(0);
   } catch (err) {
     console.error("Initialization error:", err);
+    await mongoose.disconnect();
     process.exit(1);
   }
 };

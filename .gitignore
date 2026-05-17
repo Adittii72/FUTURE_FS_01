@@ -3,4 +3,5 @@ node_modules/
 public/uploads/*
 !public/uploads/.gitkeep
 backups/*.sql
+backups/mongodb-backup-*/
 !backups/.gitkeep

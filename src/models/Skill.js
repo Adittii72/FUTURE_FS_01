@@ -1,44 +1,13 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
+import mongoose from "mongoose";
+import schemaOptions from "./schemaOptions.js";
 
-const Skill = sequelize.define(
-  "Skill",
+const skillSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    level: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    percent: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      validate: {
-        min: 0,
-        max: 100,
-      },
-    },
-    
+    name: { type: String, required: true, trim: true, unique: true },
+    level: { type: String, trim: true, default: null },
+    percent: { type: Number, min: 0, max: 100, default: null },
   },
-  {
-    tableName: "skills",
-    timestamps: true,
-    hooks: {
-      beforeCreate: (skill) => {
-        if (skill.name) skill.name = skill.name.trim();
-      },
-      beforeUpdate: (skill) => {
-        if (skill.name) skill.name = skill.name.trim();
-      },
-    },
-  }
+  { ...schemaOptions, collection: "skills" }
 );
 
-export default Skill;
+export default mongoose.models.Skill || mongoose.model("Skill", skillSchema);

@@ -1,48 +1,47 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
+import mongoose from "mongoose";
+import schemaOptions from "./schemaOptions.js";
 
-const Project = sequelize.define(
-  "Project",
+const projectImageSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    title: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    techStack: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    githubUrl: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    videoUrl: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+    imageUrl: { type: String, required: true, trim: true },
   },
   {
-    tableName: "projects",
+    _id: true,
     timestamps: true,
-    hooks: {
-      beforeCreate: (project) => {
-        if (project.title) project.title = project.title.trim();
+    versionKey: false,
+    toJSON: {
+      virtuals: true,
+      transform: (_doc, ret) => {
+        ret.id = ret._id.toString();
+        delete ret._id;
+        return ret;
       },
-      beforeUpdate: (project) => {
-        if (project.title) project.title = project.title.trim();
+    },
+    toObject: {
+      virtuals: true,
+      transform: (_doc, ret) => {
+        ret.id = ret._id.toString();
+        delete ret._id;
+        return ret;
       },
     },
   }
 );
 
+projectImageSchema.virtual("id").get(function () {
+  return this._id.toString();
+});
 
-export default Project;
+const projectSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true, trim: true, maxlength: 100 },
+    description: { type: String, required: true },
+    techStack: { type: String, trim: true, default: null },
+    githubUrl: { type: String, trim: true, default: null },
+    videoUrl: { type: String, trim: true, default: null },
+    images: { type: [projectImageSchema], default: [] },
+  },
+  { ...schemaOptions, collection: "projects" }
+);
+
+export default mongoose.models.Project || mongoose.model("Project", projectSchema);

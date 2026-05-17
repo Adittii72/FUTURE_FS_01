@@ -1,17 +1,9 @@
-import supabase from "../config/supabase.js";
+import Resume from "../models/Resume.js";
 import { uploadToSupabase } from "../utils/storage.js";
 
-// @route   GET /api/resume
-// @access  Public
 export const getResume = async (req, res) => {
   try {
-    const { data: resumeArray, error } = await supabase
-      .from("resumes")
-      .select("*");
-
-    if (error) throw error;
-
-    const resume = resumeArray && resumeArray.length > 0 ? resumeArray[0] : null;
+    const resume = await Resume.findOne();
     if (!resume) {
       return res.status(404).json({ message: "Resume not found" });
     }
@@ -23,8 +15,6 @@ export const getResume = async (req, res) => {
   }
 };
 
-// @route   POST /api/resume
-// @access  Private (Admin)
 export const setResume = async (req, res) => {
   try {
     const { fileUrl } = req.body;
@@ -33,58 +23,34 @@ export const setResume = async (req, res) => {
       return res.status(400).json({ message: "'fileUrl' is required" });
     }
 
-    // Get existing resume
-    const { data: resumeArray } = await supabase
-      .from("resumes")
-      .select("*");
+    let resume = await Resume.findOne();
+    let status = 200;
+    let message = "Resume updated";
 
-    let resume = resumeArray && resumeArray.length > 0 ? resumeArray[0] : null;
-
-    if (resume) {
-      const { data: updated, error } = await supabase
-        .from("resumes")
-        .update({ fileUrl })
-        .eq("id", resume.id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return res.json({ message: "Resume updated", resume: updated });
+    if (!resume) {
+      resume = await Resume.create({ fileUrl });
+      status = 201;
+      message = "Resume created";
     } else {
-      const { data: created, error } = await supabase
-        .from("resumes")
-        .insert([{ fileUrl }])
-        .select()
-        .single();
-
-      if (error) throw error;
-      return res.status(201).json({ message: "Resume created", resume: created });
+      resume.fileUrl = fileUrl;
+      await resume.save();
     }
+
+    return res.status(status).json({ message, resume });
   } catch (err) {
     console.error("setResume error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };
 
-// @route   DELETE /api/resume
-// @access  Private (Admin)
 export const deleteResume = async (req, res) => {
   try {
-    const { data: resumeArray } = await supabase
-      .from("resumes")
-      .select("*");
+    const resume = await Resume.findOneAndDelete();
 
-    const resume = resumeArray && resumeArray.length > 0 ? resumeArray[0] : null;
     if (!resume) {
       return res.status(404).json({ message: "Resume not found" });
     }
 
-    const { error } = await supabase
-      .from("resumes")
-      .delete()
-      .eq("id", resume.id);
-
-    if (error) throw error;
     return res.json({ message: "Resume deleted successfully" });
   } catch (err) {
     console.error("deleteResume error:", err);
@@ -92,16 +58,12 @@ export const deleteResume = async (req, res) => {
   }
 };
 
-
-// @route   POST /api/resume/upload
-// @access  Private (Admin)
 export const uploadResume = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // Upload to Supabase Storage
     const bucket = process.env.SUPABASE_STORAGE_BUCKET || "media";
     const ext = req.file.originalname.split(".").pop() || "pdf";
     const filePath = `resume/resume-${Date.now()}.${ext}`;
@@ -113,33 +75,20 @@ export const uploadResume = async (req, res) => {
       contentType: req.file.mimetype,
     });
 
-    // Get existing resume
-    const { data: resumeArray } = await supabase
-      .from("resumes")
-      .select("*");
+    let resume = await Resume.findOne();
+    let status = 200;
+    let message = "Resume uploaded";
 
-    let resume = resumeArray && resumeArray.length > 0 ? resumeArray[0] : null;
-
-    if (resume) {
-      const { data: updated, error } = await supabase
-        .from("resumes")
-        .update({ fileUrl: publicUrl })
-        .eq("id", resume.id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return res.json({ message: "Resume uploaded", resume: updated });
+    if (!resume) {
+      resume = await Resume.create({ fileUrl: publicUrl });
+      status = 201;
+      message = "Resume created";
     } else {
-      const { data: created, error } = await supabase
-        .from("resumes")
-        .insert([{ fileUrl: publicUrl }])
-        .select()
-        .single();
-
-      if (error) throw error;
-      return res.status(201).json({ message: "Resume created", resume: created });
+      resume.fileUrl = publicUrl;
+      await resume.save();
     }
+
+    return res.status(status).json({ message, resume });
   } catch (err) {
     console.error("uploadResume error:", err);
     return res.status(500).json({ message: err.message || "Server error" });

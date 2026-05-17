@@ -1,17 +1,14 @@
-import supabase from "../config/supabase.js";
+import About from "../models/About.js";
 import { uploadToSupabase } from "../utils/storage.js";
-
 
 export const getAbout = async (req, res) => {
   try {
-    const { data: aboutArray, error } = await supabase
-      .from("about")
-      .select("*");
+    const about = await About.findOne();
 
-    if (error) throw error;
+    if (!about) {
+      return res.status(404).json({ message: "About information not found" });
+    }
 
-    const about = aboutArray && aboutArray.length > 0 ? aboutArray[0] : null;
-    if (!about) return res.status(404).json({ message: "About information not found" });
     return res.json({ about });
   } catch (err) {
     console.error("getAbout error:", err);
@@ -19,79 +16,63 @@ export const getAbout = async (req, res) => {
   }
 };
 
-
 export const updateAbout = async (req, res) => {
   try {
     if (Object.keys(req.body).length === 0) {
       return res.status(400).json({ message: "At least one field is required to update" });
     }
 
-    const { name, headline, bio, linkedin, github, location, coverImageUrl, profileImageUrl } = req.body;
+    const fields = [
+      "name",
+      "headline",
+      "bio",
+      "linkedin",
+      "github",
+      "location",
+      "coverImageUrl",
+      "profileImageUrl",
+    ];
 
-    // Get existing about or create new
-    const { data: aboutArray } = await supabase
-      .from("about")
-      .select("*");
-
-    let about = aboutArray && aboutArray.length > 0 ? aboutArray[0] : null;
-
-    if (!about) {
-      const { data: newAbout, error: createError } = await supabase
-        .from("about")
-        .insert([{
-          name: name || "Your Name",
-          headline: headline || null,
-          bio: bio || null,
-          linkedin: linkedin || null,
-          github: github || null,
-          location: location || null,
-          coverImageUrl: coverImageUrl || null,
-          profileImageUrl: profileImageUrl || null,
-        }])
-        .select()
-        .single();
-
-      if (createError) throw createError;
-      return res.status(201).json({ message: "About created", about: newAbout });
+    const updateData = {};
+    for (const field of fields) {
+      if (field in req.body) updateData[field] = req.body[field];
     }
 
-    // Update existing
-    const updateData = {};
-    if ('name' in req.body) updateData.name = name;
-    if ('headline' in req.body) updateData.headline = headline;
-    if ('bio' in req.body) updateData.bio = bio;
-    if ('linkedin' in req.body) updateData.linkedin = linkedin;
-    if ('github' in req.body) updateData.github = github;
-    if ('location' in req.body) updateData.location = location;
-    if ('coverImageUrl' in req.body) updateData.coverImageUrl = coverImageUrl;
-    if ('profileImageUrl' in req.body) updateData.profileImageUrl = profileImageUrl;
+    let about = await About.findOne();
+    let message = "About updated";
+    let status = 200;
 
-    const { data: updatedAbout, error: updateError } = await supabase
-      .from("about")
-      .update(updateData)
-      .eq("id", about.id)
-      .select()
-      .single();
+    if (!about) {
+      about = await About.create({
+        name: updateData.name || "Your Name",
+        headline: updateData.headline || null,
+        bio: updateData.bio || null,
+        linkedin: updateData.linkedin || null,
+        github: updateData.github || null,
+        location: updateData.location || null,
+        coverImageUrl: updateData.coverImageUrl || null,
+        profileImageUrl: updateData.profileImageUrl || null,
+      });
+      message = "About created";
+      status = 201;
+    } else {
+      about.set(updateData);
+      await about.save();
+    }
 
-    if (updateError) throw updateError;
-
-    return res.json({ message: "About updated", about: updatedAbout });
+    return res.status(status).json({ message, about });
   } catch (err) {
     console.error("updateAbout error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 };
 
-
-// @route   POST /api/about/upload
-// @access  Private (Admin)
 export const uploadAboutImage = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // Upload to Supabase Storage
     const bucket = process.env.SUPABASE_STORAGE_BUCKET || "media";
     const ext = req.file.originalname.split(".").pop() || "jpg";
     const filePath = `about/cover-${Date.now()}.${ext}`;
@@ -103,33 +84,20 @@ export const uploadAboutImage = async (req, res) => {
       contentType: req.file.mimetype,
     });
 
-    // Get existing about
-    const { data: aboutArray } = await supabase
-      .from("about")
-      .select("*");
+    let about = await About.findOne();
+    let status = 200;
+    let message = "About image updated";
 
-    let about = aboutArray && aboutArray.length > 0 ? aboutArray[0] : null;
-
-    if (about) {
-      const { data: updated, error } = await supabase
-        .from("about")
-        .update({ coverImageUrl: publicUrl })
-        .eq("id", about.id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return res.json({ message: "About image updated", about: updated });
+    if (!about) {
+      about = await About.create({ coverImageUrl: publicUrl });
+      status = 201;
+      message = "About image created";
     } else {
-      const { data: created, error } = await supabase
-        .from("about")
-        .insert([{ coverImageUrl: publicUrl }])
-        .select()
-        .single();
-
-      if (error) throw error;
-      return res.status(201).json({ message: "About image created", about: created });
+      about.coverImageUrl = publicUrl;
+      await about.save();
     }
+
+    return res.status(status).json({ message, about });
   } catch (err) {
     console.error("uploadAboutImage error:", err);
     return res.status(500).json({ message: err.message || "Server error" });

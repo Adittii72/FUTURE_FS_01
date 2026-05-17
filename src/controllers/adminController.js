@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import supabase from "../config/supabase.js";
 import dotenv from "dotenv";
+import Admin from "../models/Admin.js";
+
 dotenv.config();
 
 const JWT_EXPIRES_IN = "7d";
@@ -9,26 +9,27 @@ const JWT_EXPIRES_IN = "7d";
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ message: "Email and password required" });
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password required" });
+    }
 
-    const { data: admins, error } = await supabase
-      .from("admins")
-      .select("*")
-      .eq("email", email.trim().toLowerCase());
+    const admin = await Admin.findOne({ email: email.trim().toLowerCase() }).select("+password");
+    if (!admin || !admin.isActive) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
 
-    if (error) throw error;
-
-    const admin = admins && admins.length > 0 ? admins[0] : null;
-    if (!admin || !admin.isActive) return res.status(401).json({ message: "Invalid credentials" });
-
-    // Compare password
-    const match = await bcrypt.compare(password, admin.password);
-    if (!match) return res.status(401).json({ message: "Invalid credentials" });
+    const match = await admin.validatePassword(password);
+    if (!match) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
 
     const payload = { id: admin.id, email: admin.email, role: admin.role || "admin" };
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
-    return res.json({ token, admin: { id: admin.id, name: admin.name, email: admin.email } });
+    return res.json({
+      token,
+      admin: { id: admin.id, name: admin.name, email: admin.email },
+    });
   } catch (err) {
     console.error("Login error:", err);
     return res.status(500).json({ message: "Server error" });
@@ -37,13 +38,14 @@ export const login = async (req, res) => {
 
 export const profile = async (req, res) => {
   try {
-    const { data: admin, error } = await supabase
-      .from("admins")
-      .select("id, name, email, isActive, createdAt, updatedAt")
-      .eq("id", req.admin.id)
-      .single();
+    const admin = await Admin.findById(req.admin.id).select(
+      "name email isActive createdAt updatedAt role"
+    );
 
-    if (error || !admin) return res.status(404).json({ message: "Admin not found" });
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
     return res.json({ admin });
   } catch (err) {
     console.error("Profile error:", err);

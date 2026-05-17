@@ -1,53 +1,30 @@
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import sequelize from "../config/database.js";
+import schemaOptions from "./schemaOptions.js";
 
 const SALT_ROUNDS = 10;
 
-const Admin = sequelize.define(
-  "Admin",
+const adminSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    name: { type: DataTypes.STRING, allowNull: false },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        isEmail: true,
-      },
-    },
-    passwordHash: { type: DataTypes.STRING, allowNull: false },
-    isActive: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, trim: true, lowercase: true, unique: true },
+    passwordHash: { type: String },
+    password: { type: String, select: false },
+    isActive: { type: Boolean, default: true },
+    role: { type: String, default: "admin" },
   },
-  {
-    tableName: "admins",
-    timestamps: true,
-    hooks: {
-      beforeCreate: (admin) => {
-        if (admin.email) admin.email = admin.email.trim().toLowerCase();
-      },
-      beforeUpdate: (admin) => {
-        if (admin.email) admin.email = admin.email.trim().toLowerCase();
-      },
-    },
-  }
+  { ...schemaOptions, collection: "admins" }
 );
 
-
-Admin.prototype.setPassword = async function (plainPassword) {
-  const hash = await bcrypt.hash(plainPassword, SALT_ROUNDS);
-  this.passwordHash = hash;
+adminSchema.methods.setPassword = async function (plainPassword) {
+  this.passwordHash = await bcrypt.hash(plainPassword, SALT_ROUNDS);
   return this.passwordHash;
 };
 
-
-Admin.prototype.validatePassword = async function (plainPassword) {
-  if (!this.passwordHash) return false;
-  return bcrypt.compare(plainPassword, this.passwordHash);
+adminSchema.methods.validatePassword = async function (plainPassword) {
+  const hash = this.passwordHash || this.password;
+  if (!hash) return false;
+  return bcrypt.compare(plainPassword, hash);
 };
 
-export default Admin;
+export default mongoose.models.Admin || mongoose.model("Admin", adminSchema);

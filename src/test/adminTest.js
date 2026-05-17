@@ -1,22 +1,19 @@
-import sequelize from "../config/database.js";
+import mongoose from "mongoose";
+import connectDatabase from "../config/database.js";
 import Admin from "../models/Admin.js";
 
 const run = async () => {
   try {
-    await sequelize.authenticate();
-    await sequelize.sync({ alter: true });
-    console.log("DB ready");
-    const admin = Admin.build({ name: "Aditi", email: "aditi@example.com" });
-    await admin.setPassword("StrongP@ssw0rd");
-    await admin.save();
-    console.log("Admin created:", admin.toJSON());
-    const found = await Admin.findOne({ where: { email: "aditi@example.com" } });
-    const isMatch = await found.validatePassword("StrongP@ssw0rd");
-    console.log("Password match:", isMatch);
-  } catch (err) {
-    console.error("Error:", err);
+    await connectDatabase();
+    console.log("MongoDB connected.");
+
+    const adminCount = await Admin.countDocuments();
+    console.log(`Admins found: ${adminCount}`);
+  } catch (error) {
+    console.error("Admin test failed:", error);
+    process.exitCode = 1;
   } finally {
-    await sequelize.close();
+    await mongoose.disconnect();
   }
 };
 

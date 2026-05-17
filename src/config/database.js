@@ -1,27 +1,28 @@
-import { Sequelize } from "sequelize";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-console.log("Connecting to database URL:", process.env.DATABASE_URL?.substring(0, 50) + "...");
+let connectionPromise = null;
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialect: "postgres",
-  pool: {
-    max: 2,
-    min: 0,
-    acquire: 30000,
-    idle: 10000,
-    evict: 15000,
-  },
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
-    connectTimeout: 10000,
-  },
-  logging: false,
-});
+const connectDatabase = async () => {
+  if (mongoose.connection.readyState === 1) {
+    return mongoose.connection;
+  }
 
-export default sequelize;
+  if (!process.env.MONGODB_URI) {
+    throw new Error("Missing MONGODB_URI environment variable");
+  }
+
+  if (!connectionPromise) {
+    connectionPromise = mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 10000,
+    });
+  }
+
+  await connectionPromise;
+  console.log("Connected to MongoDB");
+  return mongoose.connection;
+};
+
+export default connectDatabase;

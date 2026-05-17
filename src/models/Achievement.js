@@ -1,43 +1,15 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
+import mongoose from "mongoose";
+import schemaOptions from "./schemaOptions.js";
 
-const Achievement = sequelize.define(
-  "Achievement",
+const achievementSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    imageUrl: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    date: {
-      type: DataTypes.DATEONLY,
-      allowNull: true,
-    },
+    title: { type: String, required: true, trim: true },
+    description: { type: String, default: null },
+    imageUrl: { type: String, trim: true, default: null },
+    date: { type: String, default: null },
   },
-  {
-    tableName: "achievements",
-    timestamps: true,
-    hooks: {
-      beforeCreate: (achievement) => {
-        if (achievement.title) achievement.title = achievement.title.trim();
-      },
-      beforeUpdate: (achievement) => {
-        if (achievement.title) achievement.title = achievement.title.trim();
-      },
-    },
-  }
+  { ...schemaOptions, collection: "achievements" }
 );
 
-export default Achievement;
+export default mongoose.models.Achievement ||
+  mongoose.model("Achievement", achievementSchema);
