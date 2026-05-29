@@ -83,6 +83,10 @@ const About = () => {
                     src={about.profileImageUrl}
                     alt={about.name}
                     className="w-full h-full object-cover"
+                    loading="eager"
+                    fetchpriority="high"
+                    width="380"
+                    height="380"
                   />
                 </div>
               </div>
@@ -94,6 +98,10 @@ const About = () => {
                     src={about.coverImageUrl}
                     alt="Profile"
                     className="w-full h-full object-cover"
+                    loading="eager"
+                    fetchpriority="high"
+                    width="380"
+                    height="380"
                   />
                 </div>
               </div>
