@@ -142,7 +142,7 @@ const Skills = () => {
                       )
                     ) : null}
                     <div 
-                      className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold text-xl"
+                      className="w-12 h-12 bg-gradient-to-br from-[#1a1f3a] to-[#252b4a] border border-[#00d4ff]/30 rounded-lg flex items-center justify-center text-[#00d4ff] font-bold text-xl shadow-lg"
                       style={{ display: skill.icon ? 'none' : 'flex' }}
                     >
                       {skill.name.charAt(0).toUpperCase()}
