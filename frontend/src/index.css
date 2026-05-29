@@ -44,6 +44,15 @@
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+  
+  html {
+    min-height: 100vh;
+  }
+  
+  #root {
+    min-height: 100vh;
   }
   
   /* Dark Mode (default) */
