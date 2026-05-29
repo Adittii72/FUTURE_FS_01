@@ -4,30 +4,41 @@ import Modal from '/src/components/Modal.jsx';
 import Input from '/src/components/Input.jsx';
 import Textarea from '/src/components/Textarea.jsx';
 import Button from '/src/components/Button.jsx';
+import ProjectCategoryPicker from './ProjectCategoryPicker.jsx';
+import {
+  DEFAULT_PROJECT_CATEGORY,
+  normalizeProjectCategory,
+} from '/src/constants/projectCategories.js';
 
-const ManageProjectModal = ({ isOpen, onClose, onUpdate, project }) => {
+const ManageProjectModal = ({ isOpen, onClose, onUpdate, project, defaultCategory }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     techStack: '',
     githubUrl: '',
-    category: 'Full-Stack Developer',
+    category: DEFAULT_PROJECT_CATEGORY,
   });
 
   useEffect(() => {
-    if (project) {
+    if (project?.id) {
       setFormData({
         title: project.title || '',
         description: project.description || '',
         techStack: project.techStack || '',
         githubUrl: project.githubUrl || '',
-        category: project.category || 'Full-Stack Developer',
+        category: normalizeProjectCategory(project.category),
       });
     } else {
-      setFormData({ title: '', description: '', techStack: '', githubUrl: '', category: 'Full-Stack Developer' });
+      setFormData({
+        title: '',
+        description: '',
+        techStack: '',
+        githubUrl: '',
+        category: normalizeProjectCategory(defaultCategory),
+      });
     }
-  }, [project, isOpen]);
+  }, [project, isOpen, defaultCategory]);
 
   const handleChange = (e) => {
     setFormData({
@@ -36,15 +47,24 @@ const ManageProjectModal = ({ isOpen, onClose, onUpdate, project }) => {
     });
   };
 
+  const handleCategoryChange = (category) => {
+    setFormData((prev) => ({ ...prev, category }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // Payload no longer contains 'category'
-      const payload = { ...formData };
+      const payload = {
+        title: formData.title,
+        description: formData.description,
+        techStack: formData.techStack,
+        githubUrl: formData.githubUrl,
+        category: normalizeProjectCategory(formData.category),
+      };
 
-      if (project) {
+      if (project?.id) {
         await api.put(`/projects/${project.id}`, payload);
       } else {
         await api.post('/projects', payload);
@@ -59,8 +79,18 @@ const ManageProjectModal = ({ isOpen, onClose, onUpdate, project }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={project ? 'Edit Project' : 'Add New Project'} size="md">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={project?.id ? 'Edit Project' : 'Add New Project'}
+      size="lg"
+    >
       <form onSubmit={handleSubmit} className="space-y-4">
+        <ProjectCategoryPicker
+          value={formData.category}
+          onChange={handleCategoryChange}
+        />
+
         <Input
           label="Project Title"
           name="title"
@@ -96,25 +126,6 @@ const ManageProjectModal = ({ isOpen, onClose, onUpdate, project }) => {
           onChange={handleChange}
           placeholder="https://github.com/username/project"
         />
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Category
-          </label>
-          <select
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            required
-          >
-            <option value="AI Engineer">AI Engineer</option>
-            <option value="Data Science Enthusiast">Data Science Enthusiast</option>
-            <option value="Full-Stack Developer">Full-Stack Developer</option>
-          </select>
-        </div>
-        
-        {/* 'category' input field REMOVED */}
 
         <div className="flex justify-end gap-3 pt-4">
           <Button type="button" variant="secondary" onClick={onClose}>

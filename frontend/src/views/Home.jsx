@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import About from './About';
 import Skills from './Skills';
 import Projects from './Projects';
@@ -5,6 +7,20 @@ import Achievements from './Achievements';
 import Contact from './Contact';
 
 const Home = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const el = document.getElementById(location.state.scrollTo);
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
   return (
     <main className="relative lg:pl-32">
       {/* Left padding on large screens to avoid sidebar overlap */}

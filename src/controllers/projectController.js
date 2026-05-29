@@ -47,6 +47,9 @@ export const createProject = async (req, res) => {
     return res.status(201).json({ project });
   } catch (err) {
     console.error("createProject error:", err);
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ message: err.message });
+    }
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -68,6 +71,9 @@ export const updateProject = async (req, res) => {
     return res.json({ project });
   } catch (err) {
     console.error("updateProject error:", err);
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ message: err.message });
+    }
     return res.status(500).json({ message: "Server error" });
   }
 };

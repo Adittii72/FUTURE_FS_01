@@ -30,6 +30,16 @@ function App() {
                     <Routes>
                       {/* Single-page app: all sections rendered on home route */}
                       <Route path="/" element={<Home />} />
+                      <Route
+                        path="/projects"
+                        element={
+                          <Navigate
+                            to="/"
+                            replace
+                            state={{ scrollTo: 'projects' }}
+                          />
+                        }
+                      />
                       <Route path="/projects/:category" element={<ProjectCategory />} />
                       <Route
                         path="/dashboard"
