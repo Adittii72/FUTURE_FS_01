@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
-import Header from './components/Header';
+import Sidebar from './components/Sidebar';
+import MobileNav from './components/MobileNav';
 import Home from './views/Home';
 import Login from './views/Login';
 import Dashboard from './views/Dashboard';
@@ -16,14 +17,15 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <Router>
-          <div className="min-h-screen bg-white dark:bg-gray-900">
+          <div className="min-h-screen">
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route
                 path="/*"
                 element={
                   <>
-                    <Header />
+                    <Sidebar />
+                    <MobileNav />
                     <Routes>
                       {/* Single-page app: all sections rendered on home route */}
                       <Route path="/" element={<Home />} />
@@ -49,4 +51,3 @@ function App() {
 }
 
 export default App;
-

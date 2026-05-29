@@ -52,7 +52,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <section className="min-h-screen py-8 sm:py-12 md:py-16">
+    <section className="min-h-screen py-8 sm:py-12 md:py-16 lg:pl-32">
       <div className="container mx-auto px-4">
         <h1 className="text-3xl sm:text-4xl font-bold gradient-text mb-8 md:mb-12">Dashboard</h1>
 

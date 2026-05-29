@@ -78,7 +78,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+    <header className="sticky top-0 z-40 glass-card backdrop-blur-md border-b border-gray-700/50">
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="text-xl md:text-2xl font-bold gradient-text" onClick={() => scrollToSection('about')}>
@@ -91,7 +91,7 @@ const Header = () => {
                 key={link.id}
                 type="button"
                 onClick={() => scrollToSection(link.id)}
-                className="px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="px-3 py-2 rounded-lg transition-all hover:text-primary text-text-secondary"
               >
                 {link.label}
               </button>
@@ -100,37 +100,33 @@ const Header = () => {
 
           <div className="flex items-center space-x-3">
             {socialLinks.linkedin && (
-              <a href={socialLinks.linkedin} target="_blank" rel="noreferrer">
+              <a href={socialLinks.linkedin} target="_blank" rel="noreferrer" className="hover:text-primary transition-colors">
                 <Linkedin className="w-5 h-5" />
               </a>
             )}
             {socialLinks.github && (
-              <a href={socialLinks.github} target="_blank" rel="noreferrer">
+              <a href={socialLinks.github} target="_blank" rel="noreferrer" className="hover:text-primary transition-colors">
                 <Github className="w-5 h-5" />
               </a>
             )}
 
             {resumeUrl && (
-              <Button variant="outline" size="sm" onClick={handleDownloadResume}>
+              <Button variant="outline" size="sm" onClick={handleDownloadResume} className="flex items-center gap-2">
                 <Download className="w-4 h-4" /> Resume
               </Button>
             )}
-
-            <button onClick={toggleTheme}>
-              {isDark ? <Sun /> : <Moon />}
-            </button>
 
             {isLoggedIn && (
               <>
                 <Link 
                   to="/dashboard" 
-                  className="px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="px-3 py-2 rounded-lg transition-all hover:text-primary text-text-secondary"
                 >
                   Dashboard
                 </Link>
                 <button 
                   onClick={logout}
-                  className="p-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="p-2 rounded-lg transition-all hover:text-primary"
                   title="Logout"
                 >
                   <LogOut className="w-5 h-5" />
@@ -138,7 +134,7 @@ const Header = () => {
               </>
             )}
 
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden">
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden hover:text-primary transition-colors">
               {mobileMenuOpen ? <X /> : <Menu />}
             </button>
           </div>
@@ -155,7 +151,7 @@ const Header = () => {
                   scrollToSection(link.id);
                   setMobileMenuOpen(false);
                 }}
-                className="block w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="block w-full text-left px-3 py-2 rounded-lg hover:bg-dark-tertiary hover:text-primary transition-all"
               >
                 {link.label}
               </button>
@@ -164,7 +160,7 @@ const Header = () => {
               <Link
                 to="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="block w-full text-left px-3 py-2 rounded-lg hover:bg-dark-tertiary hover:text-primary transition-all"
               >
                 Dashboard
               </Link>

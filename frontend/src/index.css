@@ -2,19 +2,189 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================
+   MODERN DARK THEME - PROFESSIONAL PORTFOLIO
+   ============================================ */
+
+:root {
+  /* Primary Colors */
+  --color-primary: #00d4ff;
+  --color-primary-dark: #00a8cc;
+  --color-primary-light: #33ddff;
+  
+  /* Background Colors */
+  --color-bg-primary: #0a0e27;
+  --color-bg-secondary: #1a1f3a;
+  --color-bg-tertiary: #252b4a;
+  --color-bg-card: rgba(26, 31, 58, 0.8);
+  
+  /* Text Colors */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #8b92b0;
+  --color-text-muted: #5a6080;
+  
+  /* Accent Colors */
+  --color-accent-cyan: #00d4ff;
+  --color-accent-blue: #0099ff;
+  --color-accent-purple: #7c3aed;
+  
+  /* Glow Effects */
+  --glow-cyan: 0 0 20px rgba(0, 212, 255, 0.5);
+  --glow-cyan-strong: 0 0 40px rgba(0, 212, 255, 0.8);
+  --glow-blue: 0 0 20px rgba(0, 153, 255, 0.5);
+}
+
 @layer base {
   * {
     @apply transition-colors duration-200;
   }
   
   body {
-    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Dark Mode (default) */
+  body.dark {
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%);
+    background-attachment: fixed;
+    color: var(--color-text-primary);
+  }
+  
+  /* Light Mode */
+  body.light {
+    background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 50%, #f0f4f8 100%);
+    background-attachment: fixed;
+    color: #1a202c;
+  }
+  
+  /* Animated Background - Dark Mode */
+  body.dark::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(0, 153, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+    animation: backgroundPulse 15s ease-in-out infinite;
+  }
+  
+  /* Animated Background - Light Mode */
+  body.light::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(0, 153, 255, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+    animation: backgroundPulse 15s ease-in-out infinite;
+  }
+  
+  @keyframes backgroundPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.8; }
+  }
+}
+
+@layer components {
+  /* Glassmorphism Cards - Dark Mode */
+  .dark .glass-card {
+    background: var(--color-bg-card);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .dark .glass-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-primary);
+    box-shadow: 
+      0 12px 48px rgba(0, 0, 0, 0.4),
+      0 0 30px rgba(0, 212, 255, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Glassmorphism Cards - Light Mode */
+  .light .glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+  }
+  
+  .light .glass-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-primary);
+    box-shadow: 
+      0 12px 48px rgba(0, 0, 0, 0.15),
+      0 0 30px rgba(0, 212, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+  
+  /* Neon Button */
+  .neon-button {
+    position: relative;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent-blue) 100%);
+    color: white;
+    padding: 12px 32px;
+    border-radius: 50px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: var(--glow-cyan);
+  }
+  
+  .neon-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--glow-cyan-strong);
+  }
+  
+  .neon-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  .neon-button:hover::before {
+    left: 100%;
   }
 }
 
 @layer utilities {
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent-blue) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   
   .card-hover {
@@ -23,6 +193,18 @@
   
   .animate-fade-in {
     animation: fadeIn 0.5s ease-in;
+  }
+  
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
   }
   
   @keyframes fadeIn {
@@ -35,5 +217,51 @@
       transform: translateY(0);
     }
   }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+  
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(0, 212, 255, 0.8);
+    }
+  }
 }
 
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-accent-blue) 100%);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
