@@ -74,9 +74,9 @@ const About = () => {
               {about.bio}
             </p>
           </div>
-          <div className="animate-fade-in order-1 md:order-2 flex justify-center">
+          <div className="animate-fade-in order-1 md:order-2 flex justify-center items-center w-full">
             {about.profileImageUrl ? (
-              <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96">
+              <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#00d4ff] to-[#0099ff] rounded-full opacity-100"></div>
                 <div className="relative opacity-100 rounded-full overflow-hidden" style={{ width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', margin: '10px' }}>
                   <img
@@ -91,7 +91,7 @@ const About = () => {
                 </div>
               </div>
             ) : about.coverImageUrl ? (
-              <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96">
+              <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#00d4ff] to-[#0099ff] rounded-full opacity-100"></div>
                 <div className="relative opacity-100 rounded-full overflow-hidden" style={{ width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', margin: '10px' }}>
                   <img
