@@ -25,44 +25,65 @@ const app = express();
 // ============================================
 // CORS Configuration - Properly configured
 // ============================================
-const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',')
-  : [
-      'https://aditishrimankar.com',
-      'https://www.aditishrimankar.com',
-      'http://localhost:5173',
-      'http://localhost:3000',
-      'http://127.0.0.1:5173',
-      'http://127.0.0.1:3000'
-    ];
+const defaultOrigins = [
+  "https://aditishrimankar.com",
+  "https://www.aditishrimankar.com",
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:3000",
+];
+
+const envOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim()).filter(Boolean)
+  : [];
+
+const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl, postman)
+  origin(origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, postman)
     if (!origin) return callback(null, true);
     
-    // Allow all origins in development
-    if (process.env.NODE_ENV !== 'production') {
+    // Check if origin is in allowed list
+    if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
     
-    // Check if origin is allowed
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      // Still allow in production for now (can be restricted later)
-      callback(null, true);
+    // Allow all origins in development
+    if (process.env.NODE_ENV !== "production") {
+      return callback(null, true);
     }
+    
+    // Block in production
+    console.warn(`CORS blocked for origin: ${origin}`);
+    callback(new Error(`CORS blocked for origin: ${origin}`));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range'],
-  maxAge: 86400 // 24 hours
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: [
+    "Origin",
+    "X-Requested-With",
+    "Content-Type",
+    "Accept",
+    "Authorization",
+  ],
+  exposedHeaders: ["Content-Range", "X-Content-Range"],
+  maxAge: 86400, // 24 hours
 };
 
+// Apply CORS middleware
 app.use(cors(corsOptions));
 
+// Handle preflight requests explicitly - skip DB connection
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+// Database connection middleware - skip for OPTIONS
 app.use(async (req, res, next) => {
   try {
     await connectDatabase();

@@ -1,3 +1,5 @@
+import { BACKEND_URL, fixBackendHost } from "../config/backend.js";
+
 /**
  * Converts a relative media URL to a full backend URL
  * @param {string} url - The URL (can be relative like /uploads/file.jpg or already full URL)
@@ -8,12 +10,10 @@ export const getMediaUrl = (url) => {
   
   // If it's already a full URL (starts with http:// or https://), return as is
   if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url;
+    return fixBackendHost(url);
   }
   
-  const backendUrl =
-    import.meta.env.VITE_BACKEND_URL ||
-    'https://future-fs-01-backend-7jvt.onrender.com';
+  const backendUrl = BACKEND_URL;
 
   // If it's a relative path (starts with /), prepend backend URL
   if (url.startsWith('/')) {
