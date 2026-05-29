@@ -140,7 +140,7 @@ const Achievements = () => {
               
               {/* --- UPDATED CARD CONTENT --- */}
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex-shrink-0">
+                <div className="p-3 bg-gradient-to-r from-[#00d4ff] to-[#0099ff] rounded-lg flex-shrink-0">
                   <Award className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
