@@ -82,6 +82,7 @@ const Sidebar = () => {
     { id: 'projects', icon: Briefcase, label: 'Projects' },
     { id: 'achievements', icon: Award, label: 'Achievements' },
     { id: 'contact', icon: Mail, label: 'Contact' },
+    { id: 'resume', icon: Download, label: 'Resume', isAction: true },
   ];
 
   return (
@@ -92,6 +93,25 @@ const Sidebar = () => {
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.id;
+            
+            // Handle resume download action
+            if (item.isAction && item.id === 'resume') {
+              return (
+                <button
+                  key={item.id}
+                  onClick={handleDownloadResume}
+                  className="group relative w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 bg-gradient-to-br from-[#00d4ff] to-[#0099ff] hover:shadow-glow-cyan"
+                  title={item.label}
+                >
+                  <Icon className="w-5 h-5 text-white" />
+                  
+                  {/* Tooltip */}
+                  <span className="absolute left-full ml-4 px-3 py-2 bg-dark-secondary rounded-lg text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    {item.label}
+                  </span>
+                </button>
+              );
+            }
             
             return (
               <button
@@ -142,16 +162,6 @@ const Sidebar = () => {
             >
               <Github className="w-5 h-5 text-text-secondary group-hover:text-primary transition-colors" />
             </a>
-          )}
-
-          {resumeUrl && (
-            <button
-              onClick={handleDownloadResume}
-              className="group w-12 h-12 rounded-xl bg-dark-tertiary hover:bg-dark-secondary flex items-center justify-center transition-all"
-              title="Download Resume"
-            >
-              <Download className="w-5 h-5 text-text-secondary group-hover:text-primary transition-colors" />
-            </button>
           )}
           
           {/* Theme Toggle */}
