@@ -28,7 +28,7 @@ export const getProjectById = async (req, res) => {
 
 export const createProject = async (req, res) => {
   try {
-    const { title, description, techStack, githubUrl } = req.body;
+    const { title, description, techStack, githubUrl, category } = req.body;
 
     if (!title || !description) {
       return res
@@ -41,6 +41,7 @@ export const createProject = async (req, res) => {
       description,
       techStack: techStack || null,
       githubUrl: githubUrl || null,
+      category: category || 'Full-Stack Developer',
     });
 
     return res.status(201).json({ project });
@@ -52,11 +53,11 @@ export const createProject = async (req, res) => {
 
 export const updateProject = async (req, res) => {
   try {
-    const { title, description, techStack, githubUrl } = req.body;
+    const { title, description, techStack, githubUrl, category } = req.body;
 
     const project = await Project.findByIdAndUpdate(
       req.params.id,
-      { title, description, techStack, githubUrl },
+      { title, description, techStack, githubUrl, category },
       { new: true, runValidators: true }
     );
 

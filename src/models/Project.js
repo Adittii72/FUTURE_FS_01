@@ -40,6 +40,12 @@ const projectSchema = new mongoose.Schema(
     githubUrl: { type: String, trim: true, default: null },
     videoUrl: { type: String, trim: true, default: null },
     images: { type: [projectImageSchema], default: [] },
+    category: { 
+      type: String, 
+      trim: true, 
+      enum: ['AI Engineer', 'Data Science Enthusiast', 'Full-Stack Developer'],
+      default: 'Full-Stack Developer' 
+    },
   },
   { ...schemaOptions, collection: "projects" }
 );

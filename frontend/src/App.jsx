@@ -6,6 +6,7 @@ import MobileNav from './components/MobileNav';
 import Home from './views/Home';
 import Login from './views/Login';
 import Dashboard from './views/Dashboard';
+import ProjectCategory from './views/ProjectCategory';
 
 const PrivateRoute = ({ children }) => {
   const { isLoggedIn } = useAuth();
@@ -29,6 +30,7 @@ function App() {
                     <Routes>
                       {/* Single-page app: all sections rendered on home route */}
                       <Route path="/" element={<Home />} />
+                      <Route path="/projects/:category" element={<ProjectCategory />} />
                       <Route
                         path="/dashboard"
                         element={

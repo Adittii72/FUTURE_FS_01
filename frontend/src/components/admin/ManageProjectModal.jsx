@@ -12,6 +12,7 @@ const ManageProjectModal = ({ isOpen, onClose, onUpdate, project }) => {
     description: '',
     techStack: '',
     githubUrl: '',
+    category: 'Full-Stack Developer',
   });
 
   useEffect(() => {
@@ -21,9 +22,10 @@ const ManageProjectModal = ({ isOpen, onClose, onUpdate, project }) => {
         description: project.description || '',
         techStack: project.techStack || '',
         githubUrl: project.githubUrl || '',
+        category: project.category || 'Full-Stack Developer',
       });
     } else {
-      setFormData({ title: '', description: '', techStack: '', githubUrl: '' });
+      setFormData({ title: '', description: '', techStack: '', githubUrl: '', category: 'Full-Stack Developer' });
     }
   }, [project, isOpen]);
 
@@ -94,6 +96,23 @@ const ManageProjectModal = ({ isOpen, onClose, onUpdate, project }) => {
           onChange={handleChange}
           placeholder="https://github.com/username/project"
         />
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Category
+          </label>
+          <select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            required
+          >
+            <option value="AI Engineer">AI Engineer</option>
+            <option value="Data Science Enthusiast">Data Science Enthusiast</option>
+            <option value="Full-Stack Developer">Full-Stack Developer</option>
+          </select>
+        </div>
         
         {/* 'category' input field REMOVED */}
 

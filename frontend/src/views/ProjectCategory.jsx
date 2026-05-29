@@ -1,0 +1,238 @@
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Github, Edit, Upload, Trash2 } from 'lucide-react';
+import { useAuth } from '/src/context/AuthContext.jsx';
+import api from '/src/services/api.js';
+import Card from '/src/components/Card.jsx';
+import ManageProjectModal from '/src/components/admin/ManageProjectModal.jsx';
+import UploadMediaModal from '/src/components/admin/UploadMediaModal.jsx';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { getMediaUrl } from '/src/utils/mediaUrl.js';
+
+const ProjectCategory = () => {
+  const { category } = useParams();
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState(null);
+  const [uploadingProjectId, setUploadingProjectId] = useState(null);
+
+  const decodedCategory = decodeURIComponent(category);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [category]);
+
+  const fetchProjects = async () => {
+    try {
+      const res = await api.get('/projects');
+      const filtered = res.data.projects.filter(
+        (p) => (p.category || 'Full-Stack Developer') === decodedCategory
+      );
+      setProjects(filtered);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = (project) => {
+    setEditingProject(project);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this project?')) {
+      try {
+        await api.delete(`/projects/${id}`);
+        fetchProjects();
+      } catch (error) {
+        console.error('Error deleting project:', error);
+        alert('Failed to delete project');
+      }
+    }
+  };
+
+  const handleUploadMedia = (projectId) => {
+    setUploadingProjectId(projectId);
+    setIsUploadModalOpen(true);
+  };
+
+  const handleUpdate = () => {
+    fetchProjects();
+    setIsModalOpen(false);
+    setEditingProject(null);
+  };
+
+  const handleMediaUploaded = () => {
+    fetchProjects();
+    setIsUploadModalOpen(false);
+    setUploadingProjectId(null);
+  };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00d4ff] mx-auto"></div>
+      </div>
+    );
+  }
+
+  return (
+    <section className="min-h-screen py-8 sm:py-12 md:py-16">
+      <div className="container mx-auto px-4">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate('/projects')}
+          className="flex items-center gap-2 text-[#00d4ff] hover:text-[#0099ff] mb-8 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span>Back to Projects</span>
+        </button>
+
+        {/* Header */}
+        <div className="mb-12">
+          <h2 className="text-3xl sm:text-4xl font-bold gradient-text mb-2">{decodedCategory}</h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            {projects.length} {projects.length === 1 ? 'project' : 'projects'} in this category
+          </p>
+        </div>
+
+        {/* Projects Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {projects.map((project) => (
+            <Card key={project.id} className="overflow-hidden">
+              {isLoggedIn && (
+                <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 flex gap-1 sm:gap-2">
+                  <button
+                    onClick={() => handleEdit(project)}
+                    className="p-1.5 sm:p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors shadow-lg"
+                    aria-label="Edit project"
+                  >
+                    <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleUploadMedia(project.id)}
+                    className="p-1.5 sm:p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors shadow-lg"
+                    aria-label="Upload media"
+                  >
+                    <Upload className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(project.id)}
+                    className="p-1.5 sm:p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors shadow-lg"
+                    aria-label="Delete project"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  </button>
+                </div>
+              )}
+              <div className="space-y-4">
+                {/* Media */}
+                <div className="relative w-full h-48 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+                  {project.videoUrl ? (
+                    <video
+                      key={project.videoUrl}
+                      src={getMediaUrl(project.videoUrl)}
+                      className="w-full h-full object-cover"
+                      controls
+                      muted
+                      loop
+                      autoPlay
+                    />
+                  ) : project.images && project.images.length > 0 ? (
+                    <Carousel
+                      showThumbs={false}
+                      showStatus={false}
+                      infiniteLoop
+                      autoPlay
+                      interval={3500}
+                      useKeyboardArrows
+                      className="h-full"
+                    >
+                      {project.images.map((image) => (
+                        <div key={image.id} className="h-48">
+                          <img
+                            src={getMediaUrl(image.imageUrl)}
+                            alt={project.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
+                    </Carousel>
+                  ) : (
+                    <div className="flex items-center justify-center h-full">
+                      <span className="text-gray-500">No media</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Project Info */}
+                <div className="space-y-2">
+                  <h3 className="text-xl sm:text-2xl font-bold">{project.title}</h3>
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">{project.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {project.techStack?.split(',').map((tech, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 bg-[#00d4ff]/20 text-[#00d4ff] rounded-full text-sm font-medium"
+                      >
+                        {tech.trim()}
+                      </span>
+                    ))}
+                  </div>
+                  {project.githubUrl && (
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-[#00d4ff] hover:text-[#0099ff] transition-colors"
+                    >
+                      <Github className="w-4 h-4" />
+                      View on GitHub
+                    </a>
+                  )}
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+
+        {projects.length === 0 && (
+          <div className="text-center py-16">
+            <p className="text-gray-500 dark:text-gray-400 text-lg">
+              No projects in this category yet.
+            </p>
+          </div>
+        )}
+      </div>
+
+      <ManageProjectModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingProject(null);
+        }}
+        onUpdate={handleUpdate}
+        project={editingProject}
+      />
+
+      <UploadMediaModal
+        isOpen={isUploadModalOpen}
+        onClose={() => {
+          setIsUploadModalOpen(false);
+          setUploadingProjectId(null);
+        }}
+        onUpload={handleMediaUploaded}
+        projectId={uploadingProjectId}
+      />
+    </section>
+  );
+};
+
+export default ProjectCategory;
