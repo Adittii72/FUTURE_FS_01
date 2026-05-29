@@ -7,7 +7,7 @@ const skillSchema = new mongoose.Schema(
     level: { type: String, trim: true, default: null },
     percent: { type: Number, min: 0, max: 100, default: null },
     icon: { type: String, trim: true, default: null, maxlength: 10000 }, // Icon URL or SVG code
-    category: { type: String, trim: true, default: "AI & Data Science" }, // Featured, Languages, Frontend, Backend, Database, Tools, AI & Data Science
+    category: { type: String, trim: true, default: "Languages" }, // Languages, Frontend, Backend, Database, Tools, AI & Data Science
   },
   { ...schemaOptions, collection: "skills" }
 );

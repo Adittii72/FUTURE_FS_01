@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Edit, Plus, Trash2, Star, Code, Palette, Server, Database, Wrench, Brain } from 'lucide-react';
+import { Edit, Plus, Trash2, Code, Palette, Server, Database, Wrench, Brain } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import Card from '../components/Card';
@@ -65,7 +65,11 @@ const Skills = () => {
 
   // Group skills by category
   const groupedSkills = skills.reduce((acc, skill) => {
-    const category = skill.category || 'AI & Data Science';
+    let category = skill.category || 'Languages';
+    // Map old "Featured" category to "Languages" for backward compatibility
+    if (category === 'Featured') {
+      category = 'Languages';
+    }
     if (!acc[category]) {
       acc[category] = [];
     }
@@ -77,7 +81,6 @@ const Skills = () => {
 
   // Category icons mapping
   const categoryIcons = {
-    'Featured': Star,
     'Languages': Code,
     'Frontend': Palette,
     'Backend': Server,

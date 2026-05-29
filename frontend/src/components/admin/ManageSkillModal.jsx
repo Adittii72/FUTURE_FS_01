@@ -10,7 +10,7 @@ const ManageSkillModal = ({ isOpen, onClose, onUpdate, skill }) => {
     name: '',
     percent: 0,
     icon: '',
-    category: 'Featured',
+    category: 'Languages',
   });
 
   useEffect(() => {
@@ -19,10 +19,10 @@ const ManageSkillModal = ({ isOpen, onClose, onUpdate, skill }) => {
         name: skill.name || '',
         percent: skill.percent || 0,
         icon: skill.icon || '',
-        category: skill.category || 'Featured',
+        category: skill.category || 'Languages',
       });
     } else {
-      setFormData({ name: '', percent: 0, icon: '', category: 'Featured' });
+      setFormData({ name: '', percent: 0, icon: '', category: 'Languages' });
     }
   }, [skill, isOpen]);
 
@@ -74,7 +74,6 @@ const ManageSkillModal = ({ isOpen, onClose, onUpdate, skill }) => {
             className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-purple-600 focus:border-transparent"
             required
           >
-            <option value="Featured">Featured</option>
             <option value="Languages">Languages</option>
             <option value="Frontend">Frontend</option>
             <option value="Backend">Backend</option>

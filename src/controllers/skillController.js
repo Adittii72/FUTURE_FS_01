@@ -23,7 +23,7 @@ export const createSkill = async (req, res) => {
       level: level || null,
       percent: percent === "" || percent === undefined ? null : Number(percent),
       icon: icon || null,
-      category: category || "AI & Data Science",
+      category: category || "Languages",
     });
 
     return res.status(201).json({ message: "Skill created", skill });
@@ -49,7 +49,7 @@ export const updateSkill = async (req, res) => {
         level,
         percent: percent === "" || percent === undefined ? null : Number(percent),
         icon: icon || null,
-        category: category || "AI & Data Science",
+        category: category || "Languages",
       },
       { new: true, runValidators: true }
     );
