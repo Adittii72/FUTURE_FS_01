@@ -170,7 +170,7 @@ const Skills = () => {
                     {skill.percent > 0 && (
                       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
                         <div 
-                          className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full transition-all duration-500"
+                          className="bg-gradient-to-r from-[#00d4ff] to-[#0099ff] h-2 rounded-full transition-all duration-500"
                           style={{ width: `${skill.percent}%` }}
                         ></div>
                       </div>
