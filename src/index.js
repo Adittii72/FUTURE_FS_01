@@ -23,25 +23,9 @@ dotenv.config();
 const app = express();
 
 // ============================================
-// CORS Configuration - Allow Hostinger Frontend
+// CORS Configuration - Simple and permissive
 // ============================================
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  'https://aditishrimankar.com',
-  'http://aditishrimankar.com',
-  'http://localhost:5173', // Local development
-  'http://localhost:3000', // Alternative local port
-  'http://localhost:4173', // Vite preview
-];
-
-app.use(cors({
-  origin: true, // Allow all origins
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204
-}));
+app.use(cors());
 
 app.use(async (req, res, next) => {
   try {
