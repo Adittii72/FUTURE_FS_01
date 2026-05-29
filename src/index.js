@@ -16,6 +16,8 @@ import contactRoutes from "./routes/contactRoutes.js";
 import resumeRoutes from "./routes/resumeRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import connectDatabase from "./config/database.js";
+import autoBackupMiddleware from "./middleware/autoBackupMiddleware.js";
+import startScheduledBackups from "./scripts/scheduledBackup.js";
 
 dotenv.config();
 const app = express();
@@ -60,6 +62,12 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 // ============================================
+// AUTO-BACKUP MIDDLEWARE
+// Automatically backs up data after modifications
+// ============================================
+app.use(autoBackupMiddleware);
+
+// ============================================
 // API ROUTES
 // ============================================
 app.use("/api/admin", adminRoutes);
@@ -79,6 +87,9 @@ const PORT = process.env.PORT || 5000;
 if (isDirectRun) {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    
+    // Start scheduled backups
+    startScheduledBackups();
   });
 }
 

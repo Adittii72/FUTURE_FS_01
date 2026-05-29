@@ -6,6 +6,8 @@ const skillSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true, unique: true },
     level: { type: String, trim: true, default: null },
     percent: { type: Number, min: 0, max: 100, default: null },
+    icon: { type: String, trim: true, default: null }, // Icon URL or icon name
+    category: { type: String, trim: true, default: "Other" }, // Featured, Languages, Frontend, Backend, etc.
   },
   { ...schemaOptions, collection: "skills" }
 );

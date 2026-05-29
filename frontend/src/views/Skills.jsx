@@ -63,6 +63,18 @@ const Skills = () => {
     );
   }
 
+  // Group skills by category
+  const groupedSkills = skills.reduce((acc, skill) => {
+    const category = skill.category || 'Other';
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(skill);
+    return acc;
+  }, {});
+
+  const categories = Object.keys(groupedSkills).sort();
+
   return (
     <section className="min-h-screen py-8 sm:py-12 md:py-16">
       <div className="container mx-auto px-4">
@@ -79,45 +91,57 @@ const Skills = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {skills.map((skill) => (
-            <Card key={skill.id} className="relative">
-              {isLoggedIn && (
-                <div className="absolute top-2 right-2 sm:top-4 sm:right-4 flex gap-1 sm:gap-2">
-                  <button
-                    onClick={() => handleEdit(skill)}
-                    className="p-1.5 sm:p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                    aria-label="Edit skill"
-                  >
-                    <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(skill.id)}
-                    className="p-1.5 sm:p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
-                    aria-label="Delete skill"
-                  >
-                    <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </button>
-                </div>
-              )}
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold">{skill.name}</h3>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Proficiency</span>
-                    <span>{skill.percent}%</span>
+        {categories.map((category) => (
+          <div key={category} className="mb-12">
+            <h3 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-200">
+              {category}
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {groupedSkills[category].map((skill) => (
+                <Card key={skill.id} className="relative group hover:scale-105 transition-transform">
+                  {isLoggedIn && (
+                    <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                      <button
+                        onClick={() => handleEdit(skill)}
+                        className="p-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                        aria-label="Edit skill"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(skill.id)}
+                        className="p-1.5 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                        aria-label="Delete skill"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+                  <div className="flex flex-col items-center justify-center p-4 space-y-3">
+                    {skill.icon ? (
+                      <img 
+                        src={skill.icon} 
+                        alt={skill.name}
+                        className="w-12 h-12 object-contain"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div 
+                      className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold text-xl"
+                      style={{ display: skill.icon ? 'none' : 'flex' }}
+                    >
+                      {skill.name.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="text-sm font-medium text-center">{skill.name}</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-                    <div
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 h-3 rounded-full transition-all duration-500"
-                      style={{ width: `${skill.percent}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        ))}
 
         {skills.length === 0 && (
           <div className="text-center py-16">

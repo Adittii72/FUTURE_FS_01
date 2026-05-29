@@ -9,6 +9,8 @@ const ManageSkillModal = ({ isOpen, onClose, onUpdate, skill }) => {
   const [formData, setFormData] = useState({
     name: '',
     percent: 0,
+    icon: '',
+    category: 'Featured',
   });
 
   useEffect(() => {
@@ -16,9 +18,11 @@ const ManageSkillModal = ({ isOpen, onClose, onUpdate, skill }) => {
       setFormData({
         name: skill.name || '',
         percent: skill.percent || 0,
+        icon: skill.icon || '',
+        category: skill.category || 'Featured',
       });
     } else {
-      setFormData({ name: '', percent: 0 });
+      setFormData({ name: '', percent: 0, icon: '', category: 'Featured' });
     }
   }, [skill, isOpen]);
 
@@ -61,15 +65,42 @@ const ManageSkillModal = ({ isOpen, onClose, onUpdate, skill }) => {
           placeholder="React"
         />
 
+        <div>
+          <label className="block text-sm font-medium mb-2">Category</label>
+          <select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            required
+          >
+            <option value="Featured">Featured</option>
+            <option value="Languages">Languages</option>
+            <option value="Frontend">Frontend</option>
+            <option value="Backend">Backend</option>
+            <option value="Database">Database</option>
+            <option value="Tools">Tools</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
         <Input
-          label="Proficiency (%)"
+          label="Icon URL (optional)"
+          name="icon"
+          value={formData.icon}
+          onChange={handleChange}
+          placeholder="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg"
+        />
+        <p className="text-xs text-gray-500 -mt-2">Use icon URLs from devicon.dev or similar</p>
+
+        <Input
+          label="Proficiency (%) - Optional"
           name="percent"
           type="number"
           min="0"
           max="100"
           value={formData.percent}
           onChange={handleChange}
-          required
           placeholder="85"
         />
 

@@ -9,6 +9,8 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "backup": "node src/scripts/backupDatabase.js",
+    "backup:auto": "node src/scripts/autoBackup.js",
+    "backup:list": "node -e \"import('./src/scripts/autoBackup.js').then(m => { const backups = m.listBackups(); console.log('Available backups:', backups); })\"",
     "restore": "node src/scripts/restoreDatabase.js",
     "migrate:supabase-to-mongo": "node src/scripts/migrateSupabaseToMongo.js"
   },
@@ -27,6 +29,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.3",
     "multer": "^2.0.2",
+    "node-cron": "^4.2.1",
     "resend": "^6.9.4"
   },
   "devDependencies": {
