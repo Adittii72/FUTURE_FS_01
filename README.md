@@ -72,32 +72,6 @@ FUTURE_FS_01/
 └── package.json             # Backend dependencies
 ```
 
-## Environment Variables
-
-### Backend (.env)
-```
-PORT=5000
-NODE_ENV=production
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-INIT_ADMIN_EMAIL=your_admin_email
-INIT_ADMIN_PASSWORD=your_admin_password
-SUPABASE_URL=your_supabase_url
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_key
-SUPABASE_STORAGE_BUCKET=media
-RESEND_API_KEY=your_resend_api_key
-FROM_EMAIL=noreply@aditishrimankar.com
-ADMIN_EMAIL=aditi1411ss@gmail.com
-FRONTEND_URL=https://aditishrimankar.com
-ALLOWED_ORIGINS=https://aditishrimankar.com,https://www.aditishrimankar.com
-```
-
-### Frontend (.env)
-```
-VITE_API_BASE_URL=https://future-fs-01-backend-7jvt.onrender.com/api
-VITE_BACKEND_URL=https://future-fs-01-backend-7jvt.onrender.com
-```
-
 ## Installation & Setup
 
 ### Prerequisites
