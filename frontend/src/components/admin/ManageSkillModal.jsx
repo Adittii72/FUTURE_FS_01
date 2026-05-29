@@ -80,7 +80,7 @@ const ManageSkillModal = ({ isOpen, onClose, onUpdate, skill }) => {
             <option value="Backend">Backend</option>
             <option value="Database">Database</option>
             <option value="Tools">Tools</option>
-            <option value="Other">Other</option>
+            <option value="AI & Data Science">AI & Data Science</option>
           </select>
         </div>
 

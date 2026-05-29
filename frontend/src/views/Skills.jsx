@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Edit, Plus, Trash2 } from 'lucide-react';
+import { Edit, Plus, Trash2, Star, Code, Palette, Server, Database, Wrench, Brain } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import Card from '../components/Card';
@@ -65,7 +65,7 @@ const Skills = () => {
 
   // Group skills by category
   const groupedSkills = skills.reduce((acc, skill) => {
-    const category = skill.category || 'Other';
+    const category = skill.category || 'AI & Data Science';
     if (!acc[category]) {
       acc[category] = [];
     }
@@ -74,6 +74,17 @@ const Skills = () => {
   }, {});
 
   const categories = Object.keys(groupedSkills).sort();
+
+  // Category icons mapping
+  const categoryIcons = {
+    'Featured': Star,
+    'Languages': Code,
+    'Frontend': Palette,
+    'Backend': Server,
+    'Database': Database,
+    'Tools': Wrench,
+    'AI & Data Science': Brain,
+  };
 
   return (
     <section className="min-h-screen py-8 sm:py-12 md:py-16">
@@ -91,11 +102,16 @@ const Skills = () => {
           )}
         </div>
 
-        {categories.map((category) => (
-          <div key={category} className="mb-12">
-            <h3 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-200">
-              {category}
-            </h3>
+        {categories.map((category) => {
+          const CategoryIcon = categoryIcons[category] || Brain;
+          return (
+            <div key={category} className="mb-12">
+              <div className="flex items-center gap-3 mb-6">
+                <CategoryIcon className="w-6 h-6 text-[#00d4ff]" />
+                <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+                  {category}
+                </h3>
+              </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {groupedSkills[category].map((skill) => (
                 <Card key={skill.id} className="relative group hover:scale-105 transition-transform">
@@ -161,7 +177,8 @@ const Skills = () => {
               ))}
             </div>
           </div>
-        ))}
+        );
+        })}
 
         {skills.length === 0 && (
           <div className="text-center py-16">
