@@ -63,9 +63,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Additional CORS headers for preflight
-app.options('*', cors(corsOptions));
-
 app.use(async (req, res, next) => {
   try {
     await connectDatabase();
