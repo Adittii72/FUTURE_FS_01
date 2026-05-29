@@ -80,7 +80,7 @@ const About = () => {
           <div className="animate-fade-in order-1 md:order-2 flex justify-center md:justify-end">
             {about.profileImageUrl ? (
               <div className="relative" style={{ width: '400px', height: '400px' }}>
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full opacity-100"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-[#00d4ff] to-[#0099ff] rounded-full opacity-100"></div>
                 <div className="relative opacity-100 rounded-full overflow-hidden" style={{ width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', margin: '10px' }}>
                   <img
                     src={about.profileImageUrl}
@@ -91,7 +91,7 @@ const About = () => {
               </div>
             ) : about.coverImageUrl ? (
               <div className="relative" style={{ width: '400px', height: '400px' }}>
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full opacity-100"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-[#00d4ff] to-[#0099ff] rounded-full opacity-100"></div>
                 <div className="relative opacity-100 rounded-full overflow-hidden" style={{ width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', margin: '10px' }}>
                   <img
                     src={about.coverImageUrl}
