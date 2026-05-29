@@ -119,18 +119,27 @@ const Skills = () => {
                   )}
                   <div className="flex flex-col items-center justify-center p-4 space-y-3">
                     {skill.icon ? (
-                      <img 
-                        src={skill.icon} 
-                        alt={skill.name}
-                        className="w-12 h-12 object-contain"
-                        crossOrigin="anonymous"
-                        onError={(e) => {
-                          console.error(`Failed to load icon for ${skill.name}:`, skill.icon);
-                          e.target.style.display = 'none';
-                          const fallback = e.target.nextElementSibling;
-                          if (fallback) fallback.style.display = 'flex';
-                        }}
-                      />
+                      skill.icon.trim().startsWith('<svg') ? (
+                        // Handle inline SVG code
+                        <div 
+                          className="w-12 h-12 flex items-center justify-center"
+                          dangerouslySetInnerHTML={{ __html: skill.icon }}
+                        />
+                      ) : (
+                        // Handle URL-based icons
+                        <img 
+                          src={skill.icon} 
+                          alt={skill.name}
+                          className="w-12 h-12 object-contain"
+                          crossOrigin="anonymous"
+                          onError={(e) => {
+                            console.error(`Failed to load icon for ${skill.name}:`, skill.icon);
+                            e.target.style.display = 'none';
+                            const fallback = e.target.nextElementSibling;
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
+                        />
+                      )
                     ) : null}
                     <div 
                       className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-white font-bold text-xl"

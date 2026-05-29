@@ -85,13 +85,18 @@ const ManageSkillModal = ({ isOpen, onClose, onUpdate, skill }) => {
         </div>
 
         <Input
-          label="Icon URL (optional)"
+          label="Icon URL or SVG Code"
           name="icon"
           value={formData.icon}
           onChange={handleChange}
           placeholder="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg"
         />
-        <p className="text-xs text-gray-500 -mt-2">Use icon URLs from devicon.dev or similar</p>
+        <div className="text-xs text-gray-500 -mt-2 space-y-1">
+          <p>✓ CDN URLs from devicon.dev or cdn.jsdelivr.net</p>
+          <p>✓ URLs from devicons.io (e.g., https://devicons.io/api/...)</p>
+          <p>✓ Direct SVG code (paste the entire &lt;svg&gt;...&lt;/svg&gt;)</p>
+          <p>✓ Simple Icons URLs (https://cdn.jsdelivr.net/npm/simple-icons@...)</p>
+        </div>
 
         <Input
           label="Proficiency (%) - Optional"

@@ -1,0 +1,251 @@
+================================================================================
+                    SKILL CATEGORY & ICON FIX - DEPLOYMENT GUIDE
+================================================================================
+
+🔧 WHAT WAS FIXED:
+================================================================================
+
+1. ✅ Category Field Not Saving
+   - Backend controller now properly handles 'category' field
+   - Skills will save to the correct category (Languages, Frontend, etc.)
+   - No more defaulting to "Other" section
+
+2. ✅ Icon Field Not Saving
+   - Backend controller now properly handles 'icon' field
+   - Icon URLs will be saved and displayed correctly
+
+3. ✅ Icon Display Issues
+   - Added crossOrigin="anonymous" for external CDN images
+   - Better error handling for failed icon loads
+   - Fallback to first letter if icon fails to load
+
+4. ✅ Added Proficiency Bar
+   - Visual progress bar shows skill proficiency percentage
+
+================================================================================
+📋 DEPLOYMENT STEPS:
+================================================================================
+
+STEP 1: Backend Deployment (Render)
+------------------------------------
+The backend changes have been pushed to GitHub.
+Render will automatically detect and redeploy.
+
+Wait for Render deployment to complete (2-3 minutes)
+Check: https://future-fs-01-backend-7jvt.onrender.com
+
+STEP 2: Test the Fix
+---------------------
+1. Go to your website: https://aditishrimankar.com
+2. Login to admin dashboard
+3. Navigate to Skills section
+4. Click "Add Skill" or "Edit" an existing skill
+
+STEP 3: Add a Skill with Icon
+------------------------------
+Example: Python
+
+Skill Name:    Python
+Category:      Languages  ← Should now save correctly!
+Icon URL:      https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg
+Proficiency:   85
+
+Click "Save"
+
+STEP 4: Verify
+--------------
+✓ Skill should appear in "Languages" section (not "Other")
+✓ Python icon should be visible
+✓ Proficiency bar should show 85%
+
+================================================================================
+🎯 ICON URLS FOR YOUR SKILLS:
+================================================================================
+
+⭐ FEATURED:
+------------
+Python:                 https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg
+FastAPI:                https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg
+RAG Systems:            https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/openai.svg
+React.js:               https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg
+Generative AI:          https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/openai.svg
+PostgreSQL:             https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg
+Machine Learning:       https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg
+Data Science:           https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg
+
+💻 LANGUAGES:
+-------------
+Python:                 https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg
+Java:                   https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg
+SQL:                    https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg
+JavaScript:             https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg
+
+🎨 FRONTEND:
+------------
+React.js:               https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg
+Next.js:                https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg
+HTML5:                  https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg
+CSS3:                   https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg
+Tailwind CSS:           https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg
+Streamlit:              https://cdn.jsdelivr.net/gh/devicons/devicon/icons/streamlit/streamlit-original.svg
+
+⚙️ BACKEND:
+-----------
+FastAPI:                https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg
+Django:                 https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg
+Django REST Framework:  https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg
+REST APIs:              https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/fastapi.svg
+JWT Authentication:     https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/jsonwebtokens.svg
+LangChain:              https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/chainlink.svg
+
+🗄️ DATABASE:
+------------
+PostgreSQL:             https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg
+MySQL:                  https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg
+Supabase:               https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg
+Neo4j:                  https://cdn.jsdelivr.net/gh/devicons/devicon/icons/neo4j/neo4j-original.svg
+pgVector:               https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg
+
+🛠️ TOOLS:
+---------
+Git:                    https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg
+GitHub:                 https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg
+Postman:                https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg
+Jupyter Notebook:       https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jupyter/jupyter-original.svg
+Tableau:                https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/tableau.svg
+Vercel:                 https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vercel/vercel-original.svg
+Render:                 https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/render.svg
+GitHub Actions:         https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/githubactions.svg
+
+🤖 OTHER (AI/ML/Data Science):
+-------------------------------
+Machine Learning:       https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg
+Data Science:           https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg
+Exploratory Data Analysis: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jupyter/jupyter-original.svg
+Data Visualization:     https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/plotly.svg
+Generative AI:          https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/openai.svg
+RAG Systems:            https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/openai.svg
+Prompt Engineering:     https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/openai.svg
+Feature Engineering:    https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg
+Vector Embeddings:      https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/vectorworks.svg
+NLP:                    https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/openai.svg
+
+================================================================================
+📋 ADDITIONAL COMMON TECHNOLOGIES (FOR REFERENCE):
+================================================================================
+
+LANGUAGES:
+----------
+TypeScript:   https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg
+C++:          https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg
+C:            https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg
+Go:           https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg
+Rust:         https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-plain.svg
+PHP:          https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg
+Ruby:         https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ruby/ruby-original.svg
+
+FRONTEND:
+---------
+Vue:          https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg
+Angular:      https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg
+Bootstrap:    https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg
+Sass:         https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sass/sass-original.svg
+Redux:        https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redux/redux-original.svg
+
+BACKEND:
+--------
+Node.js:      https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg
+Express:      https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg
+Flask:        https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg
+Spring:       https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg
+Laravel:      https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-plain.svg
+NestJS:       https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nestjs/nestjs-plain.svg
+
+DATABASE:
+---------
+MongoDB:      https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg
+Redis:        https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg
+SQLite:       https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original.svg
+Oracle:       https://cdn.jsdelivr.net/gh/devicons/devicon/icons/oracle/oracle-original.svg
+Firebase:     https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg
+
+TOOLS:
+------
+Docker:       https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg
+Kubernetes:   https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg
+VS Code:      https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg
+Linux:        https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg
+AWS:          https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg
+Azure:        https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg
+Jenkins:      https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jenkins/jenkins-original.svg
+Nginx:        https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg
+
+================================================================================
+🔍 HOW TO FIND MORE ICONS:
+================================================================================
+
+1. Visit: https://devicon.dev/
+2. Search for your technology
+3. Click on the icon
+4. Select a version (original, plain, line)
+5. Look for the <img> tag code
+6. Copy the URL from the src attribute
+
+Example:
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" />
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         Copy this URL and paste it in the "Icon URL" field
+
+================================================================================
+❓ TROUBLESHOOTING:
+================================================================================
+
+Issue: Icon still not showing
+Solution: 
+  1. Check browser console for errors (F12)
+  2. Verify the icon URL is correct (paste in browser)
+  3. Make sure you're using the CDN URL (starts with https://cdn.jsdelivr.net)
+  4. Clear browser cache (Ctrl+Shift+R)
+
+Issue: Category still showing as "Other"
+Solution:
+  1. Make sure backend has redeployed on Render
+  2. Check Render logs for any errors
+  3. Try editing an existing skill and changing its category
+  4. Refresh the page after saving
+
+Issue: Changes not reflecting
+Solution:
+  1. Wait for Render deployment to complete
+  2. Hard refresh the page (Ctrl+Shift+R)
+  3. Clear browser cache
+  4. Try in incognito mode
+
+================================================================================
+✅ VERIFICATION CHECKLIST:
+================================================================================
+
+□ Backend deployed successfully on Render
+□ Can add new skill with custom category
+□ Category saves correctly (not defaulting to "Other")
+□ Icon URL saves and displays correctly
+□ Icon loads from devicon.dev CDN
+□ Proficiency bar displays when percentage is set
+□ Skills grouped by category on frontend
+□ Edit skill preserves category and icon
+
+================================================================================
+📞 NEED HELP?
+================================================================================
+
+If icons still don't show after deployment:
+1. Check browser console (F12) for CORS or loading errors
+2. Verify the icon URL works by pasting it directly in browser
+3. Make sure Render backend has fully redeployed
+4. Try a different icon URL to test
+
+For more icon options, check:
+- frontend/ICONS_GUIDE.txt
+- frontend/ICON_QUICK_REFERENCE.txt
+
+================================================================================
