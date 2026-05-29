@@ -1,0 +1,153 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                        REACT ICONS - QUICK REFERENCE                         ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ BASIC USAGE                                                                  │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  import { FaHome } from 'react-icons/fa';
+  
+  <FaHome />                                    // Default
+  <FaHome size={24} />                          // Custom size
+  <FaHome color="blue" />                       // Custom color
+  <FaHome className="w-6 h-6 text-blue-500" /> // Tailwind
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ICON LIBRARIES (Import Prefixes)                                            │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  fa   → Font Awesome      import { FaHome } from 'react-icons/fa';
+  md   → Material Design   import { MdHome } from 'react-icons/md';
+  hi2  → Heroicons v2      import { HiHome } from 'react-icons/hi2';
+  bs   → Bootstrap         import { BsHouse } from 'react-icons/bs';
+  fi   → Feather           import { FiHome } from 'react-icons/fi';
+  ai   → Ant Design        import { AiOutlineHome } from 'react-icons/ai';
+  io5  → Ionicons          import { IoHome } from 'react-icons/io5';
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ POPULAR ICONS BY CATEGORY                                                   │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Navigation:
+    FaHome, FaUser, FaCog, FaBell, FaSearch, FaMenu, FaBars
+
+  Social Media:
+    FaGithub, FaLinkedin, FaTwitter, FaFacebook, FaInstagram, FaYoutube
+
+  Actions:
+    FaEdit, FaTrash, FaSave, FaDownload, FaUpload, FaCopy, FaShare
+
+  Communication:
+    FaEnvelope, FaPhone, FaComment, FaVideo, FaMicrophone
+
+  Status:
+    FaCheckCircle, FaTimesCircle, FaExclamationCircle, FaInfoCircle
+
+  Files:
+    FaFile, FaFolder, FaFilePdf, FaFileImage, FaFileVideo
+
+  Development:
+    FaCode, FaTerminal, FaBug, FaDatabase, FaServer, FaGit
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ STYLING METHODS                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Size Prop:
+    <FaHome size={16} />  <FaHome size={24} />  <FaHome size={32} />
+
+  Color Prop:
+    <FaHome color="red" />  <FaHome color="#3B82F6" />
+
+  Tailwind Classes:
+    <FaHome className="w-6 h-6" />                    // Size
+    <FaHome className="text-blue-500" />              // Color
+    <FaHome className="hover:text-blue-700" />        // Hover
+    <FaHome className="hover:scale-110" />            // Scale
+    <FaHome className="transition-all" />             // Smooth
+
+  Inline Styles:
+    <FaHome style={{ fontSize: '2rem', color: 'blue' }} />
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ COMMON PATTERNS                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Button with Icon:
+    <button className="flex items-center gap-2">
+      <FaHome /> <span>Home</span>
+    </button>
+
+  Icon Link:
+    <a href="#" className="flex items-center gap-2">
+      <FaGithub size={20} /> GitHub
+    </a>
+
+  Icon with Badge:
+    <div className="relative">
+      <FaBell size={24} />
+      <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full" />
+    </div>
+
+  Animated Icon:
+    <FaCog className="animate-spin" />
+    <FaHeart className="animate-pulse" />
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ SEARCH & BROWSE                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Online Search:
+    https://react-icons.github.io/react-icons/search
+
+  Visual Browser (in your project):
+    import IconBrowser from './components/IconBrowser';
+    <IconBrowser />
+
+  Reference File:
+    frontend/src/utils/iconReference.js
+
+  Examples:
+    frontend/src/examples/IconUsageExamples.jsx
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ CURRENTLY USED IN YOUR PROJECT                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Sidebar.jsx & MobileNav.jsx:
+    FaHome, FaCode, FaProjectDiagram, FaTrophy, FaEnvelope
+    FaLinkedin, FaGithub, FaDownload, FaSun, FaMoon
+    FaCog, FaSignOutAlt, FaBars, FaTimes
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ TIPS                                                                         │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  ✓ Import only what you need (tree-shakeable)
+  ✓ All icons are SVG (scalable, crisp)
+  ✓ Works with any CSS framework
+  ✓ No additional CSS files needed
+  ✓ TypeScript support included
+  ✓ 200,000+ icons available
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ QUICK EXAMPLES                                                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  // Social Links
+  import { FaGithub, FaLinkedin } from 'react-icons/fa';
+  <FaGithub size={24} className="hover:text-gray-700" />
+
+  // Navigation
+  import { FaHome, FaUser, FaCog } from 'react-icons/fa';
+  <nav><FaHome /> <FaUser /> <FaCog /></nav>
+
+  // Buttons
+  import { FaEdit, FaTrash } from 'react-icons/fa';
+  <button><FaEdit /> Edit</button>
+  <button><FaTrash /> Delete</button>
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  Need more help? Check: frontend/ICONS_GUIDE.txt                            ║
+╚══════════════════════════════════════════════════════════════════════════════╝

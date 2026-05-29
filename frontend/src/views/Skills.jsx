@@ -123,9 +123,12 @@ const Skills = () => {
                         src={skill.icon} 
                         alt={skill.name}
                         className="w-12 h-12 object-contain"
+                        crossOrigin="anonymous"
                         onError={(e) => {
+                          console.error(`Failed to load icon for ${skill.name}:`, skill.icon);
                           e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'flex';
+                          const fallback = e.target.nextElementSibling;
+                          if (fallback) fallback.style.display = 'flex';
                         }}
                       />
                     ) : null}
@@ -136,6 +139,14 @@ const Skills = () => {
                       {skill.name.charAt(0).toUpperCase()}
                     </div>
                     <span className="text-sm font-medium text-center">{skill.name}</span>
+                    {skill.percent > 0 && (
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
+                        <div 
+                          className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${skill.percent}%` }}
+                        ></div>
+                      </div>
+                    )}
                   </div>
                 </Card>
               ))}

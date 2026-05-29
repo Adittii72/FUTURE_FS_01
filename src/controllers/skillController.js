@@ -12,7 +12,7 @@ export const getAllSkills = async (req, res) => {
 
 export const createSkill = async (req, res) => {
   try {
-    const { name, level, percent } = req.body;
+    const { name, level, percent, icon, category } = req.body;
 
     if (!name) {
       return res.status(400).json({ message: "Skill 'name' is required" });
@@ -22,6 +22,8 @@ export const createSkill = async (req, res) => {
       name,
       level: level || null,
       percent: percent === "" || percent === undefined ? null : Number(percent),
+      icon: icon || null,
+      category: category || "Other",
     });
 
     return res.status(201).json({ message: "Skill created", skill });
@@ -38,7 +40,7 @@ export const createSkill = async (req, res) => {
 export const updateSkill = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, level, percent } = req.body;
+    const { name, level, percent, icon, category } = req.body;
 
     const skill = await Skill.findByIdAndUpdate(
       id,
@@ -46,6 +48,8 @@ export const updateSkill = async (req, res) => {
         name,
         level,
         percent: percent === "" || percent === undefined ? null : Number(percent),
+        icon: icon || null,
+        category: category || "Other",
       },
       { new: true, runValidators: true }
     );
