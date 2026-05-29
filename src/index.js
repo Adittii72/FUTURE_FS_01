@@ -27,8 +27,11 @@ const app = express();
 // ============================================
 const allowedOrigins = [
   process.env.FRONTEND_URL,
+  'https://aditishrimankar.com',
+  'http://aditishrimankar.com',
   'http://localhost:5173', // Local development
   'http://localhost:3000', // Alternative local port
+  'http://localhost:4173', // Vite preview
 ];
 
 app.use(cors({

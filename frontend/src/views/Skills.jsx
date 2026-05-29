@@ -83,7 +83,7 @@ const Skills = () => {
           {isLoggedIn && (
             <button
               onClick={handleCreate}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-all text-sm sm:text-base"
+              className="neon-button flex items-center gap-2 text-sm sm:text-base"
             >
               <Plus className="w-4 h-4" />
               <span>Add Skill</span>
