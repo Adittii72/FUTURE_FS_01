@@ -8,9 +8,9 @@ import ManageAboutModal from '../components/admin/ManageAboutModal.jsx';
 const About = () => {
   const { isLoggedIn } = useAuth();
   const [about, setAbout] = useState({
-    name: 'Your Name',
-    headline: 'Full Stack Developer',
-    bio: 'Passionate developer creating amazing web experiences.',
+    name: 'Aditi Shrimankar',
+    headline: 'Full Stack Developer | AI Engineer | Data Science Enthusiast',
+    bio: 'Computer Science student with hands-on experience in AI, Machine Learning, Data Science, and Full-Stack Development.',
     coverImageUrl: '',
     profileImageUrl: '',
     linkedin: '',
@@ -40,11 +40,8 @@ const About = () => {
   };
 
   if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-      </div>
-    );
+    // Show skeleton/placeholder instead of spinner
+    return null;
   }
 
   return (

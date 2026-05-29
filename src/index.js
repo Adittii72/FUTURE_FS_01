@@ -119,6 +119,15 @@ app.get("/", (req, res) => {
   res.send("Backend is running successfully");
 });
 
+// Health check endpoint (lightweight, no DB required)
+app.get("/health", (req, res) => {
+  res.status(200).json({ 
+    status: "ok", 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 if (isDirectRun) {
   app.listen(PORT, () => {
