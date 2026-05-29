@@ -14,7 +14,8 @@ import {
 } from '/src/constants/projectCategories.js';
 
 const Projects = () => {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, authReady } = useAuth();
+  const canManage = authReady && isLoggedIn;
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState('categories');
@@ -69,7 +70,11 @@ const Projects = () => {
         fetchProjects();
       } catch (error) {
         console.error('Error deleting project:', error);
-        alert('Failed to delete project');
+        if (error.response?.status === 401) {
+          alert('Session expired. Please sign in again.');
+        } else {
+          alert(error.response?.data?.message || 'Failed to delete project');
+        }
       }
     }
   };
@@ -103,7 +108,7 @@ const Projects = () => {
 
   const renderProjectCard = (project) => (
     <Card key={project.id} className="overflow-hidden relative">
-      {isLoggedIn && (
+      {canManage && (
         <div className="absolute top-2 right-2 z-10 flex gap-1">
           <button
             onClick={() => handleEdit(project)}
@@ -214,7 +219,7 @@ const Projects = () => {
                 : `${activeCategory} — ${categoryProjects.length} ${categoryProjects.length === 1 ? 'project' : 'projects'}`}
             </p>
           </div>
-          {isLoggedIn && (
+          {canManage && (
             <button
               onClick={handleCreate}
               className="neon-button flex items-center gap-2 text-sm sm:text-base"
@@ -316,7 +321,7 @@ const Projects = () => {
                 <p className="text-gray-500 dark:text-gray-400 text-lg mb-4">
                   No projects in {activeCategory} yet.
                 </p>
-                {isLoggedIn && (
+                {canManage && (
                   <button
                     type="button"
                     onClick={handleCreate}
@@ -331,7 +336,7 @@ const Projects = () => {
           </>
         )}
 
-        {isLoggedIn && projects.length > 0 && view === 'categories' && (
+        {canManage && projects.length > 0 && view === 'categories' && (
           <div className="mt-16">
             <h3 className="text-2xl font-bold mb-6">All Projects (Admin)</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

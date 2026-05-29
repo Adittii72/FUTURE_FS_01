@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
 import { useAuth } from '/src/context/AuthContext.jsx';
 import api from '/src/services/api.js';
@@ -9,6 +9,8 @@ import Button from '/src/components/Button.jsx';
 
 const Login = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const sessionExpired = searchParams.get('expired') === '1';
   const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
@@ -51,6 +53,12 @@ const Login = () => {
           <h1 className="text-2xl sm:text-3xl font-bold gradient-text">Admin Login</h1>
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-2">Sign in to manage your portfolio</p>
         </div>
+
+        {sessionExpired && !error && (
+          <div className="mb-6 p-4 bg-amber-100 dark:bg-amber-900/30 border border-amber-400 text-amber-800 dark:text-amber-300 rounded-lg">
+            Your session expired. Please sign in again to save or delete content.
+          </div>
+        )}
 
         {error && (
           <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/30 border border-red-400 text-red-700 dark:text-red-400 rounded-lg">

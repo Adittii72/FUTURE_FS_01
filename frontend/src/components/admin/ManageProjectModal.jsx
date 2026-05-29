@@ -72,7 +72,13 @@ const ManageProjectModal = ({ isOpen, onClose, onUpdate, project, defaultCategor
       onUpdate();
     } catch (error) {
       console.error('Error saving project:', error);
-      alert('Failed to save project');
+      const status = error.response?.status;
+      const message = error.response?.data?.message;
+      if (status === 401) {
+        alert('Session expired or not signed in. You will be redirected to login.');
+      } else {
+        alert(message || 'Failed to save project');
+      }
     } finally {
       setLoading(false);
     }
