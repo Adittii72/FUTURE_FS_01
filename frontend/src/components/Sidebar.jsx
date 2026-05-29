@@ -179,7 +179,7 @@ const Sidebar = () => {
         </div>
 
         {/* Admin Actions */}
-        {canManage ? (
+        {canManage && (
           <>
             <div className="h-px bg-gray-700"></div>
             <div className="space-y-4">
@@ -200,19 +200,6 @@ const Sidebar = () => {
               </button>
             </div>
           </>
-        ) : (
-          authReady && (
-            <>
-              <div className="h-px bg-gray-700"></div>
-              <button
-                onClick={() => navigate('/login')}
-                className="group w-12 h-12 rounded-xl bg-dark-tertiary hover:bg-dark-secondary flex items-center justify-center transition-all"
-                title="Admin Login"
-              >
-                <User className="w-5 h-5 text-text-secondary group-hover:text-primary transition-colors" />
-              </button>
-            </>
-          )
         )}
       </div>
     </aside>
