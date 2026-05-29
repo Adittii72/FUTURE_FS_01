@@ -10,7 +10,6 @@ const ManageAchievementModal = ({ isOpen, onClose, onUpdate, achievement }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    date: '',
   });
 
   useEffect(() => {
@@ -18,10 +17,9 @@ const ManageAchievementModal = ({ isOpen, onClose, onUpdate, achievement }) => {
       setFormData({
         title: achievement.title || '',
         description: achievement.description || '',
-        date: achievement.date ? new Date(achievement.date).toISOString().split('T')[0] : '',
       });
     } else {
-      setFormData({ title: '', description: '', date: '' });
+      setFormData({ title: '', description: '' });
     }
   }, [achievement, isOpen]);
 
@@ -71,14 +69,6 @@ const ManageAchievementModal = ({ isOpen, onClose, onUpdate, achievement }) => {
           required
           rows={4}
           placeholder="Achievement description..."
-        />
-
-        <Input
-          label="Date"
-          name="date"
-          type="date"
-          value={formData.date}
-          onChange={handleChange}
         />
 
         <div className="flex justify-end gap-3 pt-4">

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Edit, Plus, Trash2, Award, Upload } from 'lucide-react';
+import { Edit, Plus, Trash2, Award, Upload, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import api from '../services/api.js';
 import Card from '../components/Card.jsx';
+import Modal from '../components/Modal.jsx';
 import ManageAchievementModal from '../components/admin/ManageAchievementModal.jsx';
 import UploadAchievementImageModal from '../components/admin/UploadAchievementImageModal.jsx'; // <-- ADDED
 import { getMediaUrl } from '../utils/mediaUrl.js';
@@ -16,6 +17,8 @@ const Achievements = () => {
 
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [uploadAchievementId, setUploadAchievementId] = useState(null);
+  const [showCopyrightModal, setShowCopyrightModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
 
   useEffect(() => {
@@ -72,6 +75,12 @@ const Achievements = () => {
     fetchAchievements();
     setIsUploadModalOpen(false);
     setUploadAchievementId(null);
+  };
+
+  const handleImageClick = (e, imageUrl) => {
+    e.preventDefault();
+    setSelectedImage(imageUrl);
+    setShowCopyrightModal(true);
   };
 
   if (loading) {
@@ -137,25 +146,18 @@ const Achievements = () => {
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold mb-2">{achievement.title}</h3>
                   <p className="text-gray-600 dark:text-gray-300">{achievement.description}</p>
-                  {achievement.date && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                      {new Date(achievement.date).toLocaleDateString()}
-                    </p>
-                  )}
-                  {/* --- ADDED IMAGE DISPLAY --- */}
+                  {/* --- CERTIFICATE IMAGE WITH COPYRIGHT PROTECTION --- */}
                   {achievement.imageUrl && (
-                    <a 
-                      href={getMediaUrl(achievement.imageUrl)} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="block mt-4"
+                    <div 
+                      onClick={(e) => handleImageClick(e, achievement.imageUrl)}
+                      className="block mt-4 cursor-pointer"
                     >
                       <img 
                         src={getMediaUrl(achievement.imageUrl)} 
                         alt="Certificate" 
-                        className="rounded-lg w-full h-auto max-w-xs border dark:border-gray-700"
+                        className="rounded-lg w-full h-auto max-w-xs border dark:border-gray-700 hover:opacity-90 transition-opacity"
                       />
-                    </a>
+                    </div>
                   )}
                 </div>
               </div>
@@ -192,6 +194,48 @@ const Achievements = () => {
         onUpload={handleImageUploaded}
         achievementId={uploadAchievementId}
       />
+
+      {/* --- COPYRIGHT PROTECTION MODAL --- */}
+      <Modal
+        isOpen={showCopyrightModal}
+        onClose={() => {
+          setShowCopyrightModal(false);
+          setSelectedImage(null);
+        }}
+        title="Certificate Verification"
+        size="md"
+      >
+        <div className="space-y-4">
+          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <p className="text-sm text-blue-800 dark:text-blue-200">
+              <strong>Copyright & Privacy Notice:</strong> This certificate is the intellectual property of the issuing organization and the recipient. 
+              Unauthorized reproduction, distribution, or use of this certificate is strictly prohibited and may be subject to legal action.
+            </p>
+          </div>
+          
+          {selectedImage && (
+            <div className="rounded-lg overflow-hidden border dark:border-gray-700">
+              <img 
+                src={getMediaUrl(selectedImage)} 
+                alt="Certificate" 
+                className="w-full h-auto"
+              />
+            </div>
+          )}
+
+          <div className="flex justify-end">
+            <button
+              onClick={() => {
+                setShowCopyrightModal(false);
+                setSelectedImage(null);
+              }}
+              className="px-4 py-2 bg-[#00d4ff] hover:bg-[#0099ff] text-white rounded-lg transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </Modal>
     </section>
   );
 };
