@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Home, Code, Briefcase, Award, Mail, Download, Linkedin, Github, LogOut, User, Moon, Sun } from 'lucide-react';
+import { Home, Code, Briefcase, Award, Mail, Download, Linkedin, Github, LogOut, User, GraduationCap, Building2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 import api from '../services/api';
 
 const Sidebar = () => {
   const { isLoggedIn, authReady, logout } = useAuth();
   const canManage = authReady && isLoggedIn;
-  const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('about');
   const [resumeUrl, setResumeUrl] = useState('');
@@ -42,7 +40,7 @@ const Sidebar = () => {
   // Track active section on scroll
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['about', 'skills', 'projects', 'achievements', 'contact'];
+      const sections = ['about', 'education', 'skills', 'projects', 'experience', 'achievements', 'contact'];
       const scrollPosition = window.scrollY + 200;
 
       for (const section of sections) {
@@ -78,8 +76,10 @@ const Sidebar = () => {
 
   const navItems = [
     { id: 'about', icon: Home, label: 'Home' },
+    { id: 'education', icon: GraduationCap, label: 'Education' },
     { id: 'skills', icon: Code, label: 'Skills' },
     { id: 'projects', icon: Briefcase, label: 'Projects' },
+    { id: 'experience', icon: Building2, label: 'Experience' },
     { id: 'achievements', icon: Award, label: 'Achievements' },
     { id: 'contact', icon: Mail, label: 'Contact' },
     { id: 'resume', icon: Download, label: 'Resume', isAction: true },
@@ -100,10 +100,10 @@ const Sidebar = () => {
                 <button
                   key={item.id}
                   onClick={handleDownloadResume}
-                  className="group relative w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 bg-gradient-to-br from-[#00d4ff] to-[#0099ff] hover:shadow-glow-cyan"
+                  className="group relative w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 bg-dark-tertiary hover:bg-dark-secondary"
                   title={item.label}
                 >
-                  <Icon className="w-5 h-5 text-white" />
+                  <Icon className="w-5 h-5 text-text-secondary group-hover:text-primary transition-colors" />
                   
                   {/* Tooltip */}
                   <span className="absolute left-full ml-4 px-3 py-2 bg-dark-secondary rounded-lg text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
@@ -163,19 +163,6 @@ const Sidebar = () => {
               <Github className="w-5 h-5 text-text-secondary group-hover:text-primary transition-colors" />
             </a>
           )}
-          
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="group w-12 h-12 rounded-xl bg-dark-tertiary hover:bg-dark-secondary flex items-center justify-center transition-all"
-            title={isDark ? 'Light Mode' : 'Dark Mode'}
-          >
-            {isDark ? (
-              <Sun className="w-5 h-5 text-text-secondary group-hover:text-primary transition-colors" />
-            ) : (
-              <Moon className="w-5 h-5 text-text-secondary group-hover:text-primary transition-colors" />
-            )}
-          </button>
         </div>
 
         {/* Admin Actions */}

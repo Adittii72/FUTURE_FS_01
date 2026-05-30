@@ -15,6 +15,8 @@ import achievementRoutes from "./routes/achievementRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import resumeRoutes from "./routes/resumeRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
+import educationRoutes from "./routes/educationRoutes.js";
+import experienceRoutes from "./routes/experienceRoutes.js";
 import connectDatabase from "./config/database.js";
 import autoBackupMiddleware from "./middleware/autoBackupMiddleware.js";
 import startScheduledBackups from "./scripts/scheduledBackup.js";
@@ -114,6 +116,8 @@ app.use("/api/achievements", achievementRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/resume", resumeRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/education", educationRoutes);
+app.use("/api/experience", experienceRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend is running successfully");

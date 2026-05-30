@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FolderKanban, Award, Code, FileText } from 'lucide-react';
+import { FolderKanban, Award, Code, FileText, GraduationCap, Building2 } from 'lucide-react';
 import api from '../services/api';
 import Card from '../components/Card';
 import Button from '../components/Button';
@@ -14,6 +14,8 @@ const Dashboard = () => {
     projects: 0,
     skills: 0,
     achievements: 0,
+    education: 0,
+    experience: 0,
   });
   const [loading, setLoading] = useState(true);
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
@@ -29,7 +31,18 @@ const Dashboard = () => {
   const fetchData = async () => {
     try {
       const statsRes = await api.get('/analytics/summary');
-      setStats(statsRes.data.summary);
+      
+      // Fetch education and experience counts separately
+      const [educationRes, experienceRes] = await Promise.all([
+        api.get('/education'),
+        api.get('/experience')
+      ]);
+      
+      setStats({
+        ...statsRes.data.summary,
+        education: educationRes.data.education?.length || 0,
+        experience: experienceRes.data.experience?.length || 0,
+      });
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
@@ -49,6 +62,8 @@ const Dashboard = () => {
     { icon: FolderKanban, label: 'Projects', value: stats.projects, color: 'from-blue-500 to-cyan-500' },
     { icon: Code, label: 'Skills', value: stats.skills, color: 'from-purple-500 to-pink-500' },
     { icon: Award, label: 'Achievements', value: stats.achievements, color: 'from-yellow-500 to-orange-500' },
+    { icon: GraduationCap, label: 'Education', value: stats.education, color: 'from-green-500 to-teal-500' },
+    { icon: Building2, label: 'Experience', value: stats.experience, color: 'from-indigo-500 to-purple-500' },
   ];
 
   return (
@@ -73,7 +88,7 @@ const Dashboard = () => {
         </Card>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6 mb-8 md:mb-12">
           {statCards.map((stat, idx) => (
             <Card key={idx} className="relative overflow-hidden">
               <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.color} opacity-10 rounded-full -mr-16 -mt-16`}></div>

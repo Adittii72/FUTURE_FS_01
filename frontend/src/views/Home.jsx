@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import About from './About';
+import Education from './Education';
 import Skills from './Skills';
 import Projects from './Projects';
+import Experience from './Experience';
 import Achievements from './Achievements';
 import Contact from './Contact';
 
@@ -30,12 +32,20 @@ const Home = () => {
           <About />
         </section>
 
+        <section id="education" className="relative z-10">
+          <Education />
+        </section>
+
         <section id="skills" className="relative z-10">
           <Skills />
         </section>
 
         <section id="projects" className="relative z-10">
           <Projects />
+        </section>
+
+        <section id="experience" className="relative z-10">
+          <Experience />
         </section>
 
         <section id="achievements" className="relative z-10">

@@ -19,13 +19,13 @@ export const PROJECT_CATEGORIES = [
     name: 'Data Science Enthusiast',
     icon: BarChart3,
     description: 'Extracting insights and patterns from complex datasets',
-    gradient: 'from-[#7c3aed] to-[#a855f7]',
+    gradient: 'from-[#00d4ff] to-[#0099ff]',
   },
   {
     name: 'Full-Stack Developer',
     icon: Code2,
     description: 'Creating end-to-end web applications with modern technologies',
-    gradient: 'from-[#00d4ff] to-[#7c3aed]',
+    gradient: 'from-[#00d4ff] to-[#0099ff]',
   },
 ];
 
