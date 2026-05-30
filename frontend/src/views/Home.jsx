@@ -40,12 +40,12 @@ const Home = () => {
           <Skills />
         </section>
 
-        <section id="projects" className="relative z-10">
-          <Projects />
-        </section>
-
         <section id="experience" className="relative z-10">
           <Experience />
+        </section>
+
+        <section id="projects" className="relative z-10">
+          <Projects />
         </section>
 
         <section id="achievements" className="relative z-10">

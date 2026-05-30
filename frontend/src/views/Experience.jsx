@@ -74,9 +74,9 @@ const Experience = () => {
   }
 
   return (
-    <section className="min-h-screen py-8 sm:py-12 md:py-16">
+    <section className="py-8 sm:py-12 md:py-16">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 md:mb-12">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <h2 className="text-3xl sm:text-4xl font-bold gradient-text">Experience</h2>
           {isLoggedIn && (
             <button

@@ -40,7 +40,7 @@ const Sidebar = () => {
   // Track active section on scroll
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['about', 'education', 'skills', 'projects', 'experience', 'achievements', 'contact'];
+      const sections = ['about', 'education', 'skills', 'experience', 'projects', 'achievements', 'contact'];
       const scrollPosition = window.scrollY + 200;
 
       for (const section of sections) {
@@ -78,8 +78,8 @@ const Sidebar = () => {
     { id: 'about', icon: Home, label: 'Home' },
     { id: 'education', icon: GraduationCap, label: 'Education' },
     { id: 'skills', icon: Code, label: 'Skills' },
-    { id: 'projects', icon: Briefcase, label: 'Projects' },
     { id: 'experience', icon: Building2, label: 'Experience' },
+    { id: 'projects', icon: Briefcase, label: 'Projects' },
     { id: 'achievements', icon: Award, label: 'Achievements' },
     { id: 'contact', icon: Mail, label: 'Contact' },
     { id: 'resume', icon: Download, label: 'Resume', isAction: true },

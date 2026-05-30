@@ -90,9 +90,9 @@ const Skills = () => {
   };
 
   return (
-    <section className="min-h-screen py-8 sm:py-12 md:py-16">
+    <section className="py-8 sm:py-12 md:py-16">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 md:mb-12">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <h2 className="text-3xl sm:text-4xl font-bold gradient-text">Skills</h2>
           {isLoggedIn && (
             <button
@@ -108,8 +108,8 @@ const Skills = () => {
         {categories.map((category) => {
           const CategoryIcon = categoryIcons[category] || Brain;
           return (
-            <div key={category} className="mb-12">
-              <div className="flex items-center gap-3 mb-6">
+            <div key={category} className="mb-8">
+              <div className="flex items-center gap-3 mb-4">
                 <CategoryIcon className="w-6 h-6 text-[#00d4ff]" />
                 <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                   {category}
