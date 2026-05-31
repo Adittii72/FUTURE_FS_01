@@ -17,6 +17,7 @@ import resumeRoutes from "./routes/resumeRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import educationRoutes from "./routes/educationRoutes.js";
 import experienceRoutes from "./routes/experienceRoutes.js";
+import bootstrapRoutes from "./routes/bootstrapRoutes.js";
 import connectDatabase from "./config/database.js";
 import autoBackupMiddleware from "./middleware/autoBackupMiddleware.js";
 import startScheduledBackups from "./scripts/scheduledBackup.js";
@@ -85,6 +86,14 @@ app.use((req, res, next) => {
   next();
 });
 
+// Fast health check (no DB) — used to wake Render without Mongo latency
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // Database connection middleware - skip for OPTIONS
 app.use(async (req, res, next) => {
   try {
@@ -118,18 +127,10 @@ app.use("/api/resume", resumeRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/education", educationRoutes);
 app.use("/api/experience", experienceRoutes);
+app.use("/api/public/bootstrap", bootstrapRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend is running successfully");
-});
-
-// Health check endpoint (lightweight, no DB required)
-app.get("/health", (req, res) => {
-  res.status(200).json({ 
-    status: "ok", 
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
-  });
 });
 
 const PORT = process.env.PORT || 5000;

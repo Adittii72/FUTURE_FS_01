@@ -57,9 +57,16 @@ const Skills = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-      </div>
+      <section className="py-8 sm:py-12 md:py-16 min-h-[40vh]">
+        <div className="container mx-auto px-4">
+          <div className="h-10 w-32 bg-[#252b4a] rounded-lg animate-pulse mb-8" />
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="h-28 rounded-xl bg-[#252b4a] animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </section>
     );
   }
 
@@ -150,6 +157,10 @@ const Skills = () => {
                           src={skill.icon} 
                           alt={skill.name}
                           className="w-12 h-12 object-contain"
+                          loading="lazy"
+                          decoding="async"
+                          width="48"
+                          height="48"
                           crossOrigin="anonymous"
                           onError={(e) => {
                             console.error(`Failed to load icon for ${skill.name}:`, skill.icon);

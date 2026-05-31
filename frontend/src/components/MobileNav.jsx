@@ -3,40 +3,19 @@ import { Home, Code, Briefcase, Award, Mail, Menu, X, User, LogOut, Download, Li
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import api from '../services/api';
+import { usePortfolioData } from '../context/PortfolioDataContext';
 
 const MobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { isLoggedIn, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const { about, resumeUrl } = usePortfolioData();
   const navigate = useNavigate();
-  const [resumeUrl, setResumeUrl] = useState('');
-  const [socialLinks, setSocialLinks] = useState({
-    linkedin: '',
-    github: '',
-  });
 
-  useEffect(() => {
-    // Fetch resume
-    api.get('/resume')
-      .then(res => {
-        setResumeUrl(res?.data?.resume?.fileUrl || '');
-      })
-      .catch(() => setResumeUrl(''));
-
-    // Fetch social links
-    api.get('/about')
-      .then(res => {
-        const about = res?.data?.about ?? res?.data;
-        setSocialLinks({
-          linkedin: about?.linkedin || '',
-          github: about?.github || '',
-        });
-      })
-      .catch(() => {
-        setSocialLinks({ linkedin: '', github: '' });
-      });
-  }, []);
+  const socialLinks = {
+    linkedin: about.linkedin || '',
+    github: about.github || '',
+  };
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);

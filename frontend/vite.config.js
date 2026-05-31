@@ -6,30 +6,39 @@ export default defineConfig({
   server: {
     port: 3000,
     open: true,
-    host: true // Allows access from network devices (like your phone)
+    host: true,
   },
   build: {
-    // Optimize chunk size
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        // Manual chunking for better caching
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui-vendor': ['lucide-react'],
+        manualChunks(id) {
+          if (id.includes('react-responsive-carousel')) {
+            return 'carousel';
+          }
+          if (id.includes('node_modules')) {
+            if (
+              id.includes('react-dom') ||
+              id.includes('react-router') ||
+              id.includes('/react/')
+            ) {
+              return 'react-vendor';
+            }
+            if (id.includes('lucide-react')) {
+              return 'icons';
+            }
+            if (id.includes('axios')) {
+              return 'http';
+            }
+          }
         },
-        // Add timestamp to force cache invalidation
-        entryFileNames: `assets/[name]-[hash]-${Date.now()}.js`,
-        chunkFileNames: `assets/[name]-[hash]-${Date.now()}.js`,
-        assetFileNames: `assets/[name]-[hash]-${Date.now()}.[ext]`,
       },
     },
-    // Use esbuild for minification (faster than terser)
     minify: 'esbuild',
+    cssCodeSplit: true,
+    sourcemap: false,
   },
-  // Optimize dependencies
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom'],
   },
 })
-

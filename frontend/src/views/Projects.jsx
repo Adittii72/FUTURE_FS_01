@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Edit, Plus, Trash2, Github, Upload, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useAuth } from '/src/context/AuthContext.jsx';
 import api from '/src/services/api.js';
 import Card from '/src/components/Card.jsx';
 import ManageProjectModal from '/src/components/admin/ManageProjectModal.jsx';
 import UploadMediaModal from '/src/components/admin/UploadMediaModal.jsx';
-import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { getMediaUrl } from '/src/utils/mediaUrl.js';
+
+const ProjectMediaCarousel = lazy(() => import('/src/components/ProjectMediaCarousel.jsx'));
 import {
   PROJECT_CATEGORIES,
   normalizeProjectCategory,
@@ -143,24 +143,13 @@ const Projects = () => {
               muted
             />
           ) : project.images && project.images.length > 0 ? (
-            <Carousel
-              showThumbs={false}
-              showStatus={false}
-              infiniteLoop
-              autoPlay
-              interval={3500}
-              className="h-full"
+            <Suspense
+              fallback={
+                <div className="h-full w-full animate-pulse bg-[#252b4a]" />
+              }
             >
-              {project.images.map((image) => (
-                <div key={image.id} className="h-48">
-                  <img
-                    src={getMediaUrl(image.imageUrl)}
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ))}
-            </Carousel>
+              <ProjectMediaCarousel images={project.images} title={project.title} />
+            </Suspense>
           ) : (
             <div className="flex items-center justify-center h-full">
               <span className="text-gray-500">No media</span>
@@ -201,9 +190,16 @@ const Projects = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00d4ff] mx-auto"></div>
-      </div>
+      <section className="min-h-[50vh] py-8 sm:py-12 md:py-16">
+        <div className="container mx-auto px-4">
+          <div className="h-10 w-48 bg-[#252b4a] rounded-lg animate-pulse mb-8" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-64 rounded-2xl bg-[#252b4a] animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </section>
     );
   }
 

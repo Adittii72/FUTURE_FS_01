@@ -1,48 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Edit } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
-import api from '../services/api.js';
-import Card from '../components/Card.jsx';
+import { usePortfolioData } from '../context/PortfolioDataContext.jsx';
 import ManageAboutModal from '../components/admin/ManageAboutModal.jsx';
 
 const About = () => {
   const { isLoggedIn } = useAuth();
-  const [about, setAbout] = useState({
-    name: 'Aditi Shrimankar',
-    headline: 'Full Stack Developer | AI Engineer | Data Science Enthusiast',
-    bio: 'Computer Science student with hands-on experience in AI, Machine Learning, Data Science, and Full-Stack Development.',
-    coverImageUrl: '',
-    profileImageUrl: '',
-    linkedin: '',
-    github: '',
-  });
+  const { about, refreshAbout } = usePortfolioData();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchAbout();
-  }, []);
-
-  const fetchAbout = async () => {
-    try {
-      const res = await api.get('/about');
-      setAbout(res.data.about);
-    } catch (error) {
-      console.error('Error fetching about:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleUpdate = () => {
-    fetchAbout();
+    refreshAbout();
     setIsEditModalOpen(false);
   };
 
-  if (loading) {
-    // Show skeleton/placeholder instead of spinner
-    return null;
-  }
+  const profileSrc = about.profileImageUrl || about.coverImageUrl;
 
   return (
     <section className="h-screen flex flex-col relative overflow-hidden">
@@ -61,12 +33,10 @@ const About = () => {
         )}
 
         <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center h-full max-h-full">
-          <div className="space-y-4 md:space-y-6 animate-fade-in order-2 md:order-1">
-            {/* --- ADDED NAME FIELD --- */}
+          <div className="space-y-4 md:space-y-6 order-2 md:order-1">
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-gray-900 dark:text-white">
               {about.name}
             </h1>
-            {/* --- HEADLINE --- */}
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
               <span className="gradient-text">{about.headline}</span>
             </h2>
@@ -74,38 +44,37 @@ const About = () => {
               {about.bio}
             </p>
           </div>
-          <div className="animate-fade-in order-1 md:order-2 flex justify-center items-center w-full">
-            {about.profileImageUrl ? (
-              <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#00d4ff] to-[#0099ff] rounded-full opacity-100"></div>
-                <div className="relative opacity-100 rounded-full overflow-hidden" style={{ width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', margin: '10px' }}>
+
+          <div className="order-1 md:order-2 flex justify-center items-center w-full">
+            <div
+              className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto"
+              aria-hidden={!profileSrc}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#00d4ff] to-[#0099ff] rounded-full" />
+              <div
+                className="relative rounded-full overflow-hidden bg-[#1a1f3a]"
+                style={{
+                  width: 'calc(100% - 20px)',
+                  height: 'calc(100% - 20px)',
+                  margin: '10px',
+                }}
+              >
+                {profileSrc ? (
                   <img
-                    src={about.profileImageUrl}
+                    src={profileSrc}
                     alt={about.name}
                     className="w-full h-full object-cover"
                     loading="eager"
-                    fetchpriority="high"
+                    fetchPriority="high"
+                    decoding="async"
                     width="380"
                     height="380"
                   />
-                </div>
+                ) : (
+                  <div className="w-full h-full animate-pulse bg-[#252b4a]" />
+                )}
               </div>
-            ) : about.coverImageUrl ? (
-              <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mx-auto">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#00d4ff] to-[#0099ff] rounded-full opacity-100"></div>
-                <div className="relative opacity-100 rounded-full overflow-hidden" style={{ width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', margin: '10px' }}>
-                  <img
-                    src={about.coverImageUrl}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                    loading="eager"
-                    fetchpriority="high"
-                    width="380"
-                    height="380"
-                  />
-                </div>
-              </div>
-            ) : null}
+            </div>
           </div>
         </div>
       </div>

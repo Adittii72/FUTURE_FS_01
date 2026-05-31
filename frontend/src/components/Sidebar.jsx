@@ -1,41 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Home, Code, Briefcase, Award, Mail, Download, Linkedin, Github, LogOut, User, GraduationCap, Building2 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
+import { usePortfolioData } from '../context/PortfolioDataContext';
 
 const Sidebar = () => {
   const { isLoggedIn, authReady, logout } = useAuth();
   const canManage = authReady && isLoggedIn;
+  const { about, resumeUrl } = usePortfolioData();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('about');
-  const [resumeUrl, setResumeUrl] = useState('');
-  const [socialLinks, setSocialLinks] = useState({
-    linkedin: '',
-    github: '',
-  });
 
-  useEffect(() => {
-    // Fetch resume
-    api.get('/resume')
-      .then(res => {
-        setResumeUrl(res?.data?.resume?.fileUrl || '');
-      })
-      .catch(() => setResumeUrl(''));
-
-    // Fetch social links
-    api.get('/about')
-      .then(res => {
-        const about = res?.data?.about ?? res?.data;
-        setSocialLinks({
-          linkedin: about?.linkedin || '',
-          github: about?.github || '',
-        });
-      })
-      .catch(() => {
-        setSocialLinks({ linkedin: '', github: '' });
-      });
-  }, []);
+  const socialLinks = {
+    linkedin: about.linkedin || '',
+    github: about.github || '',
+  };
 
   // Track active section on scroll
   useEffect(() => {

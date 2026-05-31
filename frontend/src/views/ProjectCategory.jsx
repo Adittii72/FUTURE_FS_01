@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Github, Edit, Upload, Trash2, Plus } from 'lucide-react';
 import { useAuth } from '/src/context/AuthContext.jsx';
@@ -6,10 +6,10 @@ import api from '/src/services/api.js';
 import Card from '/src/components/Card.jsx';
 import ManageProjectModal from '/src/components/admin/ManageProjectModal.jsx';
 import UploadMediaModal from '/src/components/admin/UploadMediaModal.jsx';
-import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { getMediaUrl } from '/src/utils/mediaUrl.js';
 import { normalizeProjectCategory } from '/src/constants/projectCategories.js';
+
+const ProjectMediaCarousel = lazy(() => import('/src/components/ProjectMediaCarousel.jsx'));
 
 const ProjectCategory = () => {
   const { category } = useParams();
@@ -164,25 +164,16 @@ const ProjectCategory = () => {
                       autoPlay
                     />
                   ) : project.images && project.images.length > 0 ? (
-                    <Carousel
-                      showThumbs={false}
-                      showStatus={false}
-                      infiniteLoop
-                      autoPlay
-                      interval={3500}
-                      useKeyboardArrows
-                      className="h-full"
+                    <Suspense
+                      fallback={
+                        <div className="h-full w-full animate-pulse bg-[#252b4a]" />
+                      }
                     >
-                      {project.images.map((image) => (
-                        <div key={image.id} className="h-48">
-                          <img
-                            src={getMediaUrl(image.imageUrl)}
-                            alt={project.title}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      ))}
-                    </Carousel>
+                      <ProjectMediaCarousel
+                        images={project.images}
+                        title={project.title}
+                      />
+                    </Suspense>
                   ) : (
                     <div className="flex items-center justify-center h-full">
                       <span className="text-gray-500">No media</span>

@@ -1,16 +1,13 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
-import { LoadingProvider } from './context/LoadingContext';
+import { PortfolioDataProvider } from './context/PortfolioDataContext';
 import Sidebar from './components/Sidebar';
 import MobileNav from './components/MobileNav';
-import LoadingBar from './components/LoadingBar';
 import Home from './views/Home';
 import Login from './views/Login';
 import Dashboard from './views/Dashboard';
 import ProjectCategory from './views/ProjectCategory';
-import { wakeUpBackend, prefetchCriticalData } from './utils/backendWakeup';
 
 const PrivateRoute = ({ children }) => {
   const { isLoggedIn } = useAuth();
@@ -18,67 +15,52 @@ const PrivateRoute = ({ children }) => {
 };
 
 function App() {
-  const [initialLoading, setInitialLoading] = useState(true);
-
-  // Wake up backend on app load
-  useEffect(() => {
-    const initBackend = async () => {
-      await wakeUpBackend();
-      // Prefetch critical data after backend is awake
-      await prefetchCriticalData();
-      setInitialLoading(false);
-    };
-    initBackend();
-  }, []);
-
   return (
     <ThemeProvider>
-      <LoadingProvider>
-        <AuthProvider>
-          <LoadingBar isLoading={initialLoading} />
+      <AuthProvider>
+        <PortfolioDataProvider>
           <Router>
-          <div className="min-h-screen bg-gradient-to-br from-[#0a0e27] via-[#1a1f3a] to-[#0a0e27]">
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route
-                path="/*"
-                element={
-                  <>
-                    <Sidebar />
-                    <MobileNav />
-                    <Routes>
-                      {/* Single-page app: all sections rendered on home route */}
-                      <Route path="/" element={<Home />} />
-                      <Route
-                        path="/projects"
-                        element={
-                          <Navigate
-                            to="/"
-                            replace
-                            state={{ scrollTo: 'projects' }}
-                          />
-                        }
-                      />
-                      <Route path="/projects/:category" element={<ProjectCategory />} />
-                      <Route
-                        path="/dashboard"
-                        element={
-                          <PrivateRoute>
-                            <Dashboard />
-                          </PrivateRoute>
-                        }
-                      />
-                      <Route path="*" element={<Navigate to="/" />} />
-                    </Routes>
-                  </>
-                }
-              />
-            </Routes>
-          </div>
-        </Router>
+            <div className="min-h-screen bg-gradient-to-br from-[#0a0e27] via-[#1a1f3a] to-[#0a0e27]">
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route
+                  path="/*"
+                  element={
+                    <>
+                      <Sidebar />
+                      <MobileNav />
+                      <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route
+                          path="/projects"
+                          element={
+                            <Navigate
+                              to="/"
+                              replace
+                              state={{ scrollTo: 'projects' }}
+                            />
+                          }
+                        />
+                        <Route path="/projects/:category" element={<ProjectCategory />} />
+                        <Route
+                          path="/dashboard"
+                          element={
+                            <PrivateRoute>
+                              <Dashboard />
+                            </PrivateRoute>
+                          }
+                        />
+                        <Route path="*" element={<Navigate to="/" />} />
+                      </Routes>
+                    </>
+                  }
+                />
+              </Routes>
+            </div>
+          </Router>
+        </PortfolioDataProvider>
       </AuthProvider>
-    </LoadingProvider>
-  </ThemeProvider>
+    </ThemeProvider>
   );
 }
 

@@ -1,12 +1,20 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import About from './About';
-import Education from './Education';
-import Skills from './Skills';
-import Projects from './Projects';
-import Experience from './Experience';
-import Achievements from './Achievements';
-import Contact from './Contact';
+import LazySection from '../components/LazySection';
+
+const Education = lazy(() => import('./Education'));
+const Skills = lazy(() => import('./Skills'));
+const Experience = lazy(() => import('./Experience'));
+const Projects = lazy(() => import('./Projects'));
+const Achievements = lazy(() => import('./Achievements'));
+const Contact = lazy(() => import('./Contact'));
+
+const SectionFallback = () => (
+  <div className="container mx-auto px-4 py-16 flex justify-center" aria-hidden>
+    <div className="h-8 w-8 rounded-full border-2 border-[#00d4ff]/30 border-t-[#00d4ff] animate-spin" />
+  </div>
+);
 
 const Home = () => {
   const location = useLocation();
@@ -25,36 +33,46 @@ const Home = () => {
 
   return (
     <main className="relative lg:pl-32">
-      {/* Left padding on large screens to avoid sidebar overlap */}
       <div className="max-w-7xl mx-auto">
-        {/* Each section wrapped with an id so sidebar links can scroll here */}
         <section id="about" className="relative z-10">
           <About />
         </section>
 
-        <section id="education" className="relative z-10">
-          <Education />
-        </section>
+        <LazySection id="education" minHeight="40vh">
+          <Suspense fallback={<SectionFallback />}>
+            <Education />
+          </Suspense>
+        </LazySection>
 
-        <section id="skills" className="relative z-10">
-          <Skills />
-        </section>
+        <LazySection id="skills" minHeight="50vh">
+          <Suspense fallback={<SectionFallback />}>
+            <Skills />
+          </Suspense>
+        </LazySection>
 
-        <section id="experience" className="relative z-10">
-          <Experience />
-        </section>
+        <LazySection id="experience" minHeight="40vh">
+          <Suspense fallback={<SectionFallback />}>
+            <Experience />
+          </Suspense>
+        </LazySection>
 
-        <section id="projects" className="relative z-10">
-          <Projects />
-        </section>
+        <LazySection id="projects" minHeight="50vh">
+          <Suspense fallback={<SectionFallback />}>
+            <Projects />
+          </Suspense>
+        </LazySection>
 
-        <section id="achievements" className="relative z-10">
-          <Achievements />
-        </section>
+        <LazySection id="achievements" minHeight="40vh">
+          <Suspense fallback={<SectionFallback />}>
+            <Achievements />
+          </Suspense>
+        </LazySection>
 
-        <section id="contact" className="relative z-10">
-          <Contact />
-        </section>
+        <LazySection id="contact" minHeight="35vh">
+          <Suspense fallback={<SectionFallback />}>
+            <Contact />
+          </Suspense>
+        </LazySection>
       </div>
     </main>
   );
